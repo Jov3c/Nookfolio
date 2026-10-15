@@ -39,7 +39,10 @@ function coverVariant(slug: string) {
   return (hash % 5) + 1;
 }
 
-usePageSeo({ title: 'Blog — Jov3', description: '记录 AI、产品、开发和一些值得长期保留的想法。' });
+usePageSeo({
+  title: 'Blog — Nookfolio',
+  description: '记录 AI、产品、开发和一些值得长期保留的想法。',
+});
 </script>
 
 <template>

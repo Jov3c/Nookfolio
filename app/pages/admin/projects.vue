@@ -38,7 +38,7 @@ const errorMessage = ref('');
 const markdownFileInput = ref<HTMLInputElement | null>(null);
 const form = reactive<ProjectForm>(createEmptyForm());
 
-useSeoMeta({ title: '项目管理 — JOV3 管理后台', robots: 'noindex, nofollow' });
+useSeoMeta({ title: '项目管理 — Nookfolio 管理后台', robots: 'noindex, nofollow' });
 
 const selectedProject = computed(() =>
   projects.value.find((project) => project.id === selectedProjectId.value),

@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from 'node:crypto';
 
-export const VISITOR_COOKIE_NAME = 'jov3_visitor_id';
+export const VISITOR_COOKIE_NAME = 'nookfolio_visitor_id';
 export const ONLINE_WINDOW_MS = 5 * 60 * 1_000;
 
 const VISITOR_ID_PATTERN = /^[A-Za-z0-9_-]{32,128}$/;

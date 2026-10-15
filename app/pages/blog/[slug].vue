@@ -19,7 +19,7 @@ if (!post.value?.data) {
 
 const article = post.value.data;
 usePageSeo({
-  title: `${article.seoTitle || article.title} — Jov3`,
+  title: `${article.seoTitle || article.title} — Nookfolio`,
   description: article.seoDescription || article.excerpt,
   type: 'article',
   image: article.cover?.publicUrl,

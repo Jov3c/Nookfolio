@@ -117,7 +117,7 @@ const busyKey = ref('');
 const notice = ref('');
 const errorMessage = ref('');
 
-useSeoMeta({ title: '个人简历 — JOV3 管理后台', robots: 'noindex, nofollow' });
+useSeoMeta({ title: '个人简历 — Nookfolio 管理后台', robots: 'noindex, nofollow' });
 
 async function load() {
   isLoading.value = true;

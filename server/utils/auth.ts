@@ -6,7 +6,7 @@ import { AuthError, AuthService } from '../services/auth-service';
 import { usePrisma } from './prisma';
 import { SlidingWindowRateLimiter } from './rate-limit';
 
-export const ADMIN_SESSION_COOKIE = 'jov3_admin_session';
+export const ADMIN_SESSION_COOKIE = 'nookfolio_admin_session';
 const SESSION_MAX_AGE_SECONDS = 7 * 24 * 60 * 60;
 
 const loginLimiter = new SlidingWindowRateLimiter({

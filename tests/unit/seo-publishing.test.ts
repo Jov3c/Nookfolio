@@ -14,7 +14,7 @@ describe('SEO publishing utilities', () => {
   it('builds escaped RSS XML with published posts only', () => {
     const xml = buildRssFeed(
       {
-        title: 'JOV3 & Notes',
+        title: 'Nookfolio & Notes',
         description: 'A <personal> site',
         url: 'https://site.example',
       },

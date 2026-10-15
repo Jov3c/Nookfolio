@@ -8,14 +8,16 @@ import pg from 'pg';
 
 const { Client } = pg;
 const backupDir = process.argv[2];
-const adminDatabaseUrl = process.env.JOV3_RESTORE_ADMIN_DATABASE_URL;
+const adminDatabaseUrl = process.env.NOOKFOLIO_RESTORE_ADMIN_DATABASE_URL;
 const restoreRoot = resolve(
-  process.env.JOV3_RESTORE_ROOT || join(process.cwd(), '.data', 'restore-test'),
+  process.env.NOOKFOLIO_RESTORE_ROOT || join(process.cwd(), '.data', 'restore-test'),
 );
 
 if (!backupDir) throw new Error('usage: restore-test.sh /path/to/backup-directory');
 if (!adminDatabaseUrl) {
-  throw new Error('JOV3_RESTORE_ADMIN_DATABASE_URL must point to an isolated PostgreSQL server');
+  throw new Error(
+    'NOOKFOLIO_RESTORE_ADMIN_DATABASE_URL must point to an isolated PostgreSQL server',
+  );
 }
 
 const databaseDump = resolve(backupDir, 'database.sql');
@@ -24,7 +26,7 @@ if (!existsSync(databaseDump) || !existsSync(assetArchive)) {
   throw new Error('Backup directory must contain database.sql and uploads-geo.tgz');
 }
 
-const databaseName = `jov3_restore_${Date.now()}_${randomBytes(3).toString('hex')}`;
+const databaseName = `nookfolio_restore_${Date.now()}_${randomBytes(3).toString('hex')}`;
 const restoreUrl = new URL(adminDatabaseUrl);
 restoreUrl.pathname = `/${databaseName}`;
 restoreUrl.searchParams.delete('schema');

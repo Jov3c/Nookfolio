@@ -34,7 +34,7 @@ describe('media and email verification persistence', () => {
     const service = new EmailVerificationService(
       new EmailVerificationRepository(prisma),
       sender,
-      'https://jov3.example',
+      'https://nookfolio.example',
     );
     await service.issue({ purpose: 'FRIEND_LINK', entityId, email });
 

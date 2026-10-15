@@ -67,7 +67,7 @@ const selectedEntry = computed(() =>
 );
 const isNewEntry = computed(() => selectedEntryId.value === null);
 
-useSeoMeta({ title: '时间线管理 — JOV3 管理后台', robots: 'noindex, nofollow' });
+useSeoMeta({ title: '时间线管理 — Nookfolio 管理后台', robots: 'noindex, nofollow' });
 
 async function load() {
   isLoading.value = true;

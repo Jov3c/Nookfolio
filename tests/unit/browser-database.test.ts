@@ -16,14 +16,16 @@ describe('browser database reset', () => {
   });
 
   it('requires an explicit opt-in outside CI', () => {
-    expect(() => assertBrowserResetAllowed('postgresql://localhost/jov3', {})).toThrow(
-      'JOV3_BROWSER_RESET=1',
+    expect(() => assertBrowserResetAllowed('postgresql://localhost/nookfolio', {})).toThrow(
+      'NOOKFOLIO_BROWSER_RESET=1',
     );
     expect(() =>
-      assertBrowserResetAllowed('postgresql://localhost/jov3', { JOV3_BROWSER_RESET: '1' }),
+      assertBrowserResetAllowed('postgresql://localhost/nookfolio', {
+        NOOKFOLIO_BROWSER_RESET: '1',
+      }),
     ).not.toThrow();
     expect(() =>
-      assertBrowserResetAllowed('postgresql://localhost/jov3', { CI: 'true' }),
+      assertBrowserResetAllowed('postgresql://localhost/nookfolio', { CI: 'true' }),
     ).not.toThrow();
   });
 });

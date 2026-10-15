@@ -22,7 +22,7 @@ export class SmtpConfigError extends Error {
 
 export function readSmtpConfig(env: NodeJS.ProcessEnv = process.env): SmtpConfig {
   const host = env.SMTP_HOST?.trim();
-  const fromName = env.SMTP_FROM_NAME?.trim() || 'Jov3';
+  const fromName = env.SMTP_FROM_NAME?.trim() || 'Nookfolio';
   const fromEmail = env.SMTP_FROM_EMAIL?.trim().toLowerCase();
   const publicSiteUrl = env.PUBLIC_SITE_URL?.trim().replace(/\/$/, '');
   const port = Number(env.SMTP_PORT || 587);

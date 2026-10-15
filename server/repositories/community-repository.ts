@@ -86,7 +86,7 @@ export class CommunityRepository {
         postId: input.postId,
         parentId: input.parentId,
         authorType: 'ADMIN',
-        nickname: 'Jov3',
+        nickname: 'Nookfolio',
         email: null,
         content: input.content,
         status: 'PUBLISHED',
@@ -170,7 +170,7 @@ export class CommunityRepository {
       data: {
         parentId: input.parentId,
         authorType: 'ADMIN',
-        nickname: 'Jov3',
+        nickname: 'Nookfolio',
         email: null,
         content: input.content,
         isPrivate: input.isPrivate,

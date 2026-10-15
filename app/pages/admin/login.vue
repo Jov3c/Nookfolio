@@ -7,7 +7,7 @@ const isHydrated = ref(false);
 const isSubmitting = ref(false);
 const errorMessage = ref('');
 
-useSeoMeta({ title: '管理员登录 — JOV3', robots: 'noindex, nofollow' });
+useSeoMeta({ title: '管理员登录 — Nookfolio', robots: 'noindex, nofollow' });
 onNuxtReady(() => {
   isHydrated.value = true;
 });
@@ -37,7 +37,7 @@ async function submit() {
 <template>
   <main class="login-panel">
     <div class="login-panel__intro">
-      <p class="eyebrow">JOV3 管理后台</p>
+      <p class="eyebrow">Nookfolio 管理后台</p>
       <h1>欢迎回来</h1>
       <p>在一个安静、清晰的工作台中管理内容、资料和站点互动。</p>
     </div>

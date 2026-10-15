@@ -28,7 +28,7 @@ export const BROWSER_RESET_TABLES = [
   'visitor_activity',
 ] as const;
 
-type ResetEnvironment = Pick<NodeJS.ProcessEnv, 'CI' | 'JOV3_BROWSER_RESET'>;
+type ResetEnvironment = Pick<NodeJS.ProcessEnv, 'CI' | 'NOOKFOLIO_BROWSER_RESET'>;
 
 export function assertBrowserResetAllowed(databaseUrl: string, environment: ResetEnvironment) {
   let parsed: URL;
@@ -44,8 +44,8 @@ export function assertBrowserResetAllowed(databaseUrl: string, environment: Rese
   if (!parsed.pathname.slice(1)) {
     throw new Error('DATABASE_URL must include a database name');
   }
-  if (environment.CI !== 'true' && environment.JOV3_BROWSER_RESET !== '1') {
-    throw new Error('Set JOV3_BROWSER_RESET=1 before clearing browser test data');
+  if (environment.CI !== 'true' && environment.NOOKFOLIO_BROWSER_RESET !== '1') {
+    throw new Error('Set NOOKFOLIO_BROWSER_RESET=1 before clearing browser test data');
   }
 }
 

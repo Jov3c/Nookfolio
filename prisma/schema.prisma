@@ -86,7 +86,7 @@ model SiteProfile {
   siteDescription    String      @map("site_description") @db.VarChar(300)
   foundedAt          DateTime    @map("founded_at") @db.Date
   publicContactEmail String?     @map("public_contact_email") @db.VarChar(254)
-  brandText          String      @default("JOV3") @map("brand_text") @db.VarChar(80)
+  brandText          String      @default("Nookfolio") @map("brand_text") @db.VarChar(80)
   brandIconMediaId   String?     @map("brand_icon_media_id") @db.Uuid
   updatedAt          DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
   brandIconMedia     MediaAsset? @relation("SiteBrandIcon", fields: [brandIconMediaId], references: [id], onDelete: SetNull)

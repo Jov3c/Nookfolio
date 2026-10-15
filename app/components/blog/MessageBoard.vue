@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PublicMessage, PublicMessagesResponse } from '~/types/community';
 
-const form = reactive({ nickname: 'jov3 visitor', email: '', content: '', isPrivate: false });
+const form = reactive({ nickname: 'nookfolio visitor', email: '', content: '', isPrivate: false });
 const messages = ref<PublicMessage[]>([]);
 const isSubmitting = ref(false);
 const notice = ref('');

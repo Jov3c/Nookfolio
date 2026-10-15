@@ -17,7 +17,7 @@ const busyKey = ref('');
 const notice = ref('');
 const errorMessage = ref('');
 
-useSeoMeta({ title: '留言管理 — JOV3 管理后台', robots: 'noindex, nofollow' });
+useSeoMeta({ title: '留言管理 — Nookfolio 管理后台', robots: 'noindex, nofollow' });
 
 async function load() {
   isLoading.value = true;

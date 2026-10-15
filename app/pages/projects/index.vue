@@ -19,7 +19,7 @@ definePageMeta({ layout: 'blog-prototype' });
 onMounted(() => window.setTimeout(() => (showPrototypeSkeleton.value = false), 850));
 
 usePageSeo({
-  title: 'Projects — Jov3',
+  title: 'Projects — Nookfolio',
   description: '一些正在构建、持续维护或已经完成的项目。',
 });
 </script>

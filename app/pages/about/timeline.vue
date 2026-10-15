@@ -79,7 +79,7 @@ onBeforeUnmount(() => {
 });
 
 usePageSeo({
-  title: '人生时间线 — 关于 — Jov3',
+  title: '人生时间线 — 关于 — Nookfolio',
   description: '做过的项目、改变方向的时刻、学到的东西，以及正在发生的生活。',
 });
 </script>
@@ -179,6 +179,6 @@ usePageSeo({
       </div>
     </section>
 
-    <footer class="life-footer"><span>JOV3</span><span>人生时间线 · 2026</span></footer>
+    <footer class="life-footer"><span>Nookfolio</span><span>人生时间线 · 2026</span></footer>
   </div>
 </template>

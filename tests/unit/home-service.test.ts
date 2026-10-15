@@ -7,13 +7,13 @@ function configuredRepository() {
     ensureDefaults: vi.fn(),
     findSiteProfile: vi.fn().mockResolvedValue({
       id: 'site',
-      siteTitle: 'Jov3',
-      brandText: 'JOV3',
+      siteTitle: 'Nookfolio',
+      brandText: 'Nookfolio',
       brandIconMediaId: 'brand-media',
       brandIconMedia: {
         id: 'brand-media',
         publicUrl: '/uploads/icons/brand.png',
-        altText: 'JOV3 标志',
+        altText: 'Nookfolio 标志',
       },
       siteDescription: 'A site',
       foundedAt: new Date('2026-01-01T00:00:00.000Z'),
@@ -22,7 +22,7 @@ function configuredRepository() {
     }),
     findHomeProfile: vi.fn().mockResolvedValue({
       id: 'home',
-      nickname: 'Jov3',
+      nickname: 'Nookfolio',
       role: 'Builder',
       intro: 'Building.',
       avatarMediaId: null,
@@ -57,11 +57,11 @@ describe('home service', () => {
 
     expect(result.entries).toEqual([]);
     expect(repository.ensureDefaults).not.toHaveBeenCalled();
-    expect(result.siteProfile.brandText).toBe('JOV3');
+    expect(result.siteProfile.brandText).toBe('Nookfolio');
     expect(result.siteProfile.brandIcon).toEqual({
       id: 'brand-media',
       url: '/uploads/icons/brand.png',
-      altText: 'JOV3 标志',
+      altText: 'Nookfolio 标志',
     });
   });
 

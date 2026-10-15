@@ -3,7 +3,7 @@ import BlogChrome from '~/components/blog/BlogChrome.vue';
 import MessageBoard from '~/components/blog/MessageBoard.vue';
 
 usePageSeo({
-  title: 'Message — Blog — Jov3',
+  title: 'Message — Blog — Nookfolio',
   description: '想说点什么就留下来吧。可以是建议、问题，也可以只是打个招呼。',
 });
 definePageMeta({ layout: 'blog-prototype' });

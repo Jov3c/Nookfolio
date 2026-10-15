@@ -36,12 +36,12 @@ describe('media upload security', () => {
       '10 MB limit',
     );
     expect(() =>
-      resolveStoredMediaPath('../outside', { MEDIA_STORAGE_ROOT: 'C:\\jov3-test' }),
+      resolveStoredMediaPath('../outside', { MEDIA_STORAGE_ROOT: 'C:\\nookfolio-test' }),
     ).toThrow('Invalid media path');
   });
 
   it('stores a UUID-based file below the configured persistent root', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'jov3-media-'));
+    const root = await mkdtemp(join(tmpdir(), 'nookfolio-media-'));
     try {
       const stored = await storeMediaFile(
         onePixelPng,

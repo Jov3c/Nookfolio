@@ -10,14 +10,14 @@ describe('CV and Timeline schemas', () => {
   it('normalizes a partial CV profile update without losing the public switch', () => {
     const result = cvProfileUpdateSchema.parse({
       isPublic: false,
-      name: '  Jov3  ',
+      name: '  Nookfolio  ',
       website: 'https://site.example',
       portraitMediaId: null,
     });
 
     expect(result).toMatchObject({
       isPublic: false,
-      name: 'Jov3',
+      name: 'Nookfolio',
       website: 'https://site.example',
       portraitMediaId: null,
     });
@@ -26,7 +26,7 @@ describe('CV and Timeline schemas', () => {
   it('allows an open-ended experience and rejects an unsafe website', () => {
     expect(
       cvExperienceSchema.parse({
-        company: 'JOV3',
+        company: 'Nookfolio',
         role: 'Builder',
         location: 'Chengdu',
         startDate: '2025-06-01',

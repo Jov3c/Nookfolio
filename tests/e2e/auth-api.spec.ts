@@ -23,11 +23,11 @@ test('auth API uses a secure cookie and invalidates the database session on logo
   });
   expect(login.status()).toBe(200);
   const cookie = login.headers()['set-cookie'] ?? '';
-  expect(cookie).toContain('jov3_admin_session=');
+  expect(cookie).toContain('nookfolio_admin_session=');
   expect(cookie).toContain('HttpOnly');
   expect(cookie).toContain('Secure');
   expect(cookie).toContain('SameSite=Lax');
-  expect(await login.text()).not.toContain('jov3_admin_session');
+  expect(await login.text()).not.toContain('nookfolio_admin_session');
 
   const me = await request.get('/api/v1/auth/me');
   expect(me.status()).toBe(200);

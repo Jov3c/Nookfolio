@@ -7,7 +7,7 @@ describe('page SEO metadata', () => {
     expect(
       buildPageSeoMeta(
         {
-          title: 'A post — Jov3',
+          title: 'A post — Nookfolio',
           description: 'A useful post',
           path: '/blog/a-post',
           type: 'article',
@@ -16,10 +16,10 @@ describe('page SEO metadata', () => {
         'https://site.example',
       ),
     ).toEqual({
-      title: 'A post — Jov3',
+      title: 'A post — Nookfolio',
       description: 'A useful post',
       canonical: 'https://site.example/blog/a-post',
-      ogTitle: 'A post — Jov3',
+      ogTitle: 'A post — Nookfolio',
       ogDescription: 'A useful post',
       ogType: 'article',
       ogUrl: 'https://site.example/blog/a-post',
@@ -31,7 +31,7 @@ describe('page SEO metadata', () => {
   it('uses the current public path and website card when no optional values are supplied', () => {
     expect(
       buildPageSeoMeta(
-        { title: 'JOV3', description: 'A personal site' },
+        { title: 'Nookfolio', description: 'A personal site' },
         'https://site.example/',
         '/projects?tab=all',
       ),

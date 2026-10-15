@@ -26,7 +26,7 @@ const shortcuts = [
   { title: '首页资料', description: '更新身份信息和首页入口', to: '/admin/home' },
 ];
 
-useSeoMeta({ title: '仪表盘 — JOV3 管理后台', robots: 'noindex, nofollow' });
+useSeoMeta({ title: '仪表盘 — Nookfolio 管理后台', robots: 'noindex, nofollow' });
 </script>
 
 <template>

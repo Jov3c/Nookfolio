@@ -7,7 +7,7 @@ function createRepository(passwordHash: string): AuthRepositoryContract & { stor
   return {
     async findAdminByEmail(email) {
       return email === 'admin@example.com'
-        ? { id: 'admin-id', email, displayName: 'Jov3', passwordHash }
+        ? { id: 'admin-id', email, displayName: 'Nookfolio', passwordHash }
         : null;
     },
     async createSession(input) {
@@ -19,7 +19,7 @@ function createRepository(passwordHash: string): AuthRepositoryContract & { stor
         ? {
             id: 'session-id',
             expiresAt: new Date(Date.now() + 60_000),
-            admin: { id: 'admin-id', email: 'admin@example.com', displayName: 'Jov3' },
+            admin: { id: 'admin-id', email: 'admin@example.com', displayName: 'Nookfolio' },
           }
         : null;
     },

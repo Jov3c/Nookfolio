@@ -22,7 +22,7 @@ const selectedCategory = computed(() =>
   categories.value.find((category) => category.id === selectedId.value),
 );
 
-useSeoMeta({ title: '分类管理 — JOV3 管理后台', robots: 'noindex, nofollow' });
+useSeoMeta({ title: '分类管理 — Nookfolio 管理后台', robots: 'noindex, nofollow' });
 
 async function load() {
   isLoading.value = true;

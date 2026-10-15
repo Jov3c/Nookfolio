@@ -8,14 +8,14 @@ describe('database baseline', () => {
   });
 
   it('surfaces a connection error when PostgreSQL is unavailable', async () => {
-    const unavailableUrl = 'postgresql://jov3:jov3_dev_only@127.0.0.1:1/jov3';
+    const unavailableUrl = 'postgresql://nookfolio:nookfolio_dev_only@127.0.0.1:1/nookfolio';
 
     await expect(queryCurrentDatabase(unavailableUrl)).rejects.toThrow();
   });
 
-  it('connects to the configured PostgreSQL database and returns jov3', async () => {
+  it('connects to the configured PostgreSQL database and returns nookfolio', async () => {
     const databaseUrl = process.env.DATABASE_URL ?? '';
 
-    await expect(queryCurrentDatabase(databaseUrl)).resolves.toBe('jov3');
+    await expect(queryCurrentDatabase(databaseUrl)).resolves.toBe('nookfolio');
   });
 });

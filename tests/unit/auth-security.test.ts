@@ -33,7 +33,7 @@ describe('admin authentication security', () => {
       parseBootstrapConfig({
         ADMIN_EMAIL: 'ADMIN@EXAMPLE.COM',
         ADMIN_PASSWORD: 'short',
-        ADMIN_DISPLAY_NAME: 'Jov3',
+        ADMIN_DISPLAY_NAME: 'Nookfolio',
       }),
     ).toThrow('12');
 
@@ -41,7 +41,7 @@ describe('admin authentication security', () => {
       parseBootstrapConfig({
         ADMIN_EMAIL: 'ADMIN@EXAMPLE.COM',
         ADMIN_PASSWORD: 'a-strong-bootstrap-password',
-        ADMIN_DISPLAY_NAME: 'Jov3',
+        ADMIN_DISPLAY_NAME: 'Nookfolio',
       }).email,
     ).toBe('admin@example.com');
   });

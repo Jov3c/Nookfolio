@@ -5,7 +5,7 @@ import ErrorState from '~/components/ui/ErrorState.vue';
 const props = defineProps<{ error: NuxtError }>();
 const isNotFound = computed(() => props.error.statusCode === 404);
 
-useSeoMeta({ title: `${props.error.statusCode} — Jov3` });
+useSeoMeta({ title: `${props.error.statusCode} — Nookfolio` });
 </script>
 
 <template>

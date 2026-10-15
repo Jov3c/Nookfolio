@@ -54,7 +54,7 @@ const site = reactive<SiteProfile>({
   siteDescription: '',
   foundedAt: '',
   publicContactEmail: '',
-  brandText: 'JOV3',
+  brandText: 'Nookfolio',
   brandIconMediaId: null,
   brandIcon: null,
 });
@@ -90,7 +90,7 @@ const busyKey = ref('');
 const notice = ref('');
 const errorMessage = ref('');
 
-useSeoMeta({ title: '首页资料 — JOV3 管理后台', robots: 'noindex, nofollow' });
+useSeoMeta({ title: '首页资料 — Nookfolio 管理后台', robots: 'noindex, nofollow' });
 
 async function load() {
   isLoading.value = true;

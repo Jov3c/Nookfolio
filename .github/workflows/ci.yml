@@ -16,22 +16,22 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_DB: jov3
-          POSTGRES_USER: jov3
-          POSTGRES_PASSWORD: jov3_ci_only
+          POSTGRES_DB: nookfolio
+          POSTGRES_USER: nookfolio
+          POSTGRES_PASSWORD: nookfolio_ci_only
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U jov3 -d jov3"
+          --health-cmd "pg_isready -U nookfolio -d nookfolio"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
 
     env:
-      DATABASE_URL: postgresql://jov3:jov3_ci_only@127.0.0.1:5432/jov3?schema=public
+      DATABASE_URL: postgresql://nookfolio:nookfolio_ci_only@127.0.0.1:5432/nookfolio?schema=public
       ADMIN_EMAIL: stage02-admin@example.com
       ADMIN_PASSWORD: stage-02-e2e-admin-password
-      ADMIN_DISPLAY_NAME: Jov3
+      ADMIN_DISPLAY_NAME: Nookfolio
 
     steps:
       - name: Check out source
@@ -74,7 +74,7 @@ jobs:
 
       - name: Reset browser test database
         env:
-          JOV3_BROWSER_RESET: '1'
+          NOOKFOLIO_BROWSER_RESET: '1'
         run: pnpm test:reset-browser-data
 
       - name: Bootstrap test administrator
@@ -88,15 +88,15 @@ jobs:
 
       - name: Create restore backup fixture
         run: |
-          mkdir -p /tmp/jov3-backup/uploads /tmp/jov3-backup/geo
-          pg_dump "postgresql://jov3:jov3_ci_only@127.0.0.1:5432/jov3" > /tmp/jov3-backup/database.sql
-          tar -C /tmp/jov3-backup -czf /tmp/jov3-backup/uploads-geo.tgz uploads geo
+          mkdir -p /tmp/nookfolio-backup/uploads /tmp/nookfolio-backup/geo
+          pg_dump "postgresql://nookfolio:nookfolio_ci_only@127.0.0.1:5432/nookfolio" > /tmp/nookfolio-backup/database.sql
+          tar -C /tmp/nookfolio-backup -czf /tmp/nookfolio-backup/uploads-geo.tgz uploads geo
 
       - name: Run real PostgreSQL restore test
         env:
-          JOV3_RESTORE_ADMIN_DATABASE_URL: postgresql://jov3:jov3_ci_only@127.0.0.1:5432/postgres
-          JOV3_RESTORE_ROOT: /tmp/jov3-restore-test
-        run: sh scripts/backup/restore-test.sh /tmp/jov3-backup
+          NOOKFOLIO_RESTORE_ADMIN_DATABASE_URL: postgresql://nookfolio:nookfolio_ci_only@127.0.0.1:5432/postgres
+          NOOKFOLIO_RESTORE_ROOT: /tmp/nookfolio-restore-test
+        run: sh scripts/backup/restore-test.sh /tmp/nookfolio-backup
 
       - name: Install browser for end-to-end tests
         run: pnpm exec playwright install --with-deps chromium

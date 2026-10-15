@@ -67,7 +67,7 @@ describe('email verification service', () => {
   it('stores only a hash, invalidates old tokens, and consumes a token once', async () => {
     const repository = new MemoryVerificationRepository();
     const sender = new CapturingSender();
-    const service = new EmailVerificationService(repository, sender, 'https://jov3.example');
+    const service = new EmailVerificationService(repository, sender, 'https://nookfolio.example');
     const now = new Date('2026-09-29T12:00:00.000Z');
 
     await service.issue({
@@ -110,7 +110,7 @@ describe('email verification service', () => {
   it('rejects expired tokens and never exposes the raw token in failure logs', async () => {
     const repository = new MemoryVerificationRepository();
     const sender = new CapturingSender();
-    const service = new EmailVerificationService(repository, sender, 'https://jov3.example');
+    const service = new EmailVerificationService(repository, sender, 'https://nookfolio.example');
     const now = new Date('2026-09-29T12:00:00.000Z');
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
 

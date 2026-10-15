@@ -23,7 +23,7 @@ if (!project) {
 }
 
 usePageSeo({
-  title: `${project.name} — 项目 — Jov3`,
+  title: `${project.name} — 项目 — Nookfolio`,
   description: project.summary,
 });
 </script>

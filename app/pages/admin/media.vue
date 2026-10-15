@@ -35,7 +35,7 @@ const notice = ref('');
 const errorMessage = ref('');
 const total = ref(0);
 
-useSeoMeta({ title: '媒体库 — JOV3 管理后台', robots: 'noindex, nofollow' });
+useSeoMeta({ title: '媒体库 — Nookfolio 管理后台', robots: 'noindex, nofollow' });
 
 async function loadMedia() {
   isLoading.value = true;

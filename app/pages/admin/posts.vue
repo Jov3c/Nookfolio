@@ -31,7 +31,7 @@ const selectedPost = computed(() => posts.value.find((post) => post.id === selec
 const isNewPost = computed(() => selectedPostId.value === null);
 const previewHtml = computed(() => renderMarkdown(form.markdownBody));
 
-useSeoMeta({ title: '文章管理 — JOV3 管理后台', robots: 'noindex, nofollow' });
+useSeoMeta({ title: '文章管理 — Nookfolio 管理后台', robots: 'noindex, nofollow' });
 
 async function load() {
   isLoading.value = true;

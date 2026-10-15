@@ -1,4 +1,4 @@
-export const PROJECT_NAME = 'JOV3' as const;
+export const PROJECT_NAME = 'Nookfolio' as const;
 
 export const PROJECT_STATUSES = ['BUILDING', 'ACTIVE', 'DONE', 'PAUSED'] as const;
 

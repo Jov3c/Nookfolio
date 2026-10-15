@@ -26,7 +26,7 @@ describe('friend link application lifecycle', () => {
   const verifier = new EmailVerificationService(
     new EmailVerificationRepository(prisma),
     sender,
-    'https://jov3.example',
+    'https://nookfolio.example',
   );
   const service = new FriendLinkService(new FriendLinkRepository(prisma), verifier);
   let approvedApplicationId = '';

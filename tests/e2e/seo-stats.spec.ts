@@ -5,7 +5,7 @@ test('visit ping stores a first-party cookie and returns real site stats', async
     data: { path: '/blog' },
   });
   expect(ping.status()).toBe(200);
-  expect(ping.headers()['set-cookie']).toMatch(/jov3_visitor_id=/);
+  expect(ping.headers()['set-cookie']).toMatch(/nookfolio_visitor_id=/);
 
   const stats = await request.get('/api/v1/public/site/stats');
   expect(stats.status()).toBe(200);

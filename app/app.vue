@@ -10,7 +10,7 @@ const { data: homeResponse } = await useFetch<{
 }>('/api/v1/public/home', { key: 'public-home-meta' });
 
 usePageSeo(() => ({
-  title: homeResponse.value?.data.siteProfile.siteTitle || 'JOV3',
+  title: homeResponse.value?.data.siteProfile.siteTitle || 'Nookfolio',
   description:
     homeResponse.value?.data.siteProfile.siteDescription ||
     'Building products, tools and ideas on the internet.',

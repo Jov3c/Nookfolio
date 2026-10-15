@@ -35,7 +35,7 @@ function entryIconText(item: PublicHomeResponse['data']['entries'][number]) {
 
 <template>
   <div class="home-prototype">
-    <section class="home-prototype__card" aria-label="Jov3 个人主页">
+    <section class="home-prototype__card" aria-label="Nookfolio 个人主页">
       <div class="home-prototype__grain" />
       <header class="home-prototype__topbar">
         <SiteBrand class="home-prototype__brand" :profile="home.siteProfile" />

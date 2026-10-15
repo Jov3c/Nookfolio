@@ -61,15 +61,15 @@ export class EmailVerificationService {
     try {
       await this.sender.send({
         to: email,
-        subject: 'Verify your email for Jov3',
+        subject: 'Verify your email for Nookfolio',
         text: [
-          'Please verify your email address for Jov3.',
+          'Please verify your email address for Nookfolio.',
           '',
           verificationUrl,
           '',
           'This link expires in 30 minutes and can only be used once.',
         ].join('\n'),
-        html: `<p>Please verify your email address for Jov3.</p><p><a href="${escapeHtml(verificationUrl)}">Verify email</a></p><p>This link expires in 30 minutes and can only be used once.</p>`,
+        html: `<p>Please verify your email address for Nookfolio.</p><p><a href="${escapeHtml(verificationUrl)}">Verify email</a></p><p>This link expires in 30 minutes and can only be used once.</p>`,
       });
     } catch (error) {
       await this.repository.delete(record.id).catch(() => undefined);

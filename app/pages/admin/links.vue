@@ -32,7 +32,7 @@ const form = reactive({
   visible: true,
 });
 
-useSeoMeta({ title: '友链管理 — JOV3 管理后台', robots: 'noindex, nofollow' });
+useSeoMeta({ title: '友链管理 — Nookfolio 管理后台', robots: 'noindex, nofollow' });
 
 async function load() {
   isLoading.value = true;

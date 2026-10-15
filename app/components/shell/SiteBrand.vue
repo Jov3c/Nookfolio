@@ -14,7 +14,7 @@ const { data } = await useFetch<PublicHomeResponse>('/api/v1/public/home', {
   key: 'public-home-brand',
 });
 const profile = computed(() => props.profile ?? data.value?.data.siteProfile ?? null);
-const text = computed(() => profile.value?.brandText || 'JOV3');
+const text = computed(() => profile.value?.brandText || 'Nookfolio');
 </script>
 
 <template>

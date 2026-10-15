@@ -18,13 +18,13 @@ function createAggregate(isPublic = true) {
     portraitMedia: {
       id: '00000000-0000-4000-8000-000000000011',
       publicUrl: '/uploads/portrait.webp',
-      altText: 'Jov3',
+      altText: 'Nookfolio',
     },
     updatedAt: new Date('2026-09-29T00:00:00.000Z'),
     experiences: [
       {
         id: '00000000-0000-4000-8000-000000000012',
-        company: 'JOV3',
+        company: 'Nookfolio',
         role: 'Builder',
         location: 'Chengdu',
         startDate: new Date('2025-06-01T00:00:00.000Z'),
@@ -88,7 +88,7 @@ describe('CV service', () => {
     await expect(service.getAdmin()).resolves.toMatchObject({
       isPublic: false,
       name: '你的名字',
-      experiences: [expect.objectContaining({ company: 'JOV3' })],
+      experiences: [expect.objectContaining({ company: 'Nookfolio' })],
     });
   });
 

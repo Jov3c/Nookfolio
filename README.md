@@ -1,59 +1,40 @@
 # JOV3
 
-JOV3 personal website, built with Nuxt 4, PostgreSQL, and Prisma.
+基于 Nuxt 4、PostgreSQL 和 Prisma 的个人网站，包含首页、项目、博客、归档、友链、留言、个人简历、时间线及管理后台。
 
-Public pages reproduce the checked-in HTML prototypes. Foundation, Home/Projects,
-prototype-layout, and admin styles are kept in separate bundles. Home and Projects
-load their route styles directly; prototype and admin styles load through their
-respective layouts.
-
-## Requirements
+## 环境要求
 
 - Node.js 24.14.0
 - pnpm 11.15.1
 - PostgreSQL 16
 
-Docker Compose is optional. Local development can use any compatible
-PostgreSQL instance configured through `DATABASE_URL`.
+## 本地开发
 
-## Setup
-
-```bash
+```powershell
 corepack enable
 corepack prepare pnpm@11.15.1 --activate
 pnpm install
-cp .env.example .env
+Copy-Item .env.example .env
+pnpm db:up
 pnpm prisma:generate
 pnpm prisma:migrate:deploy
 pnpm admin:bootstrap
 pnpm site:init
-```
-
-If Docker is available, `pnpm db:up` can be used before the migration step;
-the application does not seed or rewrite site content during startup.
-
-On Windows PowerShell, replace the environment copy command with:
-
-```powershell
-Copy-Item .env.example .env
-```
-
-## Development
-
-```bash
 pnpm dev
 ```
 
-Media uploads are kept outside the repository and build output. When
-`MEDIA_STORAGE_ROOT` is not set, local development uses `.data/uploads/`; the
-production value is `/srv/jov3/data/uploads/`, which should be supplied as a
-persistent host bind mount by the deployment configuration.
+首次运行前请修改 `.env` 中的管理员账号、密码和数据库连接。`site:init` 只会补充缺失的教程占位内容，不会覆盖已经存在的数据。
 
-SMTP is provider-agnostic. Configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`,
-optional credentials, sender fields, and `PUBLIC_SITE_URL` before enabling
-visitor email verification flows.
+## 本地生产部署
 
-## Verification
+```powershell
+Copy-Item .env.production.example .env.production
+docker compose --env-file .env.production -f docker-compose.production.yml up -d --build
+```
+
+部署前应修改 `.env.production` 中的数据库密码、会话密钥、管理员信息、端口和数据目录。生产数据、上传文件、TLS 证书及环境变量均保存在仓库之外，不会提交到 Git。
+
+## 常用命令
 
 ```bash
 pnpm format:check
@@ -61,12 +42,9 @@ pnpm lint
 pnpm typecheck
 pnpm test
 pnpm test:integration
-pnpm exec playwright install chromium
 pnpm test:e2e
 pnpm build
 ```
-
-## Database
 
 ```bash
 pnpm prisma:migrate:dev
@@ -74,3 +52,7 @@ pnpm prisma:studio
 pnpm db:logs
 pnpm db:down
 ```
+
+## 仓库内容
+
+仓库仅保留应用源码、数据库迁移、自动化测试、部署配置和必要说明。依赖、构建结果、测试报告、运行数据、上传文件、备份、环境变量及临时工作目录均由忽略规则排除。

@@ -11,5 +11,14 @@ node_modules
 playwright-report
 test-results
 coverage
+output
 work
+tmp
+temp
 *.log
+*.tmp
+*.bak
+*.dump
+*.tar
+*.tar.gz
+*.zip

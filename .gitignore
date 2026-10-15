@@ -16,7 +16,7 @@ coverage/
 test-results/
 playwright-report/
 .playwright-cli/
-output/playwright/
+/output/
 
 # Generated database client
 server/generated/prisma/
@@ -37,3 +37,14 @@ Thumbs.db
 
 # Process workspaces must never enter the source repository
 .superpowers/
+/work/
+
+# Local scratch files and archives
+/tmp/
+/temp/
+*.tmp
+*.bak
+*.dump
+*.tar
+*.tar.gz
+*.zip

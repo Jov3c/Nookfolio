@@ -39,7 +39,12 @@ test('blog index exposes database-backed articles and category filtering', async
     expect(cardBox!.height).toBeGreaterThanOrEqual(152);
     expect(cardBox!.height).toBeLessThanOrEqual(160);
   }
-  await expect(page.getByRole('navigation', { name: '博客导航' }).getByRole('link')).toHaveCount(3);
+  const blogNavigation = page.getByRole('navigation', { name: '博客导航' });
+  await expect(blogNavigation.getByRole('link')).toHaveCount(4);
+  await expect(blogNavigation.getByRole('link', { name: '博客首页' })).toHaveAttribute(
+    'href',
+    '/blog',
+  );
   await page.getByRole('button', { name: '全部分类' }).click();
   await expect(page.locator('.category-option').filter({ hasText: '使用指南' })).toBeVisible();
   await page.locator('.category-option').filter({ hasText: '使用指南' }).click();

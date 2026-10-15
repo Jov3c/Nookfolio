@@ -11,7 +11,8 @@ describe('public navigation contract', () => {
   });
 
   it('exposes the active blog utility routes without placeholder anchors', () => {
-    expect(blogNavigation.map((item) => item.label)).toEqual(['归档', '友链', '留言']);
+    expect(blogNavigation.map((item) => item.label)).toEqual(['博客首页', '归档', '友链', '留言']);
+    expect(blogNavigation[0]).toEqual({ label: '博客首页', to: '/blog' });
 
     const destinations = [primaryNavigation, aboutNavigation, blogNavigation]
       .flat()

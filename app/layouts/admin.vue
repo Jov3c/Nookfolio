@@ -2,6 +2,7 @@
 import { Toaster } from 'vue-sonner';
 import 'vue-sonner/style.css';
 import SiteBrand from '~/components/shell/SiteBrand.vue';
+import ThemeToggle from '~/components/shell/ThemeToggle.vue';
 
 const admin = useAdminSession();
 const route = useRoute();
@@ -274,6 +275,7 @@ async function signOut() {
             <strong class="admin-current-page">{{ currentPage }}</strong>
           </div>
           <div class="admin-topbar__actions">
+            <ThemeToggle />
             <NuxtLink to="/" target="_blank">查看站点 ↗</NuxtLink>
             <button type="button" :disabled="isSigningOut" @click="signOut">
               {{ isSigningOut ? '正在退出…' : '退出登录' }}

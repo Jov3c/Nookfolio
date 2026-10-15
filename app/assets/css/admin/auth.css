@@ -8,6 +8,19 @@
     repeating-linear-gradient(120deg, transparent 0 52px, rgb(127 138 118 / 7%) 53px 54px);
 }
 
+html[data-theme='dark'] .admin-auth-layout {
+  background:
+    linear-gradient(rgb(17 19 16 / 90%), rgb(17 19 16 / 97%)),
+    repeating-linear-gradient(120deg, transparent 0 52px, rgb(169 183 159 / 6%) 53px 54px);
+}
+
+.admin-auth-theme-toggle {
+  position: fixed;
+  z-index: 5;
+  top: 24px;
+  right: 24px;
+}
+
 .admin-auth-brand {
   position: fixed;
   top: 28px;

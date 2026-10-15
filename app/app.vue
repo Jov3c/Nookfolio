@@ -5,9 +5,12 @@
 </template>
 
 <script setup lang="ts">
+const { theme } = useSiteTheme();
 const { data: homeResponse } = await useFetch<{
   data: { siteProfile: { siteTitle: string; siteDescription: string } };
 }>('/api/v1/public/home', { key: 'public-home-meta' });
+
+useHead(() => ({ htmlAttrs: { 'data-theme': theme.value } }));
 
 usePageSeo(() => ({
   title: homeResponse.value?.data.siteProfile.siteTitle || 'Nookfolio',

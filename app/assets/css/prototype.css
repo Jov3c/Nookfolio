@@ -2535,6 +2535,105 @@
   }
 }
 
+html[data-theme='dark']
+  :where(
+    .category-trigger,
+    .category-option,
+    .chevron,
+    .profile-desc,
+    .stat span,
+    .profile-links,
+    .site-info-title,
+    .site-info-row span,
+    .site-info-value,
+    .post-meta__category,
+    .post-card__summary,
+    .post-card__stats,
+    .links-head h2,
+    .links-head small,
+    .link-logo,
+    .link-desc,
+    .link-domain,
+    .cv-identity__headline,
+    .cv-identity__bio,
+    .cv-mini span,
+    .cv-links,
+    .cv-prototype-panel > header span,
+    .cv-prototype-entry__when,
+    .cv-prototype-entry small,
+    .cv-prototype-entry p,
+    .cv-prototype-projects small,
+    .cv-prototype-projects p,
+    .cv-prototype-skills span,
+    .cv-prototype-quote small,
+    .cv-prototype-footer,
+    .life-scroll-hint,
+    .life-current-year,
+    .life-current-year strong,
+    .life-chapter__year,
+    .life-chapter__year strong,
+    .life-chapter__kicker,
+    .life-chapter__description,
+    .life-story-card__header,
+    .life-now-card span,
+    .life-now-card__body,
+    .life-footer
+  ) {
+  color: var(--color-muted);
+}
+
+html[data-theme='dark']
+  :where(
+    .profile-avatar,
+    .post-card__cover,
+    .project-readme-shell,
+    .cv-prototype-button,
+    .cv-identity,
+    .cv-prototype-panel,
+    .cv-portrait,
+    .cv-tag,
+    .cv-prototype-skills > div,
+    .life-story-card,
+    .life-story-card__media
+  ) {
+  border-color: var(--color-line);
+  background: var(--color-panel);
+  color: var(--color-text);
+}
+
+html[data-theme='dark']
+  :where(
+    .profile-stats,
+    .archive-summary,
+    .links-head,
+    .cv-mini,
+    .cv-prototype-panel > header,
+    .life-footer
+  ) {
+  border-color: var(--color-line);
+}
+
+html[data-theme='dark'] .community-notice {
+  background: #1c2a1d;
+  color: #a8c9a4;
+}
+
+html[data-theme='dark'] .community-error {
+  background: #301f1d;
+  color: #dfa39b;
+}
+
+html[data-theme='dark'] .community-list-skeleton span {
+  background: var(--color-accent-soft);
+}
+
+html[data-theme='dark'] .cv-prototype-button--dark,
+html[data-theme='dark'] .cv-prototype-quote {
+  border-color: var(--color-line);
+  background: #202420;
+  color: #eef1ec;
+}
+
 @media print {
   .blog-prototype-topbar,
   .cv-prototype-actions,

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PublicHomeResponse } from '~/types/home';
 import SiteBrand from '~/components/shell/SiteBrand.vue';
+import ThemeToggle from '~/components/shell/ThemeToggle.vue';
 
 const { data: response, error } = await useFetch<PublicHomeResponse>('/api/v1/public/home', {
   key: 'public-home-page',
@@ -39,12 +40,15 @@ function entryIconText(item: PublicHomeResponse['data']['entries'][number]) {
       <div class="home-prototype__grain" />
       <header class="home-prototype__topbar">
         <SiteBrand class="home-prototype__brand" :profile="home.siteProfile" />
-        <span
-          v-if="home.homeProfile.statusVisible && home.homeProfile.statusText"
-          class="home-prototype__status"
-        >
-          <i /> {{ home.homeProfile.statusText }}
-        </span>
+        <div class="home-prototype__topbar-actions">
+          <span
+            v-if="home.homeProfile.statusVisible && home.homeProfile.statusText"
+            class="home-prototype__status"
+          >
+            <i /> {{ home.homeProfile.statusText }}
+          </span>
+          <ThemeToggle />
+        </div>
       </header>
 
       <main class="home-prototype__body">

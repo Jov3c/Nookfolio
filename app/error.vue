@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { NuxtError } from '#app';
 import SiteBrand from '~/components/shell/SiteBrand.vue';
+import ThemeToggle from '~/components/shell/ThemeToggle.vue';
 import ErrorState from '~/components/ui/ErrorState.vue';
 
 const props = defineProps<{ error: NuxtError }>();
@@ -34,6 +35,7 @@ function returnHome() {
 <template>
   <main v-if="isNotFound" class="lost-page" @pointermove="moveLostDot">
     <SiteBrand class="lost-page__brand" />
+    <ThemeToggle class="lost-page__theme-toggle" />
     <i
       ref="lostDot"
       class="lost-page__dot"
@@ -57,6 +59,7 @@ function returnHome() {
   </main>
 
   <div v-else class="error-page">
+    <ThemeToggle class="error-page__theme-toggle" />
     <ErrorState
       :code="error.statusCode"
       label="Something went wrong"
@@ -87,6 +90,14 @@ function returnHome() {
   z-index: 20;
   top: 30px;
   left: clamp(24px, 5vw, 72px);
+}
+
+.lost-page__theme-toggle,
+.error-page__theme-toggle {
+  position: fixed;
+  z-index: 30;
+  top: 24px;
+  right: clamp(24px, 5vw, 72px);
 }
 
 .lost-page__content {

@@ -5,6 +5,8 @@
 </template>
 
 <script setup lang="ts">
+import { useSiteTheme } from '~/composables/useSiteTheme';
+
 const { theme } = useSiteTheme();
 const { data: homeResponse } = await useFetch<{
   data: { siteProfile: { siteTitle: string; siteDescription: string } };

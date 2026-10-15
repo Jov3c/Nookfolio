@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useSiteTheme } from '~/composables/useSiteTheme';
+
 const button = ref<HTMLButtonElement | null>(null);
 const { isTransitioning, theme, toggleTheme } = useSiteTheme();
 

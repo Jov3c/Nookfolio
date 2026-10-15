@@ -5,6 +5,10 @@ import { describe, expect, it } from 'vitest';
 
 const schemaPath = fileURLToPath(new URL('../../prisma/schema.prisma', import.meta.url));
 const schema = readFileSync(schemaPath, 'utf8');
+const brandMigrationPath = fileURLToPath(
+  new URL('../../prisma/migrations/20261015144500_nookfolio_brand/migration.sql', import.meta.url),
+);
+const brandMigration = readFileSync(brandMigrationPath, 'utf8');
 
 describe('database contract', () => {
   it.each([
@@ -88,5 +92,10 @@ describe('database contract', () => {
     expect(schema).toContain('iconMediaId String?');
     expect(schema).toContain('iconMedia   MediaAsset?');
     expect(schema).toContain('@map("icon_media_id")');
+  });
+
+  it('applies the Nookfolio default to the mapped site profile table', () => {
+    expect(brandMigration).toContain('ALTER TABLE "site_profile"');
+    expect(brandMigration).not.toContain('"site_profiles"');
   });
 });

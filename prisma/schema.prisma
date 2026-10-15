@@ -1,0 +1,459 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../server/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum EntryTargetType {
+  INTERNAL
+  EXTERNAL
+}
+
+enum ProjectStatus {
+  BUILDING
+  ACTIVE
+  DONE
+  PAUSED
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum ModerationStatus {
+  PENDING_EMAIL
+  PUBLISHED
+  HIDDEN
+  SPAM
+  DELETED
+}
+
+enum AuthorType {
+  VISITOR
+  ADMIN
+}
+
+enum FriendLinkStatus {
+  PENDING_EMAIL
+  PENDING_REVIEW
+  PUBLISHED
+  REJECTED
+}
+
+enum FriendLinkSource {
+  ADMIN
+  APPLICATION
+}
+
+enum DatePrecision {
+  YEAR
+  MONTH
+  DAY
+}
+
+model AdminUser {
+  id           String         @id @default(uuid()) @db.Uuid
+  email        String         @unique @db.VarChar(254)
+  passwordHash String         @map("password_hash")
+  displayName  String         @map("display_name") @db.VarChar(80)
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  sessions     AdminSession[]
+
+  @@map("admin_users")
+}
+
+model AdminSession {
+  id         String    @id @default(uuid()) @db.Uuid
+  adminId    String    @map("admin_id") @db.Uuid
+  tokenHash  String    @unique @map("token_hash") @db.Char(64)
+  expiresAt  DateTime  @map("expires_at") @db.Timestamptz(6)
+  lastSeenAt DateTime  @default(now()) @map("last_seen_at") @db.Timestamptz(6)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  admin      AdminUser @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+  @@map("admin_sessions")
+}
+
+model SiteProfile {
+  id                 String      @id @default(uuid()) @db.Uuid
+  siteTitle          String      @map("site_title") @db.VarChar(120)
+  siteDescription    String      @map("site_description") @db.VarChar(300)
+  foundedAt          DateTime    @map("founded_at") @db.Date
+  publicContactEmail String?     @map("public_contact_email") @db.VarChar(254)
+  brandText          String      @default("JOV3") @map("brand_text") @db.VarChar(80)
+  brandIconMediaId   String?     @map("brand_icon_media_id") @db.Uuid
+  updatedAt          DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  brandIconMedia     MediaAsset? @relation("SiteBrandIcon", fields: [brandIconMediaId], references: [id], onDelete: SetNull)
+
+  @@map("site_profile")
+}
+
+model MediaAsset {
+  id                String               @id @default(uuid()) @db.Uuid
+  originalName      String               @map("original_name") @db.VarChar(255)
+  storedName        String               @unique @map("stored_name") @db.VarChar(255)
+  mimeType          String               @map("mime_type") @db.VarChar(100)
+  sizeBytes         BigInt               @map("size_bytes")
+  width             Int?
+  height            Int?
+  storagePath       String               @unique @map("storage_path") @db.VarChar(500)
+  publicUrl         String               @unique @map("public_url") @db.VarChar(500)
+  sha256            String?              @db.Char(64)
+  altText           String?              @map("alt_text") @db.VarChar(300)
+  createdAt         DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  homeProfiles      HomeProfile[]
+  siteBrandProfiles SiteProfile[]        @relation("SiteBrandIcon")
+  homeEntryIcons    HomeEntry[]          @relation("HomeEntryIcon")
+  postCovers        Post[]               @relation("PostCover")
+  friendLinkLogos   FriendLink[]         @relation("FriendLinkLogo")
+  cvPortraits       CvProfile[]          @relation("CvPortrait")
+  timelineMedia     TimelineEntryMedia[]
+
+  @@map("media_assets")
+}
+
+model EmailVerification {
+  id         String    @id @default(uuid()) @db.Uuid
+  purpose    String    @db.VarChar(40)
+  entityId   String    @map("entity_id") @db.Uuid
+  email      String    @db.VarChar(254)
+  tokenHash  String    @unique @map("token_hash") @db.Char(64)
+  expiresAt  DateTime  @map("expires_at") @db.Timestamptz(6)
+  consumedAt DateTime? @map("consumed_at") @db.Timestamptz(6)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([expiresAt])
+  @@index([purpose, entityId])
+  @@map("email_verifications")
+}
+
+model HomeProfile {
+  id            String      @id @default(uuid()) @db.Uuid
+  nickname      String      @db.VarChar(80)
+  role          String      @db.VarChar(160)
+  intro         String
+  avatarMediaId String?     @map("avatar_media_id") @db.Uuid
+  statusText    String?     @map("status_text") @db.VarChar(120)
+  statusVisible Boolean     @default(true) @map("status_visible")
+  updatedAt     DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  avatarMedia   MediaAsset? @relation(fields: [avatarMediaId], references: [id], onDelete: SetNull)
+
+  @@map("home_profile")
+}
+
+model HomeEntry {
+  id          String          @id @default(uuid()) @db.Uuid
+  title       String          @db.VarChar(80)
+  description String          @db.VarChar(180)
+  icon        String?         @db.VarChar(500)
+  iconMediaId String?         @map("icon_media_id") @db.Uuid
+  url         String          @db.VarChar(500)
+  targetType  EntryTargetType @default(INTERNAL) @map("target_type")
+  openNewTab  Boolean         @default(false) @map("open_new_tab")
+  sortOrder   Int             @default(0) @map("sort_order")
+  visible     Boolean         @default(true)
+  createdAt   DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+  iconMedia   MediaAsset?     @relation("HomeEntryIcon", fields: [iconMediaId], references: [id], onDelete: SetNull)
+
+  @@index([visible, sortOrder])
+  @@index([iconMediaId])
+  @@map("home_entries")
+}
+
+model SocialLink {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(80)
+  icon      String?  @db.VarChar(80)
+  url       String   @db.VarChar(500)
+  sortOrder Int      @default(0) @map("sort_order")
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([visible, sortOrder])
+  @@map("social_links")
+}
+
+model Project {
+  id               String                 @id @default(uuid()) @db.Uuid
+  slug             String                 @unique @db.VarChar(120)
+  name             String                 @db.VarChar(120)
+  summary          String                 @db.VarChar(400)
+  status           ProjectStatus
+  techStack        String[]               @map("tech_stack")
+  githubUrl        String?                @map("github_url") @db.VarChar(500)
+  demoUrl          String?                @map("demo_url") @db.VarChar(500)
+  readmeMarkdown   String                 @map("readme_markdown")
+  sortOrder        Int                    @default(0) @map("sort_order")
+  visible          Boolean                @default(true)
+  createdAt        DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
+  cvProjectRefs    CvProjectRef[]
+  timelineProjects TimelineEntryProject[]
+
+  @@index([visible, sortOrder])
+  @@map("projects")
+}
+
+model PostCategory {
+  id        String   @id @default(uuid()) @db.Uuid
+  slug      String   @unique @db.VarChar(80)
+  name      String   @db.VarChar(80)
+  sortOrder Int      @default(0) @map("sort_order")
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  posts     Post[]
+
+  @@index([visible, sortOrder])
+  @@map("post_categories")
+}
+
+model Post {
+  id             String           @id @default(uuid()) @db.Uuid
+  slug           String           @unique @db.VarChar(160)
+  title          String           @db.VarChar(220)
+  excerpt        String           @db.VarChar(500)
+  categoryId     String           @map("category_id") @db.Uuid
+  coverMediaId   String?          @map("cover_media_id") @db.Uuid
+  markdownBody   String           @map("markdown_body")
+  status         PostStatus
+  publishedAt    DateTime?        @map("published_at") @db.Timestamptz(6)
+  wordCount      Int              @default(0) @map("word_count")
+  viewCount      BigInt           @default(0) @map("view_count")
+  seoTitle       String?          @map("seo_title") @db.VarChar(220)
+  seoDescription String?          @map("seo_description") @db.VarChar(320)
+  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  category       PostCategory     @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  coverMedia     MediaAsset?      @relation("PostCover", fields: [coverMediaId], references: [id], onDelete: SetNull)
+  comments       ArticleComment[]
+
+  @@index([status, publishedAt])
+  @@index([categoryId])
+  @@map("posts")
+}
+
+model ArticleComment {
+  id         String           @id @default(uuid()) @db.Uuid
+  postId     String           @map("post_id") @db.Uuid
+  parentId   String?          @map("parent_id") @db.Uuid
+  authorType AuthorType       @default(VISITOR) @map("author_type")
+  nickname   String           @db.VarChar(80)
+  email      String?          @db.VarChar(254)
+  content    String
+  status     ModerationStatus
+  verifiedAt DateTime?        @map("verified_at") @db.Timestamptz(6)
+  ipHash     String?          @map("ip_hash") @db.Char(64)
+  createdAt  DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  post       Post             @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parent     ArticleComment?  @relation("ArticleCommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies    ArticleComment[] @relation("ArticleCommentReplies")
+
+  @@index([postId, status, createdAt])
+  @@index([parentId])
+  @@map("article_comments")
+}
+
+model Message {
+  id         String           @id @default(uuid()) @db.Uuid
+  parentId   String?          @map("parent_id") @db.Uuid
+  authorType AuthorType       @default(VISITOR) @map("author_type")
+  nickname   String           @db.VarChar(80)
+  email      String?          @db.VarChar(254)
+  content    String
+  isPrivate  Boolean          @default(false) @map("is_private")
+  status     ModerationStatus
+  verifiedAt DateTime?        @map("verified_at") @db.Timestamptz(6)
+  ipHash     String?          @map("ip_hash") @db.Char(64)
+  createdAt  DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  parent     Message?         @relation("MessageReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies    Message[]        @relation("MessageReplies")
+
+  @@index([status, createdAt])
+  @@index([parentId])
+  @@map("messages")
+}
+
+model FriendLink {
+  id            String           @id @default(uuid()) @db.Uuid
+  name          String           @db.VarChar(120)
+  url           String           @db.VarChar(500)
+  description   String           @db.VarChar(300)
+  logoMediaId   String?          @map("logo_media_id") @db.Uuid
+  contactEmail  String?          @map("contact_email") @db.VarChar(254)
+  applicantNote String?          @map("applicant_note") @db.VarChar(500)
+  source        FriendLinkSource
+  status        FriendLinkStatus
+  verifiedAt    DateTime?        @map("verified_at") @db.Timestamptz(6)
+  sortOrder     Int              @default(0) @map("sort_order")
+  visible       Boolean          @default(true)
+  createdAt     DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  logoMedia     MediaAsset?      @relation("FriendLinkLogo", fields: [logoMediaId], references: [id], onDelete: SetNull)
+
+  @@index([status, visible, sortOrder])
+  @@map("friend_links")
+}
+
+model CvProfile {
+  id              String         @id @default(uuid()) @db.Uuid
+  isPublic        Boolean        @default(true) @map("is_public")
+  name            String         @db.VarChar(120)
+  headline        String         @db.VarChar(180)
+  bio             String
+  location        String         @db.VarChar(120)
+  website         String?        @db.VarChar(500)
+  statusText      String?        @map("status_text") @db.VarChar(120)
+  statement       String
+  portraitMediaId String?        @map("portrait_media_id") @db.Uuid
+  updatedAt       DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  portraitMedia   MediaAsset?    @relation("CvPortrait", fields: [portraitMediaId], references: [id], onDelete: SetNull)
+  experiences     CvExperience[]
+  educations      CvEducation[]
+  skillGroups     CvSkillGroup[]
+  projectRefs     CvProjectRef[]
+
+  @@map("cv_profile")
+}
+
+model CvExperience {
+  id          String    @id @default(uuid()) @db.Uuid
+  profileId   String    @map("profile_id") @db.Uuid
+  company     String    @db.VarChar(180)
+  role        String    @db.VarChar(180)
+  location    String    @db.VarChar(120)
+  startDate   DateTime  @map("start_date") @db.Date
+  endDate     DateTime? @map("end_date") @db.Date
+  isCurrent   Boolean   @default(false) @map("is_current")
+  description String
+  sortOrder   Int       @default(0) @map("sort_order")
+  profile     CvProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId, sortOrder])
+  @@map("cv_experiences")
+}
+
+model CvEducation {
+  id          String    @id @default(uuid()) @db.Uuid
+  profileId   String    @map("profile_id") @db.Uuid
+  school      String    @db.VarChar(180)
+  major       String    @db.VarChar(180)
+  degree      String    @db.VarChar(120)
+  startDate   DateTime  @map("start_date") @db.Date
+  endDate     DateTime? @map("end_date") @db.Date
+  description String
+  sortOrder   Int       @default(0) @map("sort_order")
+  profile     CvProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId, sortOrder])
+  @@map("cv_educations")
+}
+
+model CvSkillGroup {
+  id        String    @id @default(uuid()) @db.Uuid
+  profileId String    @map("profile_id") @db.Uuid
+  title     String    @db.VarChar(120)
+  content   String
+  sortOrder Int       @default(0) @map("sort_order")
+  profile   CvProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId, sortOrder])
+  @@map("cv_skill_groups")
+}
+
+model CvProjectRef {
+  id        String    @id @default(uuid()) @db.Uuid
+  profileId String    @map("profile_id") @db.Uuid
+  projectId String    @map("project_id") @db.Uuid
+  sortOrder Int       @default(0) @map("sort_order")
+  profile   CvProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  project   Project   @relation(fields: [projectId], references: [id], onDelete: Restrict)
+
+  @@unique([profileId, projectId])
+  @@index([profileId, sortOrder])
+  @@map("cv_project_refs")
+}
+
+model TimelineEntry {
+  id            String                 @id @default(uuid()) @db.Uuid
+  eventDate     DateTime               @map("event_date") @db.Date
+  datePrecision DatePrecision          @map("date_precision")
+  title         String                 @db.VarChar(180)
+  bodyMarkdown  String                 @map("body_markdown")
+  sortOrder     Int                    @default(0) @map("sort_order")
+  visible       Boolean                @default(true)
+  createdAt     DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
+  media         TimelineEntryMedia[]
+  links         TimelineEntryLink[]
+  projectRefs   TimelineEntryProject[]
+
+  @@index([visible, eventDate, sortOrder])
+  @@map("timeline_entries")
+}
+
+model TimelineEntryMedia {
+  id              String        @id @default(uuid()) @db.Uuid
+  timelineEntryId String        @map("timeline_entry_id") @db.Uuid
+  mediaId         String        @map("media_id") @db.Uuid
+  sortOrder       Int           @default(0) @map("sort_order")
+  timelineEntry   TimelineEntry @relation(fields: [timelineEntryId], references: [id], onDelete: Cascade)
+  media           MediaAsset    @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+
+  @@unique([timelineEntryId, mediaId])
+  @@index([timelineEntryId, sortOrder])
+  @@map("timeline_entry_media")
+}
+
+model TimelineEntryLink {
+  id              String        @id @default(uuid()) @db.Uuid
+  timelineEntryId String        @map("timeline_entry_id") @db.Uuid
+  label           String        @db.VarChar(120)
+  url             String        @db.VarChar(500)
+  sortOrder       Int           @default(0) @map("sort_order")
+  timelineEntry   TimelineEntry @relation(fields: [timelineEntryId], references: [id], onDelete: Cascade)
+
+  @@index([timelineEntryId, sortOrder])
+  @@map("timeline_entry_links")
+}
+
+model TimelineEntryProject {
+  id              String        @id @default(uuid()) @db.Uuid
+  timelineEntryId String        @map("timeline_entry_id") @db.Uuid
+  projectId       String        @map("project_id") @db.Uuid
+  sortOrder       Int           @default(0) @map("sort_order")
+  timelineEntry   TimelineEntry @relation(fields: [timelineEntryId], references: [id], onDelete: Cascade)
+  project         Project       @relation(fields: [projectId], references: [id], onDelete: Restrict)
+
+  @@unique([timelineEntryId, projectId])
+  @@index([timelineEntryId, sortOrder])
+  @@map("timeline_entry_projects")
+}
+
+model PageViewDaily {
+  date  DateTime @db.Date
+  path  String   @db.VarChar(500)
+  views BigInt   @default(0)
+
+  @@id([date, path])
+  @@index([date])
+  @@map("page_view_daily")
+}
+
+model VisitorActivity {
+  visitorHash String   @id @map("visitor_hash") @db.Char(64)
+  lastSeenAt  DateTime @map("last_seen_at") @db.Timestamptz(6)
+
+  @@index([lastSeenAt])
+  @@map("visitor_activity")
+}

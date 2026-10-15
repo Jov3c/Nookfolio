@@ -1,0 +1,210 @@
+@media (max-width: 1080px) {
+  .home-entry-editor__fields,
+  .social-link-editor__fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .home-avatar-field {
+    grid-template-columns: 72px minmax(0, 1fr);
+  }
+
+  .home-avatar-field__library {
+    grid-column: 1 / -1;
+  }
+
+  .media-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-layout {
+    display: block;
+  }
+
+  .admin-sidebar {
+    position: fixed;
+    left: 0;
+    width: 224px;
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition:
+      transform 180ms ease,
+      visibility 0s linear 180ms;
+  }
+
+  .admin-layout--mobile-open .admin-sidebar {
+    transform: translateX(0);
+    visibility: visible;
+    transition-delay: 0s;
+  }
+
+  .admin-sidebar__mobile-close,
+  .admin-mobile-menu {
+    display: grid;
+    place-items: center;
+  }
+
+  .admin-sidebar__mobile-close,
+  .admin-mobile-menu {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid var(--color-line);
+    border-radius: 8px;
+    background: var(--color-panel);
+    color: var(--color-text);
+    cursor: pointer;
+  }
+
+  .admin-sidebar-backdrop {
+    position: fixed;
+    z-index: 29;
+    inset: 0;
+    display: block;
+    border: 0;
+    background: rgb(23 25 23 / 34%);
+    backdrop-filter: blur(2px);
+  }
+
+  .admin-main {
+    width: min(calc(100% - 32px), 1320px);
+    padding-block: 36px 64px;
+  }
+
+  .admin-topbar {
+    padding-inline: 16px;
+  }
+
+  .posts-admin-layout,
+  .categories-admin-layout,
+  .projects-admin-layout,
+  .timeline-admin-layout,
+  .project-editor__markdown-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .posts-admin-list-panel,
+  .categories-admin-list-panel,
+  .projects-admin-list-panel,
+  .timeline-admin-list-panel {
+    position: static;
+    max-height: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-topbar__actions > a,
+  .admin-identity small {
+    display: none;
+  }
+
+  .admin-page-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .admin-page-heading h1 {
+    font-size: 2.65rem;
+  }
+
+  .admin-heading-actions {
+    justify-content: flex-start;
+  }
+
+  .admin-welcome,
+  .moderation-toolbar,
+  .media-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-overview-grid,
+  .admin-shortcut-grid,
+  .home-form-grid,
+  .about-admin-form-grid,
+  .post-form-grid,
+  .category-form-grid,
+  .project-form-grid,
+  .about-admin-project-grid,
+  .timeline-admin-relations,
+  .friend-link-create-form .form-row,
+  .media-upload-form__row,
+  .media-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .home-form-grid__wide,
+  .about-admin-form-grid__wide,
+  .post-form-grid__wide,
+  .project-form-grid__wide {
+    grid-column: auto;
+  }
+
+  .home-entry-editor,
+  .social-link-editor,
+  .friend-link-admin-card,
+  .timeline-admin-link-row,
+  .moderation-reply {
+    grid-template-columns: 1fr;
+  }
+
+  .home-entry-editor__fields,
+  .social-link-editor__fields,
+  .home-avatar-field {
+    grid-template-columns: 1fr;
+  }
+
+  .home-avatar-field__library {
+    grid-column: auto;
+  }
+
+  .home-entry-editor__order,
+  .home-entry-editor__actions {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .posts-admin-list-panel,
+  .categories-admin-list-panel,
+  .projects-admin-list-panel,
+  .timeline-admin-list-panel {
+    max-height: 430px;
+    overflow: auto;
+  }
+
+  .admin-dashboard-section,
+  .home-admin-section,
+  .friend-link-create-panel,
+  .media-upload-panel,
+  .moderation-card,
+  .friend-link-admin-card {
+    padding: 18px;
+  }
+
+  .login-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .login-panel__intro {
+    min-height: 220px;
+    padding: 32px;
+  }
+
+  .login-panel form {
+    padding: 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-sidebar,
+  .admin-nav-link,
+  .admin-nav-indicator,
+  .admin-nav-group__collapse,
+  .admin-nav-group__items .admin-nav-link,
+  .admin-nav-group__chevron,
+  .admin-shortcut-card {
+    transition: none;
+  }
+}

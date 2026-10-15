@@ -1,0 +1,108 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: jov3
+          POSTGRES_USER: jov3
+          POSTGRES_PASSWORD: jov3_ci_only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U jov3 -d jov3"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://jov3:jov3_ci_only@127.0.0.1:5432/jov3?schema=public
+      ADMIN_EMAIL: stage02-admin@example.com
+      ADMIN_PASSWORD: stage-02-e2e-admin-password
+      ADMIN_DISPLAY_NAME: Jov3
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24.14.0
+          package-manager-cache: false
+
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.15.1 --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check formatting
+        run: pnpm format:check
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Generate Prisma client
+        run: pnpm prisma:generate
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Run unit tests
+        run: pnpm test
+
+      - name: Apply database migrations
+        run: pnpm prisma:migrate:deploy
+
+      - name: Run database integration tests
+        run: pnpm test:integration
+
+      - name: Reset browser test database
+        env:
+          JOV3_BROWSER_RESET: '1'
+        run: pnpm test:reset-browser-data
+
+      - name: Bootstrap test administrator
+        run: pnpm admin:bootstrap
+
+      - name: Seed browser test fixtures
+        run: pnpm test:seed-browser-data
+
+      - name: Verify browser fixture idempotence
+        run: pnpm test:seed-browser-data
+
+      - name: Create restore backup fixture
+        run: |
+          mkdir -p /tmp/jov3-backup/uploads /tmp/jov3-backup/geo
+          pg_dump "postgresql://jov3:jov3_ci_only@127.0.0.1:5432/jov3" > /tmp/jov3-backup/database.sql
+          tar -C /tmp/jov3-backup -czf /tmp/jov3-backup/uploads-geo.tgz uploads geo
+
+      - name: Run real PostgreSQL restore test
+        env:
+          JOV3_RESTORE_ADMIN_DATABASE_URL: postgresql://jov3:jov3_ci_only@127.0.0.1:5432/postgres
+          JOV3_RESTORE_ROOT: /tmp/jov3-restore-test
+        run: sh scripts/backup/restore-test.sh /tmp/jov3-backup
+
+      - name: Install browser for end-to-end tests
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run end-to-end tests
+        run: pnpm test:e2e
+
+      - name: Build production application
+        run: pnpm build

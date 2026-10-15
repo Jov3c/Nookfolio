@@ -1,0 +1,67 @@
+import { defineConfig, devices } from '@playwright/test';
+
+const statefulE2eFiles = [
+  '**/about-admin.spec.ts',
+  '**/auth-api.spec.ts',
+  '**/blog-admin.spec.ts',
+  '**/community.spec.ts',
+  '**/friend-links.spec.ts',
+  '**/home-config.spec.ts',
+  '**/media-library.spec.ts',
+  '**/projects-admin.spec.ts',
+  '**/seo-stats.spec.ts',
+];
+const externalStatefulE2eFiles = [...statefulE2eFiles, '**/admin-shell.spec.ts'];
+const externalBaseURL = process.env.PLAYWRIGHT_BASE_URL;
+const allowExternalStatefulTests = process.env.PLAYWRIGHT_ALLOW_EXTERNAL_WRITES === 'true';
+const externalStatefulIgnore =
+  externalBaseURL && !allowExternalStatefulTests ? externalStatefulE2eFiles : [];
+
+export default defineConfig({
+  testDir: './tests/e2e',
+  outputDir: './test-results',
+  fullyParallel: false,
+  workers: 1,
+  timeout: process.env.CI ? 60_000 : 30_000,
+  forbidOnly: Boolean(process.env.CI),
+  retries: process.env.CI ? 2 : 0,
+  reporter: [['list'], ['html', { open: 'never', outputFolder: 'playwright-report' }]],
+  use: {
+    baseURL: externalBaseURL ?? 'https://127.0.0.1:3000',
+    ignoreHTTPSErrors: true,
+    trace: 'on-first-retry',
+  },
+  projects: [
+    {
+      name: 'desktop-chromium',
+      testIgnore: externalStatefulIgnore,
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'mobile-chromium',
+      testIgnore: statefulE2eFiles,
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 390, height: 844 },
+      },
+    },
+    {
+      name: 'tablet-chromium',
+      testIgnore: statefulE2eFiles,
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 920, height: 1000 },
+      },
+    },
+  ],
+  webServer: externalBaseURL
+    ? undefined
+    : {
+        command:
+          'pnpm dev --host 127.0.0.1 --port 3000 --https --https.domains=127.0.0.1,localhost',
+        url: 'https://127.0.0.1:3000',
+        ignoreHTTPSErrors: true,
+        reuseExistingServer: !process.env.CI,
+        timeout: 120_000,
+      },
+});

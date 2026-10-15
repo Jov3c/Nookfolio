@@ -14,7 +14,9 @@ const publicRoutes = [
 ];
 
 test.beforeEach(async ({ page }) => {
-  await page.addInitScript(() => localStorage.setItem('nookfolio-theme', 'light'));
+  await page.addInitScript(() => {
+    if (!localStorage.getItem('nookfolio-theme')) localStorage.setItem('nookfolio-theme', 'light');
+  });
 });
 
 test('every page shell exposes one theme toggle', async ({ page }) => {

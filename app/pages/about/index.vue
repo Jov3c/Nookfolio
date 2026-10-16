@@ -28,12 +28,15 @@ if (!homeResponse.value) {
 const home = computed(() => homeResponse.value!.data);
 const stats = computed(() => statsResponse.value?.data);
 const cv = computed(() => cvResponse.value?.data ?? null);
-const name = computed(() => cv.value?.profile.name || home.value.homeProfile.nickname);
-const role = computed(() => cv.value?.profile.headline || home.value.homeProfile.role);
-const biography = computed(() => cv.value?.profile.bio || home.value.homeProfile.intro);
+const name = computed(() => home.value.homeProfile.nickname);
+const role = computed(() => home.value.homeProfile.role);
+const biography = computed(() => home.value.homeProfile.intro);
+const matchingCv = computed(() =>
+  cv.value?.profile.name.trim() === name.value.trim() ? cv.value : null,
+);
 const statement = computed(
   () =>
-    cv.value?.profile.statement ||
+    matchingCv.value?.profile.statement ||
     home.value.homeProfile.statusText ||
     '保持好奇，认真完成，并把值得留下的东西保存下来。',
 );

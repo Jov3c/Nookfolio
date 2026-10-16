@@ -15,6 +15,8 @@ describe('About public page contract', () => {
     expect(about).toContain("definePageMeta({ layout: 'blog-prototype' })");
     expect(about).toContain("'/api/v1/public/home'");
     expect(about).toContain("'/api/v1/public/site/stats'");
+    expect(about).toContain('const name = computed(() => home.value.homeProfile.nickname)');
+    expect(about).not.toContain('cv.value?.profile.name || home.value.homeProfile.nickname');
     expect(about).toContain('class="about-editorial__hero"');
     expect(about).not.toContain('<main class="about-editorial">');
     expect(about).toContain('在网络上');

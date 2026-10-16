@@ -49,7 +49,7 @@ function formatWords(value: number | undefined) {
         {{ link.name }}
       </a>
       <a v-if="contactEmail" :href="`mailto:${contactEmail}`">邮箱</a>
-      <a href="/rss.xml">RSS</a>
+      <NuxtLink to="/rss">RSS</NuxtLink>
     </div>
   </section>
 </template>

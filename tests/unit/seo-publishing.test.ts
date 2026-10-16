@@ -1,10 +1,33 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 
 import { buildRssFeed } from '../../server/utils/rss';
 import { buildSitemapXml } from '../../server/utils/sitemap';
 import { normalizeSiteUrl, resolvePublicSiteUrl } from '../../server/utils/site-url';
 
 describe('SEO publishing utilities', () => {
+  it('keeps the XML feed and sends human-facing RSS links to the guide page', () => {
+    const root = resolve(import.meta.dirname, '../..');
+    const home = readFileSync(resolve(root, 'app/pages/index.vue'), 'utf8');
+    const sidebar = readFileSync(
+      resolve(root, 'app/components/blog/SidebarProfileCard.vue'),
+      'utf8',
+    );
+    const guide = readFileSync(resolve(root, 'app/pages/rss.vue'), 'utf8');
+    const publication = readFileSync(
+      resolve(root, 'server/services/site-publication-service.ts'),
+      'utf8',
+    );
+
+    expect(home).toContain('<NuxtLink to="/rss">RSS</NuxtLink>');
+    expect(sidebar).toContain('<NuxtLink to="/rss">RSS</NuxtLink>');
+    expect(guide).toContain("const feedPath = '/rss.xml'");
+    expect(guide).toContain('复制订阅地址');
+    expect(guide).toContain(':href="feedPath"');
+    expect(publication).toContain("'/rss',");
+  });
+
   it('normalizes safe site URLs and falls back to the request origin', () => {
     expect(normalizeSiteUrl('https://site.example///')).toBe('https://site.example');
     expect(normalizeSiteUrl('javascript:alert(1)')).toBeNull();

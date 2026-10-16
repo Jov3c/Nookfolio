@@ -140,7 +140,7 @@ function entryIconText(item: PublicHomeResponse['data']['entries'][number]) {
             :href="`mailto:${home.siteProfile.publicContactEmail}`"
             >Email</a
           >
-          <NuxtLink to="/rss.xml">RSS</NuxtLink>
+          <NuxtLink to="/rss">RSS</NuxtLink>
         </div>
       </main>
 

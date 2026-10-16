@@ -7,6 +7,7 @@ const publicRoutes = [
   '/blog/archive',
   '/blog/links',
   '/blog/message',
+  '/rss',
   '/about',
   '/about/timeline',
   '/about/cv',

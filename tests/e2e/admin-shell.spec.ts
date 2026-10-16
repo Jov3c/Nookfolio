@@ -53,6 +53,7 @@ test('mobile navigation exposes every admin destination and manages focus', asyn
     '时间线',
     '首页资料',
     '个人简历',
+    'About 页面',
     '评论管理',
     '留言管理',
     '友链管理',

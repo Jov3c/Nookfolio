@@ -61,6 +61,10 @@
   line-height: 1.9;
 }
 
+.about-editorial__long-copy {
+  white-space: pre-line;
+}
+
 .about-editorial__story .dropcap {
   color: var(--color-text);
   font-family: Georgia, serif;

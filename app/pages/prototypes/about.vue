@@ -3,7 +3,7 @@ definePageMeta({ layout: 'blog-prototype' });
 
 useHead({ meta: [{ name: 'robots', content: 'noindex, nofollow' }] });
 
-const variants = ['Quiet Profile', 'Editorial Story', 'Modular Index'];
+const variants = ['Field Notes', 'Editorial Story', 'Open Letter', 'Editorial Archive'];
 const route = useRoute();
 const router = useRouter();
 const current = ref(Math.min(variants.length - 1, Math.max(0, Number(route.query.v || 1) - 1)));
@@ -64,54 +64,55 @@ onBeforeUnmount(() => {
   <div class="about-prototype-root">
     <div :key="renderKey" class="page-container about-prototype-stage">
       <template v-if="current === 0">
-        <header class="about-quiet__hero proto-enter">
-          <p class="eyebrow">ABOUT</p>
-          <h1>关于我，也关于<br />这个小小的网站。</h1>
-          <p>这里收录我正在做的事、长期关注的问题，以及 Nookfolio 为什么存在。</p>
-        </header>
-        <main class="about-quiet proto-enter proto-enter--delay">
-          <section class="about-quiet__portrait">
-            <div class="about-monogram">C</div>
+        <main class="about-notes">
+          <header class="about-notes__hero proto-enter">
             <div>
-              <small>PROFILE / 01</small>
+              <p class="eyebrow">FIELD NOTES / 2026</p>
+              <h1>关于我与<br />一间数字书房</h1>
+            </div>
+            <p>一份仍在修改的自我介绍，也是一张关于 Nookfolio 的建站便笺。</p>
+          </header>
+          <section class="about-notes__sheet proto-enter proto-enter--delay">
+            <aside class="about-notes__margin">
+              <span>PROFILE</span><strong>01</strong>
+              <p>成都<br />AI / 产品 / 工程</p>
+            </aside>
+            <article class="about-notes__copy">
               <h2>你好，我是 CCC。</h2>
-            </div>
+              <p class="about-notes__lead">
+                我喜欢把模糊的问题梳理清楚，再把它做成简单、可靠、能长期使用的产品。
+              </p>
+              <p>
+                现在主要关注 AI
+                应用、个人工具和产品工程。我相信好的技术不应该只停留在演示里，它还需要耐心、边界感和持续维护。
+              </p>
+              <blockquote>“做真正有用，也愿意长期留下来的东西。”</blockquote>
+            </article>
+            <aside class="about-notes__annotations">
+              <p><b>正在做</b>Nookfolio<br />本地 AI 工作流</p>
+              <p><b>工作方式</b>快速验证<br />长期迭代</p>
+              <p><b>最近更新</b>2026.10</p>
+            </aside>
           </section>
-          <section class="about-quiet__copy">
-            <p class="about-lead">
-              我关注 AI、产品与工程之间真正可用的连接，也喜欢把复杂的问题整理成可以长期维护的东西。
-            </p>
-            <p>
-              这个网站是我的公开工作台。博客保存思考，项目记录实践，简历则整理一路走来的经验。内容会持续更新，但不会为了更新而更新。
-            </p>
-            <div class="about-facts">
-              <span><small>现在关注</small>AI 产品与个人工具</span>
-              <span><small>所在城市</small>中国成都</span>
-              <span><small>工作方式</small>持续交付，长期维护</span>
-            </div>
-          </section>
-          <section class="about-quiet__site">
-            <div>
-              <small>SITE / 02</small>
-              <h2>关于 Nookfolio</h2>
-            </div>
-            <p>
-              Nookfolio 是一个不依赖平台的信息角落。它尽量安静、清楚，并让所有内容都掌握在自己手中。
-            </p>
-            <dl>
-              <div>
-                <dt>建立于</dt>
-                <dd>2026</dd>
-              </div>
-              <div>
-                <dt>内容</dt>
-                <dd>文章、项目、简历</dd>
-              </div>
-              <div>
-                <dt>原则</dt>
-                <dd>真实、克制、可维护</dd>
-              </div>
-            </dl>
+          <section
+            class="about-notes__sheet about-notes__sheet--site proto-enter proto-enter--delay"
+          >
+            <aside class="about-notes__margin">
+              <span>WEBSITE</span><strong>02</strong>
+              <p>NOOKFOLIO<br />SINCE 2026</p>
+            </aside>
+            <article class="about-notes__copy">
+              <h2>为什么还要做一个个人网站？</h2>
+              <p class="about-notes__lead">因为有些内容值得拥有一个不被信息流打断的位置。</p>
+              <p>
+                Nookfolio
+                用来保存文章、项目与个人档案。没有推荐算法，不追求更新频率，只希望每次打开时，它仍然清楚、安静，并且属于自己。
+              </p>
+            </article>
+            <aside class="about-notes__annotations">
+              <p><b>收录</b>文章 / 项目<br />简历 / 记录</p>
+              <p><b>原则</b>真实<br />克制<br />可维护</p>
+            </aside>
           </section>
         </main>
       </template>
@@ -163,66 +164,111 @@ onBeforeUnmount(() => {
         </main>
       </template>
 
+      <template v-else-if="current === 2">
+        <main class="about-letter">
+          <header class="about-letter__masthead proto-enter">
+            <p>NOOKFOLIO</p>
+            <span>一封公开信 · 2026</span>
+          </header>
+          <article class="about-letter__paper proto-enter proto-enter--delay">
+            <p class="about-letter__salute">你好，欢迎来到这里。</p>
+            <h1>这是一个关于<br /><em>好奇心、创造与长期主义</em>的网站。</h1>
+            <div class="about-letter__body">
+              <p>
+                我是 CCC，一名在
+                AI、产品与工程之间工作的创造者。我喜欢从一个还没有标准答案的问题开始，经过研究、试验和反复修改，最后把它变成真正能用的东西。
+              </p>
+              <p>
+                Nookfolio
+                是我留在网络上的一间书房。这里有已经完成的项目，也有尚未想清楚的笔记；有正式的个人档案，也有一些只想安静保存的想法。
+              </p>
+              <p>
+                我不希望它成为一张静止的名片。它应该随着工作与生活慢慢变化，诚实地记录我曾经关注什么、做过什么，以及接下来准备去哪里。
+              </p>
+            </div>
+            <footer>
+              <div class="about-letter__signature">CCC</div>
+              <p>写于成都<br />持续更新中</p>
+            </footer>
+          </article>
+          <section class="about-letter__postscript proto-enter proto-enter--delay">
+            <b>P.S.</b>
+            <p>
+              网站建立于 2026 年，主要收录博客、项目与个人简历。它由 Nuxt 与 PostgreSQL
+              驱动，也由持续的好奇心维护。
+            </p>
+          </section>
+        </main>
+      </template>
+
       <template v-else>
-        <main class="about-index">
-          <header class="about-index__hero proto-enter">
+        <main class="about-archive">
+          <header class="about-archive__hero proto-enter">
             <div>
-              <p class="eyebrow">ABOUT / INDEX</p>
+              <p class="eyebrow">EDITORIAL ARCHIVE</p>
               <h1>关于</h1>
             </div>
-            <p>个人信息、当前状态与这个网站的简明索引。</p>
+            <p>人物档案与站点记录<br />NO. 001 — 持续修订</p>
           </header>
-          <section class="about-index__grid proto-enter proto-enter--delay">
-            <article class="about-index__intro">
-              <span>01 / PROFILE</span>
-              <h2>CCC</h2>
-              <p>AI 应用 · 产品工程 · 独立创造</p>
-              <strong>把复杂问题做成简单、可靠、能够长期运行的产品。</strong>
-            </article>
-            <article>
-              <span>02 / NOW</span>
-              <h3>现在</h3>
-              <p>研究本地 AI 工作流，完善 Nookfolio，并持续记录产品与工程实践。</p>
-            </article>
-            <article>
-              <span>03 / FOCUS</span>
-              <h3>关注</h3>
-              <ul>
-                <li>AI 与个人效率</li>
-                <li>产品设计与工程实现</li>
-                <li>可持续的独立项目</li>
-              </ul>
-            </article>
-            <article class="about-index__wide">
-              <span>04 / WEBSITE</span>
-              <h3>Nookfolio</h3>
+          <section class="about-archive__record proto-enter proto-enter--delay">
+            <div class="about-archive__number">01</div>
+            <header>
+              <span>PERSON / CCC</span>
+              <h2>把复杂问题变成<br />清晰而可靠的产品。</h2>
+            </header>
+            <div class="about-archive__text">
               <p>
-                一个属于自己的数字角落，用来保存文章、项目、个人档案，以及那些不应该被信息流冲走的内容。
+                关注 AI
+                应用、产品工程与个人工具。喜欢研究新技术，但更在意它最终是否真正有用、是否能够被长期维护。
               </p>
               <dl>
                 <div>
-                  <dt>上线</dt>
+                  <dt>所在地</dt>
+                  <dd>中国成都</dd>
+                </div>
+                <div>
+                  <dt>当前方向</dt>
+                  <dd>AI 产品与工作流</dd>
+                </div>
+                <div>
+                  <dt>关键词</dt>
+                  <dd>创造 / 交付 / 长期主义</dd>
+                </div>
+              </dl>
+            </div>
+          </section>
+          <section class="about-archive__record proto-enter proto-enter--delay">
+            <div class="about-archive__number">02</div>
+            <header>
+              <span>SITE / NOOKFOLIO</span>
+              <h2>不依赖信息流的<br />个人数字档案。</h2>
+            </header>
+            <div class="about-archive__text">
+              <p>
+                用于保存文章、项目、个人经历和持续变化的兴趣。页面保持克制，内容掌握在自己手中，并允许一切慢慢生长。
+              </p>
+              <dl>
+                <div>
+                  <dt>建立</dt>
                   <dd>2026</dd>
                 </div>
                 <div>
                   <dt>技术</dt>
-                  <dd>Nuxt · PostgreSQL</dd>
+                  <dd>Nuxt / PostgreSQL</dd>
                 </div>
                 <div>
                   <dt>状态</dt>
                   <dd><i />持续维护</dd>
                 </div>
               </dl>
-            </article>
-            <article>
-              <span>05 / LINKS</span>
-              <h3>继续了解</h3>
-              <nav>
-                <a href="/projects">项目 ↗</a><a href="/blog">博客 ↗</a
-                ><a href="/about/cv">个人简历 ↗</a>
-              </nav>
-            </article>
+            </div>
           </section>
+          <footer class="about-archive__footer">
+            <span>END OF RECORD</span>
+            <nav>
+              <a href="/blog">BLOG</a><a href="/projects">PROJECTS</a><a href="/about/cv">CV</a>
+            </nav>
+          </footer>
         </main>
       </template>
     </div>
@@ -567,6 +613,267 @@ onBeforeUnmount(() => {
   padding: 10px 0;
   border-bottom: 1px solid var(--color-line);
 }
+.about-notes {
+  max-width: 1120px;
+  margin: auto;
+}
+.about-notes__hero {
+  display: grid;
+  grid-template-columns: 1.5fr 0.5fr;
+  align-items: end;
+  min-height: 470px;
+  padding: 70px 0;
+  border-bottom: 1px solid var(--color-line);
+}
+.about-notes__hero h1 {
+  margin: 15px 0 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(4rem, 7vw, 7rem);
+  font-weight: 400;
+  line-height: 0.96;
+  letter-spacing: -0.06em;
+}
+.about-notes__hero > p {
+  color: var(--color-muted);
+  line-height: 1.75;
+}
+.about-notes__sheet {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr) 190px;
+  gap: 50px;
+  padding: 90px 0;
+  border-bottom: 1px solid var(--color-line);
+}
+.about-notes__margin span,
+.about-notes__annotations b {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--color-accent);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+}
+.about-notes__margin strong {
+  display: block;
+  font-family: Georgia, serif;
+  font-size: 4.5rem;
+  font-weight: 400;
+  color: var(--color-line);
+}
+.about-notes__margin p,
+.about-notes__annotations p {
+  color: var(--color-muted);
+  font-size: 0.76rem;
+  line-height: 1.7;
+}
+.about-notes__copy h2 {
+  margin: 0 0 32px;
+  font-family: Georgia, serif;
+  font-size: 2.8rem;
+  font-weight: 400;
+}
+.about-notes__copy > p {
+  max-width: 650px;
+  color: var(--color-muted);
+  font-size: 1.03rem;
+  line-height: 1.9;
+}
+.about-notes__copy .about-notes__lead {
+  color: var(--color-text);
+  font-family: Georgia, serif;
+  font-size: 1.55rem;
+  line-height: 1.55;
+}
+.about-notes__copy blockquote {
+  margin: 48px 0 0;
+  padding: 22px 0 22px 28px;
+  border-left: 2px solid var(--color-accent);
+  font-family: Georgia, serif;
+  font-size: 1.3rem;
+}
+.about-notes__annotations {
+  border-left: 1px solid var(--color-line);
+  padding-left: 25px;
+}
+.about-notes__annotations p {
+  margin: 0 0 32px;
+}
+.about-letter {
+  max-width: 1060px;
+  margin: auto;
+  padding-top: 55px;
+}
+.about-letter__masthead {
+  display: flex;
+  justify-content: space-between;
+  padding: 18px 0;
+  border-top: 3px solid var(--color-text);
+  border-bottom: 1px solid var(--color-line);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+}
+.about-letter__masthead p {
+  margin: 0;
+  font-weight: 800;
+}
+.about-letter__masthead span {
+  color: var(--color-muted);
+}
+.about-letter__paper {
+  max-width: 850px;
+  margin: auto;
+  padding: 110px 30px 95px;
+}
+.about-letter__salute {
+  margin-bottom: 42px;
+  color: var(--color-accent);
+  font-weight: 700;
+}
+.about-letter__paper h1 {
+  margin: 0 0 70px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(3.2rem, 6vw, 6.5rem);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -0.055em;
+}
+.about-letter__paper h1 em {
+  color: var(--color-accent);
+  font-weight: 400;
+}
+.about-letter__body {
+  max-width: 680px;
+  margin-left: auto;
+}
+.about-letter__body p {
+  margin: 0 0 28px;
+  color: var(--color-muted);
+  font-family: Georgia, serif;
+  font-size: 1.2rem;
+  line-height: 1.95;
+}
+.about-letter__body p:first-child {
+  color: var(--color-text);
+  font-size: 1.42rem;
+}
+.about-letter__paper footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 26px;
+  align-items: end;
+  margin-top: 65px;
+}
+.about-letter__signature {
+  font-family: Georgia, serif;
+  font-size: 2.5rem;
+  font-style: italic;
+}
+.about-letter__paper footer p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+.about-letter__postscript {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 25px;
+  max-width: 850px;
+  margin: auto;
+  padding: 35px 30px;
+  border-top: 1px solid var(--color-line);
+}
+.about-letter__postscript p {
+  max-width: 650px;
+  margin: 0;
+  color: var(--color-muted);
+  line-height: 1.8;
+}
+.about-archive {
+  max-width: 1120px;
+  margin: auto;
+}
+.about-archive__hero {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  min-height: 390px;
+  padding: 70px 0;
+  border-bottom: 1px solid var(--color-text);
+}
+.about-archive__hero h1 {
+  margin: 10px 0 0;
+  font-size: clamp(5rem, 10vw, 10rem);
+  line-height: 0.78;
+  letter-spacing: -0.08em;
+}
+.about-archive__hero > p {
+  color: var(--color-muted);
+  font-size: 0.75rem;
+  line-height: 1.7;
+  text-align: right;
+}
+.about-archive__record {
+  display: grid;
+  grid-template-columns: 110px 1fr 0.8fr;
+  gap: 42px;
+  padding: 75px 0;
+  border-bottom: 1px solid var(--color-line);
+}
+.about-archive__number {
+  font-family: Georgia, serif;
+  font-size: 4.2rem;
+  color: var(--color-line);
+}
+.about-archive__record header span {
+  color: var(--color-accent);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+.about-archive__record h2 {
+  margin: 26px 0 0;
+  font-family: Georgia, serif;
+  font-size: clamp(2.1rem, 4vw, 4rem);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.04em;
+}
+.about-archive__text > p {
+  margin: 42px 0;
+  color: var(--color-muted);
+  line-height: 1.85;
+}
+.about-archive__text dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--color-line);
+  font-size: 0.82rem;
+}
+.about-archive__text dt {
+  color: var(--color-muted);
+}
+.about-archive__text i {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+.about-archive__footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 35px 0;
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+}
+.about-archive__footer nav {
+  display: flex;
+  gap: 25px;
+}
 .proto-picker {
   position: fixed;
   bottom: 24px;
@@ -691,6 +998,61 @@ onBeforeUnmount(() => {
   }
   .about-index__wide dl {
     grid-template-columns: 1fr;
+  }
+  .about-notes__hero {
+    display: block;
+    min-height: 420px;
+  }
+  .about-notes__hero > p {
+    margin-top: 45px;
+  }
+  .about-notes__sheet {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 60px 0;
+  }
+  .about-notes__margin {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+  }
+  .about-notes__margin strong {
+    font-size: 2.6rem;
+  }
+  .about-notes__annotations {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border-left: 0;
+    border-top: 1px solid var(--color-line);
+    padding: 25px 0 0;
+  }
+  .about-letter__paper {
+    padding: 75px 0;
+  }
+  .about-letter__body {
+    margin-left: 0;
+  }
+  .about-letter__postscript {
+    grid-template-columns: 1fr;
+    padding-inline: 0;
+  }
+  .about-archive__hero {
+    display: block;
+    min-height: 340px;
+  }
+  .about-archive__hero > p {
+    margin-top: 55px;
+    text-align: left;
+  }
+  .about-archive__record {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .about-archive__number {
+    font-size: 2.7rem;
+  }
+  .about-archive__text > p {
+    margin-top: 20px;
   }
   .proto-picker {
     max-width: calc(100vw - 20px);

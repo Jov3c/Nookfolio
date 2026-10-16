@@ -1,10 +1,10 @@
 import { expect, test } from '@playwright/test';
 
-test('about redirects to the timeline and exposes both stories', async ({ page }) => {
+test('about is standalone and keeps CV available separately', async ({ page }) => {
   await page.goto('/about');
-  await expect(page).toHaveURL(/\/about\/timeline$/);
-  await expect(page.getByRole('heading', { name: '人生时间线' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: '开始配置网站' })).toBeVisible();
+  await expect(page).toHaveURL(/\/about$/);
+  await expect(page.locator('.about-editorial__hero h1')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Edit About' })).toHaveCount(0);
 
   await page.goto('/about/cv');
   await expect(page.getByRole('heading', { name: '个人简历' })).toBeVisible();

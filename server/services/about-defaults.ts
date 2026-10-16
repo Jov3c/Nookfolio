@@ -16,7 +16,11 @@ export const DEFAULT_ABOUT_PROFILE = {
 };
 
 export async function seedAboutDefaults(prisma: PrismaClient) {
-  if (await prisma.aboutProfile.count()) return false;
-  await prisma.aboutProfile.create({ data: DEFAULT_ABOUT_PROFILE });
-  return true;
+  const existing = await prisma.aboutProfile.findUnique({ where: { singletonKey: 1 } });
+  await prisma.aboutProfile.upsert({
+    where: { singletonKey: 1 },
+    update: {},
+    create: { singletonKey: 1, ...DEFAULT_ABOUT_PROFILE },
+  });
+  return !existing;
 }

@@ -5,7 +5,7 @@ export class AboutRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
   find() {
-    return this.prisma.aboutProfile.findFirst();
+    return this.prisma.aboutProfile.findUnique({ where: { singletonKey: 1 } });
   }
 
   update(id: string, input: AboutProfileUpdateInput) {

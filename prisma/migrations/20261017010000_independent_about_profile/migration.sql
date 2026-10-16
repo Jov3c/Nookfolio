@@ -1,5 +1,6 @@
 CREATE TABLE "about_profile" (
   "id" UUID NOT NULL,
+  "singleton_key" INTEGER NOT NULL DEFAULT 1,
   "eyebrow" VARCHAR(120) NOT NULL,
   "title" VARCHAR(220) NOT NULL,
   "introduction" VARCHAR(500) NOT NULL,
@@ -11,15 +12,18 @@ CREATE TABLE "about_profile" (
   "site_facts" JSONB NOT NULL,
   "updated_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-  CONSTRAINT "about_profile_pkey" PRIMARY KEY ("id")
+  CONSTRAINT "about_profile_pkey" PRIMARY KEY ("id"),
+  CONSTRAINT "about_profile_singleton_check" CHECK ("singleton_key" = 1)
 );
 
+CREATE UNIQUE INDEX "about_profile_singleton_key_key" ON "about_profile"("singleton_key");
+
 INSERT INTO "about_profile" (
-  "id", "eyebrow", "title", "introduction", "personal_title", "personal_body",
+  "id", "singleton_key", "eyebrow", "title", "introduction", "personal_title", "personal_body",
   "quote", "site_title", "site_body", "site_facts"
 )
 SELECT
-  gen_random_uuid(),
+  gen_random_uuid(), 1,
   'A PERSONAL NOTE',
   '在网络上，留一间自己的房间。',
   '这里是一段独立的 About 页面引言，请在后台替换为你的内容。',

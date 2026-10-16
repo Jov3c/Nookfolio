@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { aboutProfileSchema, aboutProfileUpdateSchema } from '../../shared/schemas/about';
@@ -18,6 +20,21 @@ const validProfile = {
 };
 
 describe('About profile schemas', () => {
+  it('enforces and atomically seeds a single About profile', () => {
+    const root = resolve(import.meta.dirname, '../..');
+    const prisma = readFileSync(resolve(root, 'prisma/schema.prisma'), 'utf8');
+    const migration = readFileSync(
+      resolve(root, 'prisma/migrations/20261017010000_independent_about_profile/migration.sql'),
+      'utf8',
+    );
+    const defaults = readFileSync(resolve(root, 'server/services/about-defaults.ts'), 'utf8');
+
+    expect(prisma).toContain('singletonKey  Int      @unique @default(1)');
+    expect(migration).toContain('CHECK ("singleton_key" = 1)');
+    expect(defaults).toContain('aboutProfile.upsert');
+    expect(defaults).not.toContain('aboutProfile.count()');
+  });
+
   it('normalizes a complete independent About profile', () => {
     const parsed = aboutProfileSchema.parse(validProfile);
 

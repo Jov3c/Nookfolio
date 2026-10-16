@@ -57,13 +57,13 @@ enum DatePrecision {
 }
 
 model AdminUser {
-  id           String         @id @default(uuid()) @db.Uuid
-  email        String         @unique @db.VarChar(254)
-  passwordHash String         @map("password_hash")
-  displayName  String         @map("display_name") @db.VarChar(80)
-  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
-  sessions     AdminSession[]
+  id              String                @id @default(uuid()) @db.Uuid
+  email           String                @unique @db.VarChar(254)
+  passwordHash    String                @map("password_hash")
+  displayName     String                @map("display_name") @db.VarChar(80)
+  createdAt       DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime              @updatedAt @map("updated_at") @db.Timestamptz(6)
+  sessions        AdminSession[]
   loginChallenges AdminLoginChallenge[]
 
   @@map("admin_users")
@@ -167,6 +167,7 @@ model HomeProfile {
 
 model AboutProfile {
   id            String   @id @default(uuid()) @db.Uuid
+  singletonKey  Int      @unique @default(1) @map("singleton_key")
   eyebrow       String   @db.VarChar(120)
   title         String   @db.VarChar(220)
   introduction  String   @db.VarChar(500)

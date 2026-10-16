@@ -1,16 +1,10 @@
 import { expect, test } from '@playwright/test';
-
-const adminEmail = process.env.ADMIN_EMAIL ?? 'stage02-admin@example.com';
-const adminPassword = process.env.ADMIN_PASSWORD ?? 'stage-02-e2e-admin-password';
+import { createAdminSession } from '../fixtures/admin-session';
 
 test('admin can open an empty friend-link queue', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Admin friend link flow runs once');
 
-  const login = await page.request.post('/api/v1/auth/login', {
-    headers: { 'x-forwarded-for': '10.0.0.18' },
-    data: { email: adminEmail, password: adminPassword },
-  });
-  expect(login.ok()).toBe(true);
+  await createAdminSession(page);
 
   await page.goto('/admin/links');
   await page.waitForLoadState('networkidle');

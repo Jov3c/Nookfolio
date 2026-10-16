@@ -44,7 +44,7 @@ export interface AuthRepositoryContract {
 export class AuthService {
   constructor(private readonly repository: AuthRepositoryContract) {}
 
-  async login(email: string, password: string, now = new Date()) {
+  async verifyCredentials(email: string, password: string) {
     const normalizedEmail = email.trim().toLowerCase();
     const admin = await this.repository.findAdminByEmail(normalizedEmail);
     const passwordIsValid = await verifyPassword(
@@ -56,6 +56,10 @@ export class AuthService {
       throw new AuthError(401, 'INVALID_CREDENTIALS', 'Email or password is incorrect');
     }
 
+    return { id: admin.id, email: admin.email, displayName: admin.displayName };
+  }
+
+  async createSession(admin: { id: string; email: string; displayName: string }, now = new Date()) {
     const token = createSessionToken();
     const expiresAt = new Date(now.getTime() + SESSION_DURATION_MS);
     await this.repository.createSession({

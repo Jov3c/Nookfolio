@@ -147,6 +147,15 @@ onMounted(load);
         <p class="moderation-card__content">{{ message.content }}</p>
         <div class="moderation-card__actions">
           <button
+            v-if="message.status === 'PENDING_REVIEW'"
+            class="button"
+            type="button"
+            :disabled="!!busyKey"
+            @click="updateStatus(message.id, 'PUBLISHED')"
+          >
+            审核通过
+          </button>
+          <button
             v-if="message.status !== 'HIDDEN'"
             class="admin-secondary-button"
             type="button"

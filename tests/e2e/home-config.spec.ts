@@ -1,18 +1,12 @@
 import { expect, test } from '@playwright/test';
-
-const adminEmail = process.env.ADMIN_EMAIL ?? 'stage02-admin@example.com';
-const adminPassword = process.env.ADMIN_PASSWORD ?? 'stage-02-e2e-admin-password';
+import { createAdminSession } from '../fixtures/admin-session';
 
 test('admin can add a homepage entry and the public page reads it from the API', async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Homepage configuration flow runs once');
 
-  const login = await page.request.post('/api/v1/auth/login', {
-    headers: { 'x-forwarded-for': '10.0.0.23' },
-    data: { email: adminEmail, password: adminPassword },
-  });
-  expect(login.ok()).toBe(true);
+  await createAdminSession(page);
 
   let createdId = '';
   try {
@@ -49,11 +43,7 @@ test('admin can change the shared site badge and receives a fading save notice',
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Shared badge flow runs once');
 
-  const login = await page.request.post('/api/v1/auth/login', {
-    headers: { 'x-forwarded-for': '10.0.0.24' },
-    data: { email: adminEmail, password: adminPassword },
-  });
-  expect(login.ok()).toBe(true);
+  await createAdminSession(page);
   const original = (await (await page.request.get('/api/v1/admin/site-profile')).json()).data as {
     brandText: string;
   };

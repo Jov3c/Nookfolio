@@ -36,8 +36,8 @@ async function submit() {
     const isPrivate = form.isPrivate;
     await $fetch('/api/v1/public/messages', { method: 'POST', body: form });
     notice.value = isPrivate
-      ? '验证邮件已发送。完成邮箱验证后，这条悄悄话仅博主可见。'
-      : '验证邮件已发送。完成邮箱验证后，留言会自动显示。';
+      ? '悄悄话已提交，审核后仅博主可见。'
+      : '留言已提交，审核通过后会公开显示。';
     form.content = '';
     form.isPrivate = false;
     await refresh();
@@ -56,7 +56,7 @@ async function submit() {
     <form class="community-form message-board__form" @submit.prevent="submit">
       <div class="community-form__heading">
         <h2 id="message-board-title">写留言</h2>
-        <span>邮箱验证后发布</span>
+        <span>审核后发布</span>
       </div>
       <textarea
         v-model="form.content"
@@ -69,10 +69,9 @@ async function submit() {
         <input v-model="form.nickname" required maxlength="80" placeholder="昵称 *" />
         <input
           v-model="form.email"
-          required
           type="email"
           maxlength="254"
-          placeholder="邮箱 *（不会公开）"
+          placeholder="邮箱（选填，不会公开）"
         />
       </div>
       <div class="message-form-options">

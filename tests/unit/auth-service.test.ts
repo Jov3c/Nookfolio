@@ -35,10 +35,12 @@ describe('AuthService', () => {
     const passwordHash = await hashPassword('a-strong-bootstrap-password');
     const service = new AuthService(createRepository(passwordHash));
 
-    await expect(service.login('missing@example.com', 'anything')).rejects.toMatchObject({
+    await expect(
+      service.verifyCredentials('missing@example.com', 'anything'),
+    ).rejects.toMatchObject({
       statusCode: 401,
     });
-    await expect(service.login('admin@example.com', 'wrong')).rejects.toMatchObject({
+    await expect(service.verifyCredentials('admin@example.com', 'wrong')).rejects.toMatchObject({
       statusCode: 401,
     });
   });
@@ -48,7 +50,11 @@ describe('AuthService', () => {
     const repository = createRepository(passwordHash);
     const service = new AuthService(repository);
 
-    const login = await service.login('ADMIN@EXAMPLE.COM', 'a-strong-bootstrap-password');
+    const admin = await service.verifyCredentials(
+      'ADMIN@EXAMPLE.COM',
+      'a-strong-bootstrap-password',
+    );
+    const login = await service.createSession(admin);
     expect(repository.storedHash).toMatch(/^[a-f0-9]{64}$/);
     expect(repository.storedHash).not.toContain(login.token);
     await expect(service.resolveSession(login.token)).resolves.toMatchObject({

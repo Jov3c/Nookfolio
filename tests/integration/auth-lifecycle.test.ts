@@ -26,7 +26,8 @@ describe('admin authentication lifecycle', () => {
   it('stores an Argon2id password and a hash-only session', async () => {
     const repository = new AuthRepository(prisma);
     const service = new AuthService(repository);
-    const login = await service.login(email, password);
+    const admin = await service.verifyCredentials(email, password);
+    const login = await service.createSession(admin);
 
     const user = await prisma.adminUser.findUniqueOrThrow({ where: { email } });
     const session = await prisma.adminSession.findFirstOrThrow({ where: { adminId: user.id } });

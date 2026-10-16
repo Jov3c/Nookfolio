@@ -148,13 +148,13 @@ export class CommunityRepository {
 
   createMessage(input: {
     nickname: string;
-    email: string;
+    email: string | null;
     content: string;
     isPrivate: boolean;
     ipHash: string;
   }) {
     return this.prisma.message.create({
-      data: { ...input, status: 'PENDING_EMAIL', authorType: 'VISITOR' },
+      data: { ...input, status: 'PENDING_REVIEW', authorType: 'VISITOR' },
     });
   }
 

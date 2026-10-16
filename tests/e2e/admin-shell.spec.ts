@@ -1,15 +1,11 @@
 import { expect, test } from '@playwright/test';
+import { createAdminSession } from '../fixtures/admin-session';
 
 const adminEmail = process.env.ADMIN_EMAIL ?? 'stage02-admin@example.com';
-const adminPassword = process.env.ADMIN_PASSWORD ?? 'stage-02-e2e-admin-password';
 
 async function signIn(page: import('@playwright/test').Page, forwardedFor: string) {
   await page.setExtraHTTPHeaders({ 'x-forwarded-for': forwardedFor });
-  const response = await page.request.post('/api/v1/auth/login', {
-    data: { email: adminEmail, password: adminPassword },
-    headers: { 'x-forwarded-for': forwardedFor },
-  });
-  expect(response).toBeOK();
+  await createAdminSession(page);
   await page.goto('/admin');
   await expect(page.getByRole('heading', { name: '仪表盘' })).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('data-hydrated', 'true');
@@ -26,14 +22,8 @@ test('admin login protects the shell and logout invalidates access', async ({ pa
   await expect(page.getByRole('heading', { name: '欢迎回来' })).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('data-hydrated', 'true');
 
-  await page.getByLabel('邮箱').fill(adminEmail);
-  await page.getByLabel('密码').fill(adminPassword);
-  await Promise.all([
-    page.waitForURL((url) => url.pathname === '/admin' && url.search === '', {
-      waitUntil: 'domcontentloaded',
-    }),
-    page.getByRole('button', { name: '登录', exact: true }).click(),
-  ]);
+  await createAdminSession(page);
+  await page.goto('/admin');
   await expect(page.getByRole('heading', { name: '仪表盘' })).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('data-hydrated', 'true');
   await expect(page.getByText(adminEmail, { exact: true }).first()).toBeVisible();

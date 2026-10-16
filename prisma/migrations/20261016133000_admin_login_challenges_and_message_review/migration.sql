@@ -23,7 +23,3 @@ ON "admin_login_challenges"("expires_at");
 ALTER TABLE "admin_login_challenges"
 ADD CONSTRAINT "admin_login_challenges_admin_id_fkey"
 FOREIGN KEY ("admin_id") REFERENCES "admin_users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
-UPDATE "messages"
-SET "status" = 'PENDING_REVIEW'::"ModerationStatus"
-WHERE "status" = 'PENDING_EMAIL'::"ModerationStatus";

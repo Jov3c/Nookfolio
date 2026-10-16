@@ -175,7 +175,15 @@ cp .env.example .env
 | `ADMIN_DISPLAY_NAME` | 管理员显示名称      |
 | `PUBLIC_SITE_URL`    | 网站公开地址        |
 
-需要邮箱验证时，再配置 `SMTP_HOST`、`SMTP_USER`、`SMTP_PASSWORD`、`SMTP_FROM_NAME` 和 `SMTP_FROM_EMAIL`。
+后台登录采用“邮箱和密码 + 六位邮箱验证码”两步验证，因此生产环境必须配置
+`SMTP_HOST`、`SMTP_PORT`、`SMTP_SECURE`、`SMTP_USER`、`SMTP_PASSWORD`、
+`SMTP_FROM_NAME` 和 `SMTP_FROM_EMAIL`。验证码有效期为 5 分钟，且只能使用一次。
+
+留言提交不依赖邮箱发送服务：邮箱可留空，新留言会先进入后台审核队列，审核通过后才公开显示。
+评论和友链申请仍保留各自的邮箱验证流程。
+
+请只在服务器环境变量或权限受限的环境文件中保存 SMTP 密钥，不要将真实邮箱、密码、授权码、
+验证码或会话令牌写入源码、日志和版本控制。
 
 ### 4. 启动数据库
 

@@ -17,7 +17,10 @@ export const commentCreateSchema = z.object({
 
 export const messageCreateSchema = z.object({
   nickname: nicknameSchema,
-  email: emailSchema,
+  email: z
+    .union([emailSchema, z.literal('')])
+    .optional()
+    .transform((value) => value || undefined),
   content: contentSchema,
   isPrivate: z.boolean().optional().default(false),
 });

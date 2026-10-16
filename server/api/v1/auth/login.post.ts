@@ -2,12 +2,10 @@ import { defineEventHandler, readBody, setHeader } from 'h3';
 
 import { loginSchema } from '#shared/schemas/auth';
 import { apiError, authApiError } from '../../../utils/api-response';
-import {
-  assertSameOrigin,
-  consumeLoginAttempt,
-  useAuthService,
-  writeSessionCookie,
-} from '../../../utils/auth';
+import { AdminLoginChallengeError } from '../../../services/admin-login-challenge-service';
+import { useAdminLoginChallengeService } from '../../../utils/admin-login-challenge';
+import { createSmtpEmailSender, SmtpConfigError } from '../../../utils/smtp';
+import { assertSameOrigin, consumeLoginAttempt, useAuthService } from '../../../utils/auth';
 
 export default defineEventHandler(async (event) => {
   try {
@@ -29,10 +27,14 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const login = await useAuthService().login(body.data.email, body.data.password);
-    writeSessionCookie(event, login.token, login.expiresAt);
-    return { data: { admin: login.admin } };
+    const admin = await useAuthService().verifyCredentials(body.data.email, body.data.password);
+    const { sender } = createSmtpEmailSender();
+    const challenge = await useAdminLoginChallengeService().issue(admin, sender);
+    return { data: challenge };
   } catch (error) {
+    if (error instanceof SmtpConfigError || error instanceof AdminLoginChallengeError) {
+      return apiError(event, 503, 'LOGIN_CODE_UNAVAILABLE', '暂时无法发送登录验证码，请稍后再试。');
+    }
     return authApiError(event, error);
   }
 });

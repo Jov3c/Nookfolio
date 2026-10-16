@@ -1,13 +1,10 @@
 import { readBody, setResponseHeader } from 'h3';
 
 import { messageCreateSchema } from '../../../../../shared/schemas/community';
-import { EmailVerificationError } from '../../../../services/email-verification-service';
 import { CommunityError, communityApiError } from '../../../../services/community-service';
 import { apiError } from '../../../../utils/api-response';
 import { useCommunityService } from '../../../../utils/community';
-import { useEmailVerificationService } from '../../../../utils/email-verification';
 import { getVisitorIpHash } from '../../../../utils/visitor';
-import { createSmtpEmailSender, SmtpConfigError } from '../../../../utils/smtp';
 import { SlidingWindowRateLimiter } from '../../../../utils/rate-limit';
 
 const messageLimiter = new SlidingWindowRateLimiter({
@@ -35,19 +32,10 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const { sender, config } = createSmtpEmailSender();
-    const result = await useCommunityService({
-      emailVerification: useEmailVerificationService({
-        sender,
-        publicSiteUrl: config.publicSiteUrl,
-      }),
-    }).submitMessage(parsed.data, getVisitorIpHash(event));
+    const result = await useCommunityService().submitMessage(parsed.data, getVisitorIpHash(event));
     return { data: result };
   } catch (error) {
-    if (error instanceof SmtpConfigError) {
-      return apiError(event, 503, error.code, 'Email delivery is not configured');
-    }
-    if (error instanceof EmailVerificationError || error instanceof CommunityError) {
+    if (error instanceof CommunityError) {
       const mapped = communityApiError(error);
       if (mapped) return apiError(event, mapped.statusCode, mapped.code, mapped.message);
       return apiError(event, error.statusCode, error.code, error.message);

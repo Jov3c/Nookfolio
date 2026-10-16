@@ -1,7 +1,5 @@
 import { expect, test } from '@playwright/test';
-
-const adminEmail = process.env.ADMIN_EMAIL ?? 'stage02-admin@example.com';
-const adminPassword = process.env.ADMIN_PASSWORD ?? 'stage-02-e2e-admin-password';
+import { createAdminSession } from '../fixtures/admin-session';
 const onePixelPng = Buffer.from(
   '89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000d49444154789c6360a0c0000002000100ff0d0a2db40000000049454e44ae426082',
   'hex',
@@ -10,11 +8,7 @@ const onePixelPng = Buffer.from(
 test('admin can upload, edit, serve, query, and delete media', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Media API flow runs once');
 
-  const login = await page.request.post('/api/v1/auth/login', {
-    headers: { 'x-forwarded-for': '10.0.0.24' },
-    data: { email: adminEmail, password: adminPassword },
-  });
-  expect(login.ok()).toBe(true);
+  await createAdminSession(page);
 
   await page.goto('/admin/media');
   await expect(page.getByRole('heading', { name: '媒体库', exact: true })).toBeVisible();

@@ -1,16 +1,10 @@
 import { expect, test } from '@playwright/test';
-
-const adminEmail = process.env.ADMIN_EMAIL ?? 'stage02-admin@example.com';
-const adminPassword = process.env.ADMIN_PASSWORD ?? 'stage-02-e2e-admin-password';
+import { createAdminSession } from '../fixtures/admin-session';
 
 test('admin can create a README project and publish or hide it', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Project admin flow runs once');
 
-  const login = await page.request.post('/api/v1/auth/login', {
-    data: { email: adminEmail, password: adminPassword },
-    headers: { 'x-forwarded-for': '10.0.0.5' },
-  });
-  expect(login.ok()).toBe(true);
+  await createAdminSession(page);
 
   const suffix = Date.now().toString();
   const slug = `stage-five-e2e-${suffix}`;

@@ -1,16 +1,10 @@
 import { expect, test } from '@playwright/test';
-
-const adminEmail = process.env.ADMIN_EMAIL ?? 'stage02-admin@example.com';
-const adminPassword = process.env.ADMIN_PASSWORD ?? 'stage-02-e2e-admin-password';
+import { createAdminSession } from '../fixtures/admin-session';
 
 test('admin can toggle CV visibility without deleting its content', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'About admin flow runs once');
 
-  const login = await page.request.post('/api/v1/auth/login', {
-    data: { email: adminEmail, password: adminPassword },
-    headers: { 'x-forwarded-for': '10.0.0.9' },
-  });
-  expect(login.ok()).toBe(true);
+  await createAdminSession(page);
 
   const original = (await (await page.request.get('/api/v1/admin/cv/profile')).json()).data;
   try {
@@ -69,11 +63,7 @@ test('admin can toggle CV visibility without deleting its content', async ({ pag
 test('admin can create and remove a Timeline entry', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'About admin flow runs once');
 
-  const login = await page.request.post('/api/v1/auth/login', {
-    data: { email: adminEmail, password: adminPassword },
-    headers: { 'x-forwarded-for': '10.0.0.10' },
-  });
-  expect(login.ok()).toBe(true);
+  await createAdminSession(page);
 
   const title = `Stage Nine Timeline ${Date.now()}`;
   let createdId = '';

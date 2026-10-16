@@ -109,3 +109,20 @@ html[data-theme='dark'] .admin-auth-layout {
   color: #8c3d34;
   font-size: 0.75rem;
 }
+
+.login-step-copy {
+  margin: 0 0 24px;
+  color: var(--color-muted);
+  font-size: 0.86rem;
+}
+.login-code-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 18px;
+}
+.login-code-actions button {
+  border: 0;
+  background: transparent;
+  color: var(--color-muted);
+  cursor: pointer;
+}

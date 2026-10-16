@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { createAdminSession } from '../fixtures/admin-session';
 
 test('public article and guestbook start without fabricated interactions', async ({ page }) => {
   await page.goto('/blog/getting-started');
@@ -20,14 +21,7 @@ test('public article and guestbook start without fabricated interactions', async
 test('admin can open empty moderation queues', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Admin moderation flow runs once');
 
-  const login = await page.request.post('/api/v1/auth/login', {
-    headers: { 'x-forwarded-for': '10.0.0.8' },
-    data: {
-      email: process.env.ADMIN_EMAIL ?? 'stage02-admin@example.com',
-      password: process.env.ADMIN_PASSWORD ?? 'stage-02-e2e-admin-password',
-    },
-  });
-  expect(login.ok()).toBe(true);
+  await createAdminSession(page);
 
   await page.goto('/admin/comments');
   await page.waitForLoadState('networkidle');

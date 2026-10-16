@@ -94,25 +94,14 @@ export class CommunityService {
     if (!parsed.success)
       throw new CommunityError(400, 'INVALID_MESSAGE', 'Message fields are invalid');
 
-    const email = parsed.data.email.trim().toLowerCase();
     const message = await this.repository.createMessage({
       nickname: parsed.data.nickname.trim(),
-      email,
+      email: parsed.data.email ?? null,
       content: parsed.data.content.trim(),
       isPrivate: parsed.data.isPrivate,
       ipHash,
     });
-    try {
-      const verification = await this.issueVerification('MESSAGE', message.id, email);
-      return {
-        id: message.id,
-        verificationRequired: true,
-        expiresAt: verification.expiresAt.toISOString(),
-      };
-    } catch (error) {
-      await this.repository.deleteMessage(message.id).catch(() => undefined);
-      throw error;
-    }
+    return { id: message.id, moderationRequired: true };
   }
 
   async listPublicMessages(query: { page: number; pageSize: number }) {
@@ -204,7 +193,6 @@ export class CommunityService {
   async updateMessageStatus(id: string, status: ModerationActionStatus) {
     const message = await this.repository.findMessageById(id);
     if (!message) throw new CommunityError(404, 'MESSAGE_NOT_FOUND', 'Message not found');
-    ensurePublishable(message, status, 'message');
     try {
       return toAdminMessageDto(await this.repository.updateMessageStatus(id, status));
     } catch (error) {

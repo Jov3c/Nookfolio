@@ -1,16 +1,10 @@
 import { expect, test } from '@playwright/test';
-
-const adminEmail = process.env.ADMIN_EMAIL ?? 'stage02-admin@example.com';
-const adminPassword = process.env.ADMIN_PASSWORD ?? 'stage-02-e2e-admin-password';
+import { createAdminSession } from '../fixtures/admin-session';
 
 test('admin can create, publish, and remove a database-backed post', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Admin blog flow runs once');
 
-  const login = await page.request.post('/api/v1/auth/login', {
-    headers: { 'x-forwarded-for': '10.0.0.6' },
-    data: { email: adminEmail, password: adminPassword },
-  });
-  expect(login.ok()).toBe(true);
+  await createAdminSession(page);
 
   const suffix = Date.now();
   let createdId = '';
@@ -50,11 +44,7 @@ test('admin can create, publish, and remove a database-backed post', async ({ pa
 test('admin categories page shows post usage before deletion', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Category editor flow runs once');
 
-  const login = await page.request.post('/api/v1/auth/login', {
-    headers: { 'x-forwarded-for': '10.0.0.7' },
-    data: { email: adminEmail, password: adminPassword },
-  });
-  expect(login.ok()).toBe(true);
+  await createAdminSession(page);
 
   await page.goto('/admin/categories');
   await expect(page.getByRole('heading', { name: '分类管理', exact: true })).toBeVisible();

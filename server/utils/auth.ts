@@ -15,6 +15,18 @@ const loginLimiter = new SlidingWindowRateLimiter({
   maxKeys: 10_000,
 });
 
+const verificationLimiter = new SlidingWindowRateLimiter({
+  limit: 10,
+  windowMs: 15 * 60 * 1_000,
+  maxKeys: 10_000,
+});
+
+const resendLimiter = new SlidingWindowRateLimiter({
+  limit: 3,
+  windowMs: 15 * 60 * 1_000,
+  maxKeys: 10_000,
+});
+
 export function useAuthService() {
   return new AuthService(new AuthRepository(usePrisma()));
 }
@@ -46,6 +58,11 @@ export function clearSessionCookie(event: H3Event) {
 export function consumeLoginAttempt(event: H3Event) {
   const key = getRequestIP(event, { xForwardedFor: true }) ?? 'unknown';
   return loginLimiter.consume(key);
+}
+
+export function consumeVerificationAttempt(event: H3Event, action: 'verify' | 'resend') {
+  const ip = getRequestIP(event, { xForwardedFor: true }) ?? 'unknown';
+  return (action === 'verify' ? verificationLimiter : resendLimiter).consume(`${ip}:${action}`);
 }
 
 export function assertSameOrigin(event: H3Event) {

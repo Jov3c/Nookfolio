@@ -120,7 +120,7 @@ describe('comments and message board lifecycle', () => {
     });
   });
 
-  it('publishes verified messages, keeps email private, and supports moderation', async () => {
+  it('holds guestbook messages for admin review without email verification', async () => {
     const email = `stage07-${suffix}@example.com`;
     const submitted = await service.submitMessage(
       { nickname: 'Stage Seven', email, content: 'A guestbook message.', isPrivate: false },
@@ -131,9 +131,8 @@ describe('comments and message board lifecycle', () => {
     const pending = await service.listPublicMessages({ page: 1, pageSize: 50 });
     expect(pending.items.some((message) => message.id === messageId)).toBe(false);
 
-    const token = new URL(sender.messages.at(-1)!.text.split('\n')[2]!).searchParams.get('token')!;
-    const verified = await verifier.verify(token);
-    await service.completeEmailVerification(verified);
+    expect(submitted).toMatchObject({ moderationRequired: true });
+    await service.updateMessageStatus(messageId, 'PUBLISHED');
 
     const published = await service.listPublicMessages({ page: 1, pageSize: 50 });
     const message = published.items.find((item) => item.id === messageId)!;
@@ -146,14 +145,11 @@ describe('comments and message board lifecycle', () => {
     expect(hidden.items.some((item) => item.id === messageId)).toBe(false);
 
     const privateSubmitted = await service.submitMessage(
-      { nickname: 'Stage Seven', email, content: 'A private message.', isPrivate: true },
+      { nickname: 'Stage Seven', content: 'A private message.', isPrivate: true },
       'c'.repeat(64),
     );
     privateMessageId = privateSubmitted.id;
-    const privateToken = new URL(sender.messages.at(-1)!.text.split('\n')[2]!).searchParams.get(
-      'token',
-    )!;
-    await service.completeEmailVerification(await verifier.verify(privateToken));
+    await service.updateMessageStatus(privateMessageId, 'PUBLISHED');
 
     const afterPrivate = await service.listPublicMessages({ page: 1, pageSize: 50 });
     expect(afterPrivate.items.some((item) => item.id === privateMessageId)).toBe(false);

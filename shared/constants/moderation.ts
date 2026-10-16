@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const MODERATION_STATUSES = [
   'PENDING_EMAIL',
+  'PENDING_REVIEW',
   'PUBLISHED',
   'HIDDEN',
   'SPAM',
@@ -12,6 +13,7 @@ export type ModerationStatus = (typeof MODERATION_STATUSES)[number];
 
 export const MODERATION_STATUS_LABELS: Record<ModerationStatus, string> = {
   PENDING_EMAIL: '待邮箱验证',
+  PENDING_REVIEW: '待审核',
   PUBLISHED: '已公开',
   HIDDEN: '已隐藏',
   SPAM: '垃圾内容',

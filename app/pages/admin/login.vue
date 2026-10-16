@@ -94,24 +94,32 @@ function resetLogin() {
       <p>在一个安静、清晰的工作台中管理内容、资料和站点互动。</p>
     </div>
 
-    <form v-if="step === 'credentials'" @submit.prevent="submit">
+    <form @submit.prevent="step === 'credentials' ? submit() : verifyCode()">
       <label for="admin-email">邮箱</label>
-      <input id="admin-email" v-model="form.email" type="email" autocomplete="username" required />
+      <input
+        id="admin-email"
+        v-model="form.email"
+        type="email"
+        autocomplete="username"
+        :disabled="step === 'code'"
+        required
+      />
       <label for="admin-password">密码</label>
       <input
         id="admin-password"
         v-model="form.password"
         type="password"
         autocomplete="current-password"
+        :disabled="step === 'code'"
         required
       />
-      <p v-if="errorMessage" class="login-error" role="alert">{{ errorMessage }}</p>
-      <button class="button" type="submit" :disabled="!isHydrated || isSubmitting">
-        {{ isSubmitting ? '正在登录…' : '登录' }}
-      </button>
-    </form>
-    <form v-else @submit.prevent="verifyCode">
-      <p class="login-step-copy">验证码已发送到管理员邮箱，请在 5 分钟内完成验证。</p>
+      <p class="login-step-copy">
+        {{
+          step === 'code'
+            ? '验证码已发送到管理员邮箱，请在 5 分钟内完成验证。'
+            : '先获取验证码，再输入邮箱中收到的六位数字。'
+        }}
+      </p>
       <label for="admin-code">六位验证码</label>
       <input
         id="admin-code"
@@ -121,17 +129,27 @@ function resetLogin() {
         autocomplete="one-time-code"
         pattern="[0-9]{6}"
         maxlength="6"
-        required
+        :disabled="step !== 'code' || isSubmitting"
+        :required="step === 'code'"
       />
       <p v-if="errorMessage" class="login-error" role="alert">{{ errorMessage }}</p>
       <button
+        v-if="step === 'credentials'"
+        class="button"
+        type="submit"
+        :disabled="!isHydrated || isSubmitting"
+      >
+        {{ isSubmitting ? '正在发送…' : '发送验证码' }}
+      </button>
+      <button
+        v-else
         class="button"
         type="submit"
         :disabled="isSubmitting || verification.code.length !== 6"
       >
         {{ isSubmitting ? '正在验证…' : '验证并登录' }}
       </button>
-      <div class="login-code-actions">
+      <div v-if="step === 'code'" class="login-code-actions">
         <button type="button" :disabled="isSubmitting" @click="resendCode">重新发送</button>
         <button type="button" @click="resetLogin">返回</button>
       </div>

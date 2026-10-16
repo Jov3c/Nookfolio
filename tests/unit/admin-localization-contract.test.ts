@@ -55,4 +55,12 @@ describe('admin localization contract', () => {
     expect(media).not.toContain('stored outside the build');
     expect(media).not.toContain('aria-label="Media assets"');
   });
+
+  it('keeps the email verification field visible before a code is sent', () => {
+    const login = read('app/pages/admin/login.vue');
+
+    expect(login).toContain('先获取验证码，再输入邮箱中收到的六位数字。');
+    expect(login).toContain(`:disabled="step !== 'code' || isSubmitting"`);
+    expect(login).not.toContain('<form v-else @submit.prevent="verifyCode">');
+  });
 });

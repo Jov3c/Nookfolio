@@ -38,6 +38,7 @@ export class SitePublicationService {
       '/blog/archive',
       '/blog/links',
       '/blog/message',
+      '/about',
       '/about/timeline',
       ...(cvIsPublic ? ['/about/cv'] : []),
     ];

@@ -12,14 +12,12 @@ test('home presents the personal entry points', async ({ page }) => {
   await expect(page).toHaveTitle(/你的名字 — 请填写个人身份/);
   await expect(page.getByRole('heading', { name: '你的名字', exact: true })).toBeVisible();
   const entries = page.getByRole('navigation', { name: '站点入口' });
-  await expect(entries.getByRole('link', { name: /Projects/ })).toHaveAttribute(
-    'href',
-    '/projects',
-  );
-  await expect(entries.getByRole('link', { name: /Notes/ })).toHaveAttribute(
-    'href',
-    '/blog/archive',
-  );
+  const links = entries.getByRole('link');
+  await expect(links).toHaveCount(4);
+  await expect(links.nth(0)).toHaveAttribute('href', '/blog');
+  await expect(links.nth(1)).toHaveAttribute('href', '/projects');
+  await expect(links.nth(2)).toHaveAttribute('href', '/about/cv');
+  await expect(links.nth(3)).toHaveAttribute('href', '/about');
   await expectNoHorizontalOverflow(page);
 });
 

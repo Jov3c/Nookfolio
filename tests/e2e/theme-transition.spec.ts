@@ -7,6 +7,7 @@ const publicRoutes = [
   '/blog/archive',
   '/blog/links',
   '/blog/message',
+  '/about',
   '/about/timeline',
   '/about/cv',
   '/admin/login',
@@ -27,7 +28,7 @@ test('every page shell exposes one theme toggle', async ({ page }) => {
 });
 
 test('public page shells expose the Travelling link', async ({ page }) => {
-  for (const route of ['/', '/projects', '/blog', '/about/timeline']) {
+  for (const route of ['/', '/projects', '/blog', '/about']) {
     await page.goto(route);
     const travelling = page.getByRole('link', { name: '开往其他独立博客' });
     await expect(travelling).toHaveCount(1);

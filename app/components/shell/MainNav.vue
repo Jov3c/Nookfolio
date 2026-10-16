@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { primaryNavigation } from '~/data/navigation';
-import AboutDropdown from './AboutDropdown.vue';
 import ThemeToggle from './ThemeToggle.vue';
 import TravellingLink from './TravellingLink.vue';
 </script>
@@ -16,7 +15,6 @@ import TravellingLink from './TravellingLink.vue';
     >
       {{ item.label }}
     </NuxtLink>
-    <AboutDropdown />
     <TravellingLink />
     <ThemeToggle />
   </nav>

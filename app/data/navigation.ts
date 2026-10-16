@@ -7,11 +7,7 @@ export const primaryNavigation: NavigationItem[] = [
   { label: 'Home', to: '/' },
   { label: 'Projects', to: '/projects' },
   { label: 'Blog', to: '/blog' },
-];
-
-export const aboutNavigation: NavigationItem[] = [
-  { label: 'CV', to: '/about/cv' },
-  { label: 'Timeline', to: '/about/timeline' },
+  { label: 'About', to: '/about' },
 ];
 
 export const blogNavigation: NavigationItem[] = [

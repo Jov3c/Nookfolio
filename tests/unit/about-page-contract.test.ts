@@ -7,6 +7,23 @@ const root = resolve(import.meta.dirname, '../..');
 const read = (path: string) => readFileSync(resolve(root, path), 'utf8');
 
 describe('About public page contract', () => {
+  it('uses the selected editorial story as the standalone About page', () => {
+    const about = read('app/pages/about/index.vue');
+    const mainNav = read('app/components/shell/MainNav.vue');
+    const prototypeLayout = read('app/layouts/blog-prototype.vue');
+
+    expect(about).toContain("definePageMeta({ layout: 'blog-prototype' })");
+    expect(about).toContain("'/api/v1/public/home'");
+    expect(about).toContain("'/api/v1/public/site/stats'");
+    expect(about).toContain('class="about-editorial__hero"');
+    expect(about).not.toContain('<main class="about-editorial">');
+    expect(about).toContain('在网络上');
+    expect(about).toContain('关于网站');
+    expect(about).not.toContain("navigateTo('/about/timeline'");
+    expect(mainNav).not.toContain('AboutDropdown');
+    expect(prototypeLayout).not.toContain('AboutDropdown');
+  });
+
   it('uses Chinese titles and controls on both About subpages', () => {
     const cv = read('app/pages/about/cv.vue');
     const timeline = read('app/pages/about/timeline.vue');

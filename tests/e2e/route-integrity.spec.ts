@@ -9,6 +9,7 @@ const publicRoutes = [
   '/blog/archive',
   '/blog/links',
   '/blog/message',
+  '/about',
   '/about/cv',
   '/about/timeline',
 ];

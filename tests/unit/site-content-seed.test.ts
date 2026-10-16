@@ -15,8 +15,18 @@ describe('site content seed', () => {
       seedFriendLinkDefaults: seed('links'),
       seedCvDefaults: seed('cv'),
       seedTimelineDefaults: seed('timeline'),
+      seedAboutDefaults: seed('about'),
     });
 
-    expect(calls).toEqual(['home', 'projects', 'posts', 'community', 'links', 'cv', 'timeline']);
+    expect(calls).toEqual([
+      'home',
+      'projects',
+      'posts',
+      'community',
+      'links',
+      'cv',
+      'timeline',
+      'about',
+    ]);
   });
 });

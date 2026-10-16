@@ -165,6 +165,22 @@ model HomeProfile {
   @@map("home_profile")
 }
 
+model AboutProfile {
+  id            String   @id @default(uuid()) @db.Uuid
+  eyebrow       String   @db.VarChar(120)
+  title         String   @db.VarChar(220)
+  introduction  String   @db.VarChar(500)
+  personalTitle String   @map("personal_title") @db.VarChar(120)
+  personalBody  String   @map("personal_body")
+  quote         String   @db.VarChar(500)
+  siteTitle     String   @map("site_title") @db.VarChar(120)
+  siteBody      String   @map("site_body")
+  siteFacts     Json     @map("site_facts")
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("about_profile")
+}
+
 model HomeEntry {
   id          String          @id @default(uuid()) @db.Uuid
   title       String          @db.VarChar(80)

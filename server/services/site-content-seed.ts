@@ -1,4 +1,5 @@
 import type { PrismaClient } from '../generated/prisma/client';
+import { seedAboutDefaults } from './about-defaults';
 import { seedBlogDefaults } from './blog-defaults';
 import { seedCommunityDefaults } from './community-defaults';
 import { seedCvDefaults } from './cv-defaults';
@@ -15,6 +16,7 @@ type SeedDependencies = {
   seedCvDefaults: typeof seedCvDefaults;
   seedFriendLinkDefaults: typeof seedFriendLinkDefaults;
   seedTimelineDefaults: typeof seedTimelineDefaults;
+  seedAboutDefaults: typeof seedAboutDefaults;
 };
 
 const defaultDependencies: SeedDependencies = {
@@ -25,6 +27,7 @@ const defaultDependencies: SeedDependencies = {
   seedCvDefaults,
   seedFriendLinkDefaults,
   seedTimelineDefaults,
+  seedAboutDefaults,
 };
 
 export async function seedSiteContent(
@@ -38,4 +41,5 @@ export async function seedSiteContent(
   await dependencies.seedFriendLinkDefaults(prisma);
   await dependencies.seedCvDefaults(prisma);
   await dependencies.seedTimelineDefaults(prisma);
+  await dependencies.seedAboutDefaults(prisma);
 }

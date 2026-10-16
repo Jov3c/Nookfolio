@@ -26,6 +26,17 @@ test('every page shell exposes one theme toggle', async ({ page }) => {
   }
 });
 
+test('public page shells expose the Travelling link', async ({ page }) => {
+  for (const route of ['/', '/projects', '/blog', '/about/timeline']) {
+    await page.goto(route);
+    const travelling = page.getByRole('link', { name: '开往其他独立博客' });
+    await expect(travelling).toHaveCount(1);
+    await expect(travelling).toHaveAttribute('href', 'https://www.travellings.cn/go.html');
+    await expect(travelling).toHaveAttribute('target', '_blank');
+    await expect(travelling).toHaveAttribute('rel', 'noopener noreferrer');
+  }
+});
+
 test('repeated circular transitions leave no animation on reused pseudo-elements', async ({
   page,
 }) => {

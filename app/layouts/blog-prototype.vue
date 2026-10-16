@@ -2,6 +2,7 @@
 import AboutDropdown from '~/components/shell/AboutDropdown.vue';
 import SiteBrand from '~/components/shell/SiteBrand.vue';
 import ThemeToggle from '~/components/shell/ThemeToggle.vue';
+import TravellingLink from '~/components/shell/TravellingLink.vue';
 import { primaryNavigation } from '~/data/navigation';
 </script>
 
@@ -15,6 +16,7 @@ import { primaryNavigation } from '~/data/navigation';
             {{ item.label }}
           </NuxtLink>
           <AboutDropdown />
+          <TravellingLink />
           <ThemeToggle />
         </nav>
       </div>

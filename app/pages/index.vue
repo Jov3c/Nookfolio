@@ -2,6 +2,7 @@
 import type { PublicHomeResponse } from '~/types/home';
 import SiteBrand from '~/components/shell/SiteBrand.vue';
 import ThemeToggle from '~/components/shell/ThemeToggle.vue';
+import TravellingLink from '~/components/shell/TravellingLink.vue';
 
 const { data: response, error } = await useFetch<PublicHomeResponse>('/api/v1/public/home', {
   key: 'public-home-page',
@@ -47,6 +48,7 @@ function entryIconText(item: PublicHomeResponse['data']['entries'][number]) {
           >
             <i /> {{ home.homeProfile.statusText }}
           </span>
+          <TravellingLink />
           <ThemeToggle />
         </div>
       </header>

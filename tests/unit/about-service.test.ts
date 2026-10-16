@@ -52,10 +52,12 @@ describe('About service', () => {
       },
     };
 
-    await expect(new AboutService(repository as never).update({ title: '' })).rejects.toMatchObject({
-      statusCode: 400,
-      code: 'INVALID_ABOUT',
-    });
+    await expect(new AboutService(repository as never).update({ title: '' })).rejects.toMatchObject(
+      {
+        statusCode: 400,
+        code: 'INVALID_ABOUT',
+      },
+    );
     expect(called).toBe(false);
   });
 });

@@ -208,3 +208,9 @@
     transition: none;
   }
 }
+
+@media (max-width: 720px) {
+  .about-fact-row {
+    grid-template-columns: 1fr;
+  }
+}

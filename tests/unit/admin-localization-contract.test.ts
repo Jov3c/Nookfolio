@@ -16,6 +16,7 @@ const pageTitles = new Map([
   ['timeline.vue', '时间线管理'],
   ['home.vue', '首页资料'],
   ['cv.vue', '个人简历'],
+  ['about.vue', 'About 页面'],
   ['comments.vue', '评论管理'],
   ['messages.vue', '留言管理'],
   ['links.vue', '友链管理'],
@@ -37,6 +38,7 @@ describe('admin localization contract', () => {
     expect(posts).not.toContain('<h1>Posts</h1>');
     expect(posts).not.toContain('Manage categories');
     expect(posts).not.toContain('New post');
+    expect(layout).toContain("{ label: 'About 页面', text: 'About 页面', to: '/admin/about' }");
   });
 
   it('presents article workflow statuses in Chinese', () => {

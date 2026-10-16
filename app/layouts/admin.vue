@@ -35,6 +35,7 @@ const navigation = [
     items: [
       { label: '首页资料', text: '首页', to: '/admin/home' },
       { label: '个人简历', text: '个人简历', to: '/admin/cv' },
+      { label: 'About 页面', text: 'About 页面', to: '/admin/about' },
     ],
   },
   {

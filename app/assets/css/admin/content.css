@@ -648,3 +648,16 @@
   font-size: 0.72rem;
   text-align: center;
 }
+
+.about-facts-editor {
+  display: grid;
+  gap: 14px;
+  padding-top: 8px;
+}
+
+.about-fact-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 0.7fr) minmax(220px, 1.3fr) auto;
+  gap: 12px;
+  align-items: end;
+}

@@ -10,6 +10,8 @@ export async function createAdminSession(page: Page) {
 
   const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: databaseUrl }) });
   const email = (process.env.ADMIN_EMAIL ?? 'stage02-admin@example.com').toLowerCase();
+  const applicationOrigin = new URL(process.env.PLAYWRIGHT_BASE_URL ?? 'https://127.0.0.1:3000')
+    .origin;
   try {
     const admin = await prisma.adminUser.findUnique({ where: { email }, select: { id: true } });
     if (!admin) throw new Error(`Browser fixture admin does not exist: ${email}`);
@@ -31,6 +33,7 @@ export async function createAdminSession(page: Page) {
         sameSite: 'Lax',
       },
     ]);
+    await page.context().setExtraHTTPHeaders({ Origin: applicationOrigin });
   } finally {
     await prisma.$disconnect();
   }

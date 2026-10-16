@@ -13,6 +13,7 @@ const statefulE2eFiles = [
 ];
 const externalStatefulE2eFiles = [...statefulE2eFiles, '**/admin-shell.spec.ts'];
 const externalBaseURL = process.env.PLAYWRIGHT_BASE_URL;
+const chromiumExecutablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH;
 const allowExternalStatefulTests = process.env.PLAYWRIGHT_ALLOW_EXTERNAL_WRITES === 'true';
 const externalStatefulIgnore =
   externalBaseURL && !allowExternalStatefulTests ? externalStatefulE2eFiles : [];
@@ -29,6 +30,9 @@ export default defineConfig({
   use: {
     baseURL: externalBaseURL ?? 'https://127.0.0.1:3000',
     ignoreHTTPSErrors: true,
+    ...(chromiumExecutablePath
+      ? { launchOptions: { executablePath: chromiumExecutablePath } }
+      : {}),
     trace: 'on-first-retry',
   },
   projects: [

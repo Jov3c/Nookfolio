@@ -17,6 +17,6 @@ test('about redirects to the timeline and exposes both stories', async ({ page }
 test('unknown content returns a useful 404 page', async ({ page }) => {
   const response = await page.goto('/projects/does-not-exist');
   expect(response?.status()).toBe(404);
-  await expect(page.getByRole('heading', { name: 'This page wandered off.' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Back home' })).toHaveAttribute('href', '/');
+  await expect(page.getByRole('heading', { name: '有个圆点走丢了。' })).toBeVisible();
+  await expect(page.getByRole('link', { name: /带它回家/ })).toHaveAttribute('href', '/');
 });

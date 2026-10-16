@@ -14,7 +14,9 @@ export class AdminLoginChallengeRepository implements AdminLoginChallengeReposit
     now: Date,
   ) {
     return this.prisma.$transaction(async (tx) => {
-      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${input.adminId}))`;
+      await tx.$queryRaw`
+        SELECT pg_advisory_xact_lock(hashtext(${input.adminId})) IS NULL AS "lockAcquired"
+      `;
       await tx.adminLoginChallenge.updateMany({
         where: { adminId: input.adminId, consumedAt: null, expiresAt: { gt: now } },
         data: { consumedAt: now },

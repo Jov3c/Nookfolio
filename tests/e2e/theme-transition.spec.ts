@@ -42,6 +42,7 @@ test('repeated circular transitions leave no animation on reused pseudo-elements
   page,
 }) => {
   await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('data-hydrated', 'true');
   const supportsViewTransitions = await page.evaluate(
     () => typeof document.startViewTransition === 'function',
   );
@@ -82,12 +83,15 @@ test('repeated circular transitions leave no animation on reused pseudo-elements
 });
 
 test('selected theme persists across public routes', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('data-hydrated', 'true');
   await page.getByRole('button', { name: '切换到暗色主题' }).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await expect(page.getByRole('button', { name: '切换到亮色主题' })).toBeVisible();
   await page.goto('/blog');
 
+  await expect(page.locator('html')).toHaveAttribute('data-hydrated', 'true');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await expect(page.getByRole('button', { name: '切换到亮色主题' })).toBeVisible();
 });

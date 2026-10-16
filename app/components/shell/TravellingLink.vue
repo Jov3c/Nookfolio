@@ -13,18 +13,17 @@
       />
       <path d="M5 9h14M8.5 14h.01M15.5 14h.01M9 3.5v-1h6v1" />
     </svg>
-    <span>开往</span>
-    <span class="travelling-link__arrow" aria-hidden="true">↗</span>
   </a>
 </template>
 
 <style scoped>
 .travelling-link {
   display: inline-flex;
+  width: 40px;
   min-height: 40px;
   align-items: center;
-  gap: 6px;
-  padding: 8px 10px;
+  justify-content: center;
+  padding: 0;
   border-radius: 10px;
   color: var(--color-muted);
   font-size: 0.95rem;
@@ -51,30 +50,8 @@
   stroke-width: 1.6;
 }
 
-.travelling-link__arrow {
-  font-size: 0.72em;
-  transition: transform 180ms ease;
-}
-
-.travelling-link:hover .travelling-link__arrow {
-  transform: translate(1px, -1px);
-}
-
-@media (max-width: 520px) {
-  .travelling-link {
-    width: 40px;
-    justify-content: center;
-    padding-inline: 0;
-  }
-
-  .travelling-link span {
-    display: none;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .travelling-link,
-  .travelling-link__arrow {
+  .travelling-link {
     transition: none;
   }
 }

@@ -31,6 +31,7 @@ test('public page shells expose the Travelling link', async ({ page }) => {
     await page.goto(route);
     const travelling = page.getByRole('link', { name: '开往其他独立博客' });
     await expect(travelling).toHaveCount(1);
+    await expect(travelling).toHaveText('');
     await expect(travelling).toHaveAttribute('href', 'https://www.travellings.cn/go.html');
     await expect(travelling).toHaveAttribute('target', '_blank');
     await expect(travelling).toHaveAttribute('rel', 'noopener noreferrer');

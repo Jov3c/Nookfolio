@@ -40,6 +40,7 @@ services:
     image: nginx:1.27-alpine
     restart: unless-stopped
     environment:
+      NOOKFOLIO_SERVER_NAME: ${NOOKFOLIO_SERVER_NAME:-localhost}
       NOOKFOLIO_HTTPS_PORT: ${NOOKFOLIO_HTTPS_PORT:-443}
     depends_on:
       app:

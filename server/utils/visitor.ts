@@ -1,11 +1,12 @@
 import { createHash } from 'node:crypto';
 
-import { getCookie, getRequestIP, setCookie, type H3Event } from 'h3';
+import { getCookie, setCookie, type H3Event } from 'h3';
 
 import { createVisitorId, hashVisitorId, isValidVisitorId, VISITOR_COOKIE_NAME } from './stats';
+import { getTrustedClientIp } from './auth';
 
 export function getVisitorIpHash(event: H3Event) {
-  const ip = getRequestIP(event, { xForwardedFor: true }) ?? 'unknown';
+  const ip = getTrustedClientIp(event);
   return createHash('sha256').update(ip, 'utf8').digest('hex');
 }
 

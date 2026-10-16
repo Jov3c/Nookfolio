@@ -5,6 +5,7 @@ import { AuthRepository } from '../repositories/auth-repository';
 import { AuthError, AuthService } from '../services/auth-service';
 import { usePrisma } from './prisma';
 import { SlidingWindowRateLimiter } from './rate-limit';
+import { isSameOriginRequest, selectTrustedClientIp } from './request-security';
 
 export const ADMIN_SESSION_COOKIE = 'nookfolio_admin_session';
 const SESSION_MAX_AGE_SECONDS = 7 * 24 * 60 * 60;
@@ -56,30 +57,30 @@ export function clearSessionCookie(event: H3Event) {
 }
 
 export function consumeLoginAttempt(event: H3Event) {
-  const key = getRequestIP(event, { xForwardedFor: true }) ?? 'unknown';
+  const key = getTrustedClientIp(event);
   return loginLimiter.consume(key);
 }
 
 export function consumeVerificationAttempt(event: H3Event, action: 'verify' | 'resend') {
-  const ip = getRequestIP(event, { xForwardedFor: true }) ?? 'unknown';
+  const ip = getTrustedClientIp(event);
   return (action === 'verify' ? verificationLimiter : resendLimiter).consume(`${ip}:${action}`);
 }
 
-export function assertSameOrigin(event: H3Event) {
+export function assertSameOrigin(event: H3Event, options: { required?: boolean } = {}) {
   const origin = getHeader(event, 'origin');
-  if (!origin) return;
+  if (!origin && !options.required) return;
 
   const host = getHeader(event, 'x-forwarded-host') ?? getHeader(event, 'host');
-  let originHost: string | undefined;
-  try {
-    originHost = new URL(origin).host;
-  } catch {
+  if (!isSameOriginRequest(origin, host)) {
     throw new AuthError(403, 'FORBIDDEN_ORIGIN', 'Request origin is not allowed');
   }
+}
 
-  if (!host || originHost !== host) {
-    throw new AuthError(403, 'FORBIDDEN_ORIGIN', 'Request origin is not allowed');
-  }
+export function getTrustedClientIp(event: H3Event) {
+  return selectTrustedClientIp(
+    getHeader(event, 'x-forwarded-for'),
+    getRequestIP(event, { xForwardedFor: false }),
+  );
 }
 
 export async function requireAdmin(event: H3Event) {

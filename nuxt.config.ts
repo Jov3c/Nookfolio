@@ -5,6 +5,10 @@ export default defineNuxtConfig({
   modules: ['@nuxt/eslint'],
   app: {
     head: {
+      link: [
+        { rel: 'icon', type: 'image/png', href: '/nookfolio-icon.png' },
+        { rel: 'apple-touch-icon', href: '/nookfolio-icon.png' },
+      ],
       script: [
         {
           innerHTML:

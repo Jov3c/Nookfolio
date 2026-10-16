@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { parseBootstrapConfig } from '../../server/services/admin-bootstrap';
 import { SlidingWindowRateLimiter } from '../../server/utils/rate-limit';
+import { isSameOriginRequest, selectTrustedClientIp } from '../../server/utils/request-security';
 import {
   createSessionToken,
   hashPassword,
@@ -53,5 +54,16 @@ describe('admin authentication security', () => {
     expect(limiter.consume('ip', 100).allowed).toBe(true);
     expect(limiter.consume('ip', 200).allowed).toBe(false);
     expect(limiter.consume('ip', 1_001).allowed).toBe(true);
+  });
+
+  it('uses the proxy-appended client address instead of a spoofed forwarded address', () => {
+    expect(selectTrustedClientIp('198.51.100.11, 203.0.113.8', '127.0.0.1')).toBe('203.0.113.8');
+    expect(selectTrustedClientIp('not-an-ip', '127.0.0.1')).toBe('127.0.0.1');
+  });
+
+  it('requires an exact origin match for authenticated writes', () => {
+    expect(isSameOriginRequest('https://jov3.cloud', 'jov3.cloud')).toBe(true);
+    expect(isSameOriginRequest('https://evil.example', 'jov3.cloud')).toBe(false);
+    expect(isSameOriginRequest(undefined, 'jov3.cloud')).toBe(false);
   });
 });

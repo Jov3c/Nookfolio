@@ -14,6 +14,7 @@ describe('database contract', () => {
   it.each([
     'AdminUser',
     'AdminSession',
+    'AdminLoginChallenge',
     'SiteProfile',
     'MediaAsset',
     'EmailVerification',
@@ -45,6 +46,20 @@ describe('database contract', () => {
     expect(schema).toContain('tokenHash');
     expect(schema).toContain('@db.Char(64)');
     expect(schema).not.toMatch(/\btoken\s+String/);
+  });
+
+  it('stores admin login challenges with hash-only secrets and bounded attempts', () => {
+    expect(schema).toContain('model AdminLoginChallenge {');
+    expect(schema).toContain('challengeTokenHash');
+    expect(schema).toContain('codeHash');
+    expect(schema).toContain('attemptsRemaining');
+    expect(schema).toContain('consumedAt');
+    expect(schema).toContain('expiresAt');
+    expect(schema).not.toMatch(/model AdminLoginChallenge \{[\s\S]*\bcode\s+String/);
+  });
+
+  it('supports administrator review before guestbook publication', () => {
+    expect(schema).toMatch(/enum ModerationStatus \{[\s\S]*PENDING_REVIEW/);
   });
 
   it('uses UUID identifiers and mapped snake-case tables', () => {

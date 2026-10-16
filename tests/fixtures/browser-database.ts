@@ -2,6 +2,7 @@ import type { PrismaClient } from '../../server/generated/prisma/client';
 
 export const BROWSER_RESET_TABLES = [
   'admin_sessions',
+  'admin_login_challenges',
   'admin_users',
   'site_profile',
   'media_assets',

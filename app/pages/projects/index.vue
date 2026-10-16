@@ -26,11 +26,7 @@ usePageSeo({
 
 <template>
   <div class="page-container projects-page">
-    <StandardHero
-      eyebrow="SELECTED WORK"
-      title="Projects"
-      description="一些正在构建、持续维护或已经完成的项目。点击卡片进入项目 README。"
-    />
+    <StandardHero eyebrow="SELECTED WORK" title="Projects" description="项目卡片集" />
 
     <div class="projects-toolbar" aria-live="polite">
       <span v-if="showPrototypeSkeleton || pending">正在加载项目…</span>

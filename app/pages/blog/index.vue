@@ -51,11 +51,7 @@ usePageSeo({
       <CategoryFilter :categories="categoriesResponse?.data ?? []" />
     </template>
     <template #hero>
-      <StandardHero
-        eyebrow="WRITING"
-        title="Blog"
-        description="记录 AI、产品、开发和一些值得长期保留的想法。"
-      />
+      <StandardHero eyebrow="WRITING" title="Blog" description="记录想法和生活" />
     </template>
     <div
       v-if="showPrototypeSkeleton || pending"

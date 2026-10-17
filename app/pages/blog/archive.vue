@@ -3,6 +3,7 @@ import BlogChrome from '~/components/blog/BlogChrome.vue';
 import ErrorState from '~/components/ui/ErrorState.vue';
 import StandardHero from '~/components/ui/StandardHero.vue';
 import type { PublicArchiveResponse } from '~/types/blog';
+import { formatPostMonthDay } from '~/utils/content';
 
 usePageSeo({
   title: 'Archive — Blog — Nookfolio',
@@ -50,7 +51,7 @@ const { data, pending, error, refresh } =
             <h3>{{ month.month }}月</h3>
             <ul>
               <li v-for="item in month.items" :key="item.id">
-                <time :datetime="item.publishedAt">{{ item.publishedAt.slice(5, 10) }}</time>
+                <time :datetime="item.publishedAt">{{ formatPostMonthDay(item.publishedAt) }}</time>
                 <NuxtLink :to="`/blog/${item.slug}`">{{ item.title }}</NuxtLink>
                 <small>{{ item.category }}</small>
               </li>

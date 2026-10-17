@@ -9,8 +9,29 @@ export function isSafeExternalUrl(value: string | undefined): value is string {
   }
 }
 
+function shanghaiDateParts(value: string) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Shanghai',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date(value));
+  const part = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((item) => item.type === type)?.value ?? '';
+
+  return { year: part('year'), month: part('month'), day: part('day') };
+}
+
 export function formatPostDate(value: string) {
-  return value.replace(/-/g, '.').slice(0, 10);
+  if (!value) return '';
+  const { year, month, day } = shanghaiDateParts(value);
+  return `${year}.${month}.${day}`;
+}
+
+export function formatPostMonthDay(value: string) {
+  if (!value) return '';
+  const { month, day } = shanghaiDateParts(value);
+  return `${month}-${day}`;
 }
 
 export function formatPostDateTime(value: string) {

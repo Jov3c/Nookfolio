@@ -188,7 +188,7 @@ onMounted(load);
             </div>
             <span>修改后仍保持发布状态</span>
           </div>
-          <PostEditorFields
+          <AdminPostEditorFields
             v-model="form"
             :categories="categories"
             :media="media"

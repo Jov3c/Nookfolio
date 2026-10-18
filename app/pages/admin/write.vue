@@ -203,7 +203,7 @@ onMounted(load);
         </div>
       </div>
 
-      <PostEditorFields
+      <AdminPostEditorFields
         v-model="form"
         :categories="categories"
         :media="media"

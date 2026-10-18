@@ -3,7 +3,14 @@ import { renderMarkdown } from '#shared/markdown';
 import type { AdminMediaOption, BlogCategory } from '~/types/blog';
 import type { PostEditorFormValue } from '~/utils/post-editor';
 
-defineProps<{ categories: BlogCategory[]; media: AdminMediaOption[] }>();
+withDefaults(
+  defineProps<{
+    categories: BlogCategory[];
+    media: AdminMediaOption[];
+    showSlug?: boolean;
+  }>(),
+  { showSlug: true },
+);
 const emit = defineEmits<{ imported: [fileName: string]; importError: [message: string] }>();
 const form = defineModel<PostEditorFormValue>({ required: true });
 const previewHtml = computed(() => renderMarkdown(form.value.markdownBody));
@@ -28,7 +35,9 @@ async function importMarkdown(event: Event) {
   </div>
   <div class="post-form-grid">
     <label><span>标题</span><input v-model="form.title" maxlength="220" /></label>
-    <label><span>路径标识</span><input v-model="form.slug" maxlength="160" /></label>
+    <label v-if="showSlug"
+      ><span>路径标识</span><input v-model="form.slug" maxlength="160"
+    /></label>
     <label>
       <span>分类</span>
       <select v-model="form.categoryId">

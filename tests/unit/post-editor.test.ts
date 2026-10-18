@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { createDraftPayload, validatePostForPublish } from '../../app/utils/post-editor';
+import {
+  createAutomaticPostSlug,
+  createDraftPayload,
+  validatePostForPublish,
+} from '../../app/utils/post-editor';
 
 const emptyForm = {
   title: '',
@@ -31,5 +35,29 @@ describe('article publishing editor', () => {
       '请填写文章摘要',
       '请填写文章正文',
     ]);
+  });
+
+  it('creates a readable automatic path from an English title', () => {
+    expect(createAutomaticPostSlug('My First Post!', 'post-20261018-a7k3')).toBe('my-first-post');
+  });
+
+  it('uses the stable fallback path when a title has no latin words', () => {
+    expect(createAutomaticPostSlug('我的第一篇文章', 'post-20261018-a7k3')).toBe(
+      'post-20261018-a7k3',
+    );
+  });
+
+  it('allows the publishing page to validate content with an automatic path', () => {
+    expect(
+      validatePostForPublish(
+        {
+          ...emptyForm,
+          title: '自动路径文章',
+          excerpt: '文章摘要',
+          markdownBody: '# 正文',
+        },
+        { automaticSlug: true },
+      ),
+    ).toEqual([]);
   });
 });

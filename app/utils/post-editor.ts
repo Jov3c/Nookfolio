@@ -11,6 +11,18 @@ export interface PostEditorFormValue {
 
 const validSlug = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
+export function createAutomaticPostSlug(title: string, fallbackSlug: string) {
+  const readableSlug = title
+    .normalize('NFKD')
+    .toLowerCase()
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 120)
+    .replace(/-+$/g, '');
+  return readableSlug || fallbackSlug;
+}
+
 export function createDraftPayload(form: PostEditorFormValue, fallbackSlug: string) {
   return {
     title: form.title.trim() || '未命名文章',
@@ -25,11 +37,15 @@ export function createDraftPayload(form: PostEditorFormValue, fallbackSlug: stri
   };
 }
 
-export function validatePostForPublish(form: PostEditorFormValue) {
+export function validatePostForPublish(
+  form: PostEditorFormValue,
+  options: { automaticSlug?: boolean } = {},
+) {
   const errors: string[] = [];
   if (!form.title.trim()) errors.push('请填写文章标题');
-  if (!form.slug.trim()) errors.push('请填写路径标识');
-  else if (!validSlug.test(form.slug.trim())) errors.push('路径标识只能使用小写字母、数字和连字符');
+  if (!form.slug.trim() && !options.automaticSlug) errors.push('请填写路径标识');
+  else if (form.slug.trim() && !validSlug.test(form.slug.trim()))
+    errors.push('路径标识只能使用小写字母、数字和连字符');
   if (!form.excerpt.trim()) errors.push('请填写文章摘要');
   if (!form.categoryId) errors.push('请选择文章分类');
   if (!form.markdownBody.trim()) errors.push('请填写文章正文');

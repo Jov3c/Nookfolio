@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { AdminMediaOption, AdminPost, BlogCategory } from '~/types/blog';
 import {
+  createAutomaticPostSlug,
   createDraftPayload,
   validatePostForPublish,
   type PostEditorFormValue,
@@ -12,7 +13,7 @@ const route = useRoute();
 const categories = ref<BlogCategory[]>([]);
 const media = ref<AdminMediaOption[]>([]);
 const draftId = ref('');
-const fallbackSlug = ref(`draft-${Date.now().toString(36)}`);
+const fallbackSlug = ref(createFallbackSlug());
 const isLoading = ref(true);
 const isPublishing = ref(false);
 const saveState = ref<'idle' | 'saving' | 'saved' | 'error'>('idle');
@@ -91,6 +92,9 @@ watch(
 
 async function persistDraft() {
   if (!form.categoryId) throw new Error('NO_CATEGORY');
+  if (!draftId.value) {
+    fallbackSlug.value = createAutomaticPostSlug(form.title, fallbackSlug.value);
+  }
   const body = createDraftPayload(form, fallbackSlug.value);
   const result = draftId.value
     ? await $fetch<{ data: AdminPost }>(`/api/v1/admin/posts/${draftId.value}`, {
@@ -125,7 +129,7 @@ async function retrySave() {
 }
 
 async function publishPost() {
-  const validationErrors = validatePostForPublish(form);
+  const validationErrors = validatePostForPublish(form, { automaticSlug: true });
   if (validationErrors.length) {
     errorMessage.value = validationErrors.join('；');
     return;
@@ -165,6 +169,14 @@ function createEmptyForm(): PostEditorFormValue {
     seoTitle: '',
     seoDescription: '',
   };
+}
+
+function createFallbackSlug() {
+  const today = new Date();
+  const date = [today.getFullYear(), today.getMonth() + 1, today.getDate()]
+    .map((part, index) => String(part).padStart(index === 0 ? 4 : 2, '0'))
+    .join('');
+  return `post-${date}-${Math.random().toString(36).slice(2, 6)}`;
 }
 
 onBeforeRouteLeave(async () => {
@@ -207,6 +219,7 @@ onMounted(load);
         v-model="form"
         :categories="categories"
         :media="media"
+        :show-slug="false"
         @imported="notice = `已导入 ${$event}，正在自动保存。`"
         @import-error="errorMessage = $event"
       />

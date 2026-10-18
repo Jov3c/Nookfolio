@@ -21,6 +21,7 @@ if (!post.value?.data) {
 const article = post.value.data;
 const articleRoot = ref<HTMLElement | null>(null);
 const articleBody = ref<HTMLElement | null>(null);
+const hasTableOfContents = ref(false);
 usePageSeo({
   title: `${article.seoTitle || article.title} — Nookfolio`,
   description: article.seoDescription || article.excerpt,
@@ -32,8 +33,15 @@ usePageSeo({
 
 <template>
   <BlogChrome :show-sidebar="false" :show-subnav="false">
-    <div class="article-reading-layout">
-      <ArticleTableOfContents :article-root="articleRoot" :content-root="articleBody" />
+    <div
+      class="article-reading-layout"
+      :class="{ 'article-reading-layout--with-toc': hasTableOfContents }"
+    >
+      <ArticleTableOfContents
+        :article-root="articleRoot"
+        :content-root="articleBody"
+        @headings-change="hasTableOfContents = $event"
+      />
       <article ref="articleRoot" class="article-page">
         <NuxtLink class="back-link" to="/blog">← 返回博客</NuxtLink>
         <header class="article-page__header">

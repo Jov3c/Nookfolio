@@ -4,6 +4,7 @@ import {
   appendUniquePosts,
   createHeadingId,
   getReadingProgress,
+  hasArticleTableOfContents,
 } from '../../app/utils/blog-reading';
 
 describe('blog reading experience', () => {
@@ -32,5 +33,10 @@ describe('blog reading experience', () => {
     expect(getReadingProgress(200, 200, 1800, 800)).toBe(0);
     expect(getReadingProgress(700, 200, 1800, 800)).toBe(0.5);
     expect(getReadingProgress(1600, 200, 1800, 800)).toBe(1);
+  });
+
+  it('uses the two-column reading layout only when headings exist', () => {
+    expect(hasArticleTableOfContents([])).toBe(false);
+    expect(hasArticleTableOfContents([{ id: 'section' }])).toBe(true);
   });
 });

@@ -26,3 +26,7 @@ export function getReadingProgress(
   const readableDistance = Math.max(articleHeight - viewportHeight, 1);
   return Math.min(1, Math.max(0, (scrollY - articleTop) / readableDistance));
 }
+
+export function hasArticleTableOfContents(headings: Array<{ id: string }>) {
+  return headings.length > 0;
+}

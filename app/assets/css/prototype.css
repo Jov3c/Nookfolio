@@ -896,9 +896,13 @@ html[data-blog-transition='active'] .article-page__header {
 
 .article-reading-layout {
   display: grid;
-  grid-template-columns: 210px minmax(0, 820px);
+  grid-template-columns: minmax(0, 820px);
   justify-content: center;
   gap: 64px;
+}
+
+.article-reading-layout--with-toc {
+  grid-template-columns: 210px minmax(0, 820px);
 }
 
 .article-reading-layout .article-page {

@@ -24,6 +24,7 @@ const navigation = [
   {
     label: '内容管理',
     items: [
+      { label: '发布文章', text: '发布文章', to: '/admin/write' },
       { label: '文章管理', text: '文章', to: '/admin/posts' },
       { label: '分类管理', text: '分类', to: '/admin/categories' },
       { label: '项目管理', text: '项目', to: '/admin/projects' },

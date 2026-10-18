@@ -210,6 +210,15 @@
 }
 
 @media (max-width: 720px) {
+  .draft-list li {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .draft-list__actions {
+    flex-wrap: wrap;
+  }
+
   .about-fact-row {
     grid-template-columns: 1fr;
   }

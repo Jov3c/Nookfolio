@@ -20,7 +20,8 @@ const overview = computed(() => [
 ]);
 
 const shortcuts = [
-  { title: '文章管理', description: '撰写、发布和维护博客文章', to: '/admin/posts' },
+  { title: '发布文章', description: '撰写新文章并自动保存草稿', to: '/admin/write' },
+  { title: '文章管理', description: '修改或删除已经发布的文章', to: '/admin/posts' },
   { title: '项目管理', description: '维护项目展示和项目详情', to: '/admin/projects' },
   { title: '互动管理', description: '处理评论、留言和友链', to: '/admin/comments' },
   { title: '首页资料', description: '更新身份信息和首页入口', to: '/admin/home' },

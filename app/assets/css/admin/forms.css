@@ -177,6 +177,31 @@
   font-size: 0.7rem;
 }
 
+.post-autosave-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-muted);
+  font-size: 0.7rem;
+}
+
+.post-autosave-status[data-state='saving'] {
+  color: var(--color-accent);
+}
+
+.post-autosave-status[data-state='error'] {
+  color: #8c3d34;
+}
+
+.post-autosave-status button {
+  padding: 2px 8px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
 .home-entry-icon-field > span {
   color: var(--color-muted);
   font-size: 0.66rem;

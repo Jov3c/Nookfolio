@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { createHeadingId, getReadingProgress } from '~/utils/blog-reading';
+import {
+  createHeadingId,
+  getReadingProgress,
+  hasArticleTableOfContents,
+} from '~/utils/blog-reading';
 
 const props = defineProps<{
   articleRoot: HTMLElement | null;
   contentRoot: HTMLElement | null;
 }>();
+const emit = defineEmits<{ headingsChange: [available: boolean] }>();
 
 interface TocHeading {
   id: string;
@@ -30,6 +35,7 @@ function collectHeadings() {
       level: Number(heading.tagName[1]),
     };
   });
+  emit('headingsChange', hasArticleTableOfContents(headings.value));
   activeId.value = headings.value[0]?.id ?? '';
   observeHeadings();
 }

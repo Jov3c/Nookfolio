@@ -9,10 +9,9 @@ test('admin can create, publish, and remove a database-backed post', async ({ pa
   const suffix = Date.now();
   let createdId = '';
   try {
-    await page.goto('/admin/posts');
+    await page.goto('/admin/write');
     await page.waitForLoadState('networkidle');
-    await expect(page.getByRole('heading', { name: '文章管理', exact: true })).toBeVisible();
-    await page.getByRole('button', { name: '新建文章' }).click();
+    await expect(page.getByRole('heading', { name: '发布文章', exact: true })).toBeVisible();
     await page.getByRole('textbox', { name: '标题', exact: true }).fill(`Stage Six Post ${suffix}`);
     await page
       .getByRole('textbox', { name: '路径标识', exact: true })
@@ -23,17 +22,14 @@ test('admin can create, publish, and remove a database-backed post', async ({ pa
     await page
       .getByLabel('Markdown 源码')
       .fill(`# Stage Six E2E\n\nCreated from the admin editor.`);
-    await page.getByRole('button', { name: '创建文章' }).click();
-    await expect(page.getByRole('status')).toContainText('已创建');
+    await page.getByRole('button', { name: '发布文章' }).click();
+    await expect(page).toHaveURL(/\/admin\/posts/);
 
     const postsResponse = await page.request.get('/api/v1/admin/posts');
     const posts = (await postsResponse.json()).data as Array<{ id: string; slug: string }>;
     createdId = posts.find((post) => post.slug === `stage-six-e2e-${suffix}`)?.id ?? '';
     expect(createdId).not.toBe('');
 
-    await expect(page.getByRole('button', { name: '立即发布' })).toBeVisible();
-    await page.getByRole('button', { name: '立即发布' }).click();
-    await expect(page.getByRole('status')).toContainText('已发布');
     const publicResponse = await page.request.get(`/api/v1/public/posts/stage-six-e2e-${suffix}`);
     expect(publicResponse.ok()).toBe(true);
   } finally {

@@ -909,6 +909,7 @@ html[data-blog-transition='active'] .article-page__header {
 .article-toc {
   position: sticky;
   top: 112px;
+  align-self: start;
   min-width: 0;
   padding-top: 48px;
 }

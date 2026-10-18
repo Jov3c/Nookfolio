@@ -2,9 +2,11 @@
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
+  <BackToTopButton />
 </template>
 
 <script setup lang="ts">
+import BackToTopButton from '~/components/shell/BackToTopButton.vue';
 import { useSiteTheme } from '~/composables/useSiteTheme';
 
 const { theme } = useSiteTheme();

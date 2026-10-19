@@ -4,6 +4,7 @@ export interface PublicCommunityReply {
   id: string;
   nickname: string;
   content: string;
+  replyToNickname: string | null;
   authorType: AuthorType;
   createdAt: string;
 }
@@ -12,6 +13,7 @@ export interface PublicComment {
   id: string;
   nickname: string;
   content: string;
+  replyToNickname: string | null;
   authorType: AuthorType;
   createdAt: string;
   replies: PublicCommunityReply[];
@@ -21,6 +23,7 @@ export interface PublicMessage {
   id: string;
   nickname: string;
   content: string;
+  replyToNickname: string | null;
   authorType: AuthorType;
   createdAt: string;
   replies: PublicCommunityReply[];

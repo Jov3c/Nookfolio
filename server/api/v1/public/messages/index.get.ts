@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
       event,
       400,
       'VALIDATION_ERROR',
-      'Message query is invalid',
+      '留言列表参数无效。',
       parsed.error.flatten(),
     );
   }

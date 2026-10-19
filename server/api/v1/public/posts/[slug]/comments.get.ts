@@ -12,13 +12,13 @@ export default defineEventHandler(async (event) => {
       event,
       400,
       'VALIDATION_ERROR',
-      'Comment query is invalid',
+      '评论列表参数无效。',
       parsed.error.flatten(),
     );
   }
 
   const slug = getRouterParam(event, 'slug')?.trim().toLowerCase();
-  if (!slug) return apiError(event, 400, 'INVALID_POST_SLUG', 'Post slug is required');
+  if (!slug) return apiError(event, 400, 'INVALID_POST_SLUG', '文章路径无效。');
 
   try {
     const result = await useCommunityService().listPublicComments(slug, parsed.data);

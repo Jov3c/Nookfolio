@@ -93,18 +93,31 @@ class MemoryCommunityRepository {
     return record;
   }
 
-  async listPublicComments(postId: string) {
-    const items = this.comments.filter(
-      (entry) => entry.postId === postId && entry.parentId === null && entry.status === 'PUBLISHED',
-    );
-    return { items, total: items.length, publishedTotal: this.comments.length };
+  async listPublicComments(postId: string, query: { page: number; pageSize: number }) {
+    const roots = this.comments
+      .filter(
+        (entry) => entry.postId === postId && entry.parentId === null && entry.status === 'PUBLISHED',
+      )
+      .sort((left, right) => right.createdAt.getTime() - left.createdAt.getTime());
+    const items = roots
+      .slice((query.page - 1) * query.pageSize, query.page * query.pageSize)
+      .map((root) => ({
+        ...root,
+        replies: this.comments
+          .filter((entry) => entry.parentId === root.id && entry.status === 'PUBLISHED')
+          .sort((left, right) => left.createdAt.getTime() - right.createdAt.getTime()),
+      }));
+    return { items, total: roots.length, publishedTotal: this.comments.filter((entry) => entry.status === 'PUBLISHED').length };
   }
 
-  async listPublicMessages() {
-    const items = this.messages.filter(
-      (entry) => entry.parentId === null && entry.status === 'PUBLISHED' && !entry.isPrivate,
-    );
-    return { items, total: items.length };
+  async listPublicMessages(query: { page: number; pageSize: number }) {
+    const roots = this.messages
+      .filter((entry) => entry.parentId === null && entry.status === 'PUBLISHED' && !entry.isPrivate)
+      .sort((left, right) => right.createdAt.getTime() - left.createdAt.getTime());
+    return {
+      items: roots.slice((query.page - 1) * query.pageSize, query.page * query.pageSize),
+      total: roots.length,
+    };
   }
 }
 
@@ -177,5 +190,38 @@ describe('community service instant publication', () => {
     await expect(
       service.submitMessage(messageInput({ content: 'same text' }), 'ip-a'),
     ).rejects.toMatchObject<Partial<CommunityError>>({ code: 'DUPLICATE_CONTENT' });
+  });
+
+  it('paginates only public comment roots and keeps reply metadata', async () => {
+    const { repository, service } = serviceFixture();
+    for (let index = 0; index < 22; index += 1) {
+      await repository.createComment({
+        postId: repository.post.id,
+        parentId: null,
+        replyToNickname: null,
+        nickname: `访客${index}`,
+        email: null,
+        content: `内容${index}`,
+        ipHash: `ip-${index}`,
+      });
+    }
+    repository.comments[0]!.status = 'HIDDEN';
+
+    const secondPage = await service.listPublicComments('hello', { page: 2, pageSize: 20 });
+
+    expect(secondPage.items).toHaveLength(1);
+    expect(secondPage.total).toBe(21);
+    expect(secondPage.items[0]).toHaveProperty('replyToNickname', null);
+  });
+
+  it('never counts private messages in public pagination', async () => {
+    const { repository, service } = serviceFixture();
+    await service.submitMessage(messageInput({ content: '公开', isPrivate: false }), 'ip-public');
+    await service.submitMessage(messageInput({ content: '私密', isPrivate: true }), 'ip-private');
+
+    const page = await service.listPublicMessages({ page: 1, pageSize: 20 });
+
+    expect(page.total).toBe(1);
+    expect(page.items.map((item) => item.content)).toEqual(['公开']);
   });
 });

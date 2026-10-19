@@ -10,7 +10,7 @@ describe('admin design contract', () => {
   it('uses a small entry stylesheet with focused admin modules', () => {
     const layout = read('app/layouts/admin.vue');
     const css = read('app/assets/css/admin.css');
-    const modules = ['auth', 'shell', 'forms', 'content', 'responsive'];
+    const modules = ['auth', 'shell', 'forms', 'content', 'paper', 'responsive'];
 
     expect(layout).toContain('<style src="~/assets/css/admin.css"></style>');
     expect(layout).not.toContain('admin-shell.css');
@@ -34,12 +34,26 @@ describe('admin design contract', () => {
     expect(layout).toContain(':aria-label="item.label"');
     expect(layout).toContain('aria-controls="admin-sidebar"');
     expect(layout).toContain(':aria-expanded="isMobileOpen"');
-    expect(shellCss).toContain('grid-template-columns: 224px minmax(0, 1fr)');
+    expect(shellCss).toContain('grid-template-columns: 245px minmax(0, 1fr)');
     expect(shellCss).toContain('var(--color-bg)');
     expect(shellCss).toContain('var(--color-panel)');
     expect(shellCss).toContain('var(--color-accent)');
     expect(shellCss).not.toContain('#f5f7fa');
     expect(shellCss).not.toContain('#303133');
+  });
+
+  it('uses the paper editorial workspace without oversized page titles', () => {
+    const shellCss = read('app/assets/css/admin/shell.css');
+    const paperCss = read('app/assets/css/admin/paper.css');
+
+    expect(shellCss).toContain('grid-template-columns: 245px minmax(0, 1fr)');
+    expect(paperCss).toContain('--admin-paper');
+    expect(paperCss).toContain('.admin-page-heading h1');
+    expect(shellCss).toContain('font-size: clamp(1.55rem, 2.2vw, 2.1rem)');
+    expect(paperCss).toContain('.admin-dashboard-section::before');
+    expect(paperCss).toContain('grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr)');
+    expect(paperCss).toContain('.admin-dashboard > .admin-dashboard-section:nth-of-type(3)');
+    expect(paperCss).toContain('font-family: Georgia');
   });
 
   it('keeps long indexes usable before editors on narrow screens', () => {

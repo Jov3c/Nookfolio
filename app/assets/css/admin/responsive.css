@@ -25,7 +25,7 @@
   .admin-sidebar {
     position: fixed;
     left: 0;
-    width: 224px;
+    width: 245px;
     transform: translateX(-100%);
     visibility: hidden;
     transition:

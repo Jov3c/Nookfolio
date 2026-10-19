@@ -16,7 +16,7 @@
 .admin-layout {
   display: grid;
   min-height: 100vh;
-  grid-template-columns: 224px minmax(0, 1fr);
+  grid-template-columns: 245px minmax(0, 1fr);
   background: var(--color-bg);
 }
 
@@ -28,10 +28,10 @@
   height: 100vh;
   min-height: 0;
   flex-direction: column;
-  padding: 24px 16px 18px;
+  padding: 28px 20px 20px;
   overflow-y: auto;
   border-right: 1px solid var(--color-line);
-  background: #f0f2ed;
+  background: var(--admin-paper-deep, #e8e5da);
   scrollbar-width: none;
 }
 
@@ -43,16 +43,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 10px 22px;
+  padding: 0 8px 30px;
 }
 
 .admin-wordmark {
   display: inline-flex;
   align-items: center;
   color: var(--color-text);
-  font-size: 0.95rem;
+  font-family: Georgia, 'Songti SC', serif;
+  font-size: 1.15rem;
   font-weight: 900;
-  letter-spacing: -0.05em;
+  letter-spacing: 0.01em;
 }
 
 .admin-wordmark__dot {
@@ -103,10 +104,10 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 10px;
-  margin: 18px 0 4px;
+  margin: 20px 0 5px;
   border: 0;
   background: transparent;
-  color: #979d94;
+  color: #8b887e;
   cursor: pointer;
   font: inherit;
   font-size: 0.6rem;
@@ -167,12 +168,12 @@
   position: relative;
   z-index: 1;
   display: flex;
-  min-height: 36px;
+  min-height: 38px;
   align-items: center;
   padding: 7px 10px;
   border: 1px solid transparent;
-  border-radius: 8px;
-  color: #697067;
+  border-radius: 3px;
+  color: #65635a;
   font-size: 0.75rem;
   transition: color 160ms ease;
 }
@@ -191,7 +192,7 @@
   grid-template-columns: 34px minmax(0, 1fr);
   align-items: center;
   gap: 10px;
-  padding: 16px 10px 0;
+  padding: 18px 8px 0;
   margin-top: auto;
   border-top: 1px solid var(--color-line);
 }
@@ -239,12 +240,12 @@
   z-index: 20;
   top: 0;
   display: flex;
-  min-height: 58px;
+  min-height: 62px;
   align-items: center;
   justify-content: space-between;
-  padding: 0 34px;
+  padding: 0 42px;
   border-bottom: 1px solid rgb(223 227 220 / 88%);
-  background: rgb(245 246 243 / 90%);
+  background: rgb(239 237 229 / 88%);
   backdrop-filter: blur(16px);
 }
 
@@ -288,9 +289,9 @@
 }
 
 .admin-main {
-  width: min(calc(100% - 68px), 1320px);
+  width: min(calc(100% - 84px), 1280px);
   margin-inline: auto;
-  padding-block: 46px 82px;
+  padding-block: 38px 86px;
 }
 
 .admin-page-heading {
@@ -298,7 +299,7 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 24px;
-  padding-bottom: 30px;
+  padding-bottom: 24px;
 }
 
 .admin-page-heading p {
@@ -312,9 +313,9 @@
 
 .admin-page-heading h1 {
   margin: 0;
-  font-size: clamp(2.8rem, 5vw, 4.8rem);
-  letter-spacing: -0.07em;
-  line-height: 0.9;
+  font-size: clamp(1.55rem, 2.2vw, 2.1rem);
+  letter-spacing: -0.045em;
+  line-height: 1.08;
 }
 
 .admin-page-heading > span {

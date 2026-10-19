@@ -534,7 +534,7 @@
   animation: prototype-card-reveal 360ms var(--motion-ease-out) var(--reveal-delay, 0ms) both;
 }
 
-.post-card.is-revealed.post-card--leaving {
+.post-card.post-card--leaving {
   animation: post-card-leave 170ms ease-out both;
   pointer-events: none;
   transform: translateY(0);

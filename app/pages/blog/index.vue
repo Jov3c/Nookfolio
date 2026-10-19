@@ -8,7 +8,7 @@ import StandardHero from '~/components/ui/StandardHero.vue';
 import type { PublicCategoriesResponse, PublicPost, PublicPostsResponse } from '~/types/blog';
 import { appendUniquePosts } from '~/utils/blog-reading';
 
-definePageMeta({ layout: 'blog-prototype' });
+definePageMeta({ layout: 'blog-prototype', keepalive: true });
 
 const route = useRoute();
 const selectedCategory = computed(() =>
@@ -28,11 +28,23 @@ const currentPage = ref(1);
 const loadingMore = ref(false);
 const loadMoreError = ref(false);
 const loadMoreSentinel = ref<HTMLElement | null>(null);
+const savedScrollY = ref(0);
 const total = computed(() => postsResponse.value?.meta.total ?? 0);
 const hasMore = computed(() => posts.value.length < total.value);
 
 let skeletonTimer: number | undefined;
 let loadMoreObserver: IntersectionObserver | undefined;
+
+function observeLoadMore() {
+  loadMoreObserver?.disconnect();
+  loadMoreObserver = new IntersectionObserver(
+    ([entry]) => {
+      if (entry?.isIntersecting) void loadMore();
+    },
+    { rootMargin: '360px 0px' },
+  );
+  if (loadMoreSentinel.value) loadMoreObserver.observe(loadMoreSentinel.value);
+}
 
 watch(loadMoreSentinel, (sentinel, previous) => {
   if (previous) loadMoreObserver?.unobserve(previous);
@@ -71,14 +83,21 @@ async function loadMore() {
 
 onMounted(() => {
   skeletonTimer = window.setTimeout(() => (showPrototypeSkeleton.value = false), 900);
-  loadMoreObserver = new IntersectionObserver(
-    ([entry]) => {
-      if (entry?.isIntersecting) void loadMore();
-    },
-    { rootMargin: '360px 0px' },
-  );
-  if (loadMoreSentinel.value) loadMoreObserver.observe(loadMoreSentinel.value);
 });
+onBeforeRouteLeave(() => {
+  savedScrollY.value = window.scrollY;
+});
+onActivated(async () => {
+  observeLoadMore();
+  if (savedScrollY.value <= 0) return;
+  await nextTick();
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: savedScrollY.value, behavior: 'auto' });
+    });
+  });
+});
+onDeactivated(() => loadMoreObserver?.disconnect());
 onBeforeUnmount(() => {
   window.clearTimeout(skeletonTimer);
   loadMoreObserver?.disconnect();

@@ -45,7 +45,6 @@
 
 html {
   min-width: 320px;
-  scroll-behavior: smooth;
   scrollbar-color: transparent transparent;
   scrollbar-width: thin;
 }

@@ -115,23 +115,16 @@ body {
 }
 
 html[data-blog-transition='active']::view-transition-old(root) {
-  animation: blog-page-out 180ms cubic-bezier(0.23, 1, 0.32, 1) both;
+  animation: none;
 }
 
 html[data-blog-transition='active']::view-transition-new(root) {
-  animation: blog-page-in 240ms cubic-bezier(0.23, 1, 0.32, 1) both;
-}
-
-@keyframes blog-page-out {
-  to {
-    opacity: 0.72;
-  }
+  animation: blog-page-in 220ms cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 
 @keyframes blog-page-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
   }
 }
 

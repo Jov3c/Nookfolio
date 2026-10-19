@@ -534,6 +534,17 @@
   animation: prototype-card-reveal 360ms var(--motion-ease-out) var(--reveal-delay, 0ms) both;
 }
 
+.post-card.is-revealed.post-card--leaving {
+  animation: post-card-leave 170ms ease-out both;
+  pointer-events: none;
+}
+
+@keyframes post-card-leave {
+  to {
+    opacity: 0;
+  }
+}
+
 .post-card.is-revealed:hover {
   box-shadow: 0 12px 28px rgb(28 34 29 / 8%);
   transform: translateY(-2px);

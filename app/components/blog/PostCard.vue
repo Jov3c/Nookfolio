@@ -3,16 +3,26 @@ import type { PublicPost } from '~/types/blog';
 import { formatPostDateTime } from '~/utils/content';
 
 const props = defineProps<{ post: PublicPost; featured?: boolean; coverVariant?: number }>();
+const leaving = ref(false);
 
 async function openPost(event: MouseEvent) {
   if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
     return;
   event.preventDefault();
+  if (leaving.value) return;
   const target = `/blog/${props.post.slug}`;
   const startViewTransition = document.startViewTransition?.bind(document);
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if (!startViewTransition || reduceMotion) {
+  if (reduceMotion) {
+    await navigateTo(target);
+    return;
+  }
+
+  leaving.value = true;
+  await new Promise((resolve) => window.setTimeout(resolve, 170));
+
+  if (!startViewTransition) {
     await navigateTo(target);
     return;
   }
@@ -30,7 +40,7 @@ async function openPost(event: MouseEvent) {
 <template>
   <a
     class="post-card"
-    :class="{ 'post-card--featured': featured }"
+    :class="{ 'post-card--featured': featured, 'post-card--leaving': leaving }"
     :href="`/blog/${post.slug}`"
     @click="openPost"
   >

@@ -25,9 +25,17 @@ describe('blog list navigation state', () => {
 
   it('uses one navigation handler for article cards so the transition cannot race the router link', () => {
     const postCard = read('app/components/blog/PostCard.vue');
+    const prototypeCss = read('app/assets/css/prototype.css');
+    const baseCss = read('app/assets/css/base.css');
 
     expect(postCard).toContain('<a');
     expect(postCard).not.toContain('<NuxtLink');
     expect(postCard).toContain('@click="openPost"');
+    expect(postCard).toContain("'post-card--leaving': leaving");
+    expect(prototypeCss).toMatch(
+      /\.post-card\.is-revealed\.post-card--leaving\s*{[^}]*animation:/s,
+    );
+    expect(baseCss).toMatch(/@keyframes blog-page-in\s*{[^}]*opacity:\s*0/s);
+    expect(baseCss).not.toMatch(/@keyframes blog-page-in\s*{[^}]*translateY/s);
   });
 });

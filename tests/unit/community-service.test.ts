@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { describe, expect, it } from 'vitest';
 
-import type { CommunityError} from '../../server/services/community-service';
+import type { CommunityError } from '../../server/services/community-service';
 import { CommunityService } from '../../server/services/community-service';
 import type { CommentCreateInput, MessageCreateInput } from '../../shared/schemas/community';
 
@@ -53,7 +53,10 @@ interface MemoryCommunityRecord {
   replies: MemoryCommunityRecord[];
 }
 
-type MemoryCommentInput = Omit<MemoryCommunityRecord, 'id' | 'authorType' | 'status' | 'verifiedAt' | 'createdAt' | 'updatedAt' | 'replies'>;
+type MemoryCommentInput = Omit<
+  MemoryCommunityRecord,
+  'id' | 'authorType' | 'status' | 'verifiedAt' | 'createdAt' | 'updatedAt' | 'replies'
+>;
 type MemoryMessageInput = Omit<MemoryCommentInput, 'postId'>;
 
 class MemoryCommunityRepository {
@@ -118,7 +121,8 @@ class MemoryCommunityRepository {
   async listPublicComments(postId: string, query: { page: number; pageSize: number }) {
     const roots = this.comments
       .filter(
-        (entry) => entry.postId === postId && entry.parentId === null && entry.status === 'PUBLISHED',
+        (entry) =>
+          entry.postId === postId && entry.parentId === null && entry.status === 'PUBLISHED',
       )
       .sort((left, right) => right.createdAt.getTime() - left.createdAt.getTime());
     const items = roots
@@ -129,12 +133,18 @@ class MemoryCommunityRepository {
           .filter((entry) => entry.parentId === root.id && entry.status === 'PUBLISHED')
           .sort((left, right) => left.createdAt.getTime() - right.createdAt.getTime()),
       }));
-    return { items, total: roots.length, publishedTotal: this.comments.filter((entry) => entry.status === 'PUBLISHED').length };
+    return {
+      items,
+      total: roots.length,
+      publishedTotal: this.comments.filter((entry) => entry.status === 'PUBLISHED').length,
+    };
   }
 
   async listPublicMessages(query: { page: number; pageSize: number }) {
     const roots = this.messages
-      .filter((entry) => entry.parentId === null && entry.status === 'PUBLISHED' && !entry.isPrivate)
+      .filter(
+        (entry) => entry.parentId === null && entry.status === 'PUBLISHED' && !entry.isPrivate,
+      )
       .sort((left, right) => right.createdAt.getTime() - left.createdAt.getTime());
     return {
       items: roots.slice((query.page - 1) * query.pageSize, query.page * query.pageSize),

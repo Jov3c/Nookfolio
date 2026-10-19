@@ -11,7 +11,9 @@ export function useVisitorIdentity() {
 
   onMounted(() => {
     try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}') as Partial<VisitorIdentity>;
+      const saved = JSON.parse(
+        localStorage.getItem(STORAGE_KEY) ?? '{}',
+      ) as Partial<VisitorIdentity>;
       nickname.value = typeof saved.nickname === 'string' ? saved.nickname : '';
       email.value = typeof saved.email === 'string' ? saved.email : '';
     } catch {
@@ -22,7 +24,10 @@ export function useVisitorIdentity() {
   watch([nickname, email], () => {
     if (!import.meta.client) return;
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ nickname: nickname.value, email: email.value }));
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ nickname: nickname.value, email: email.value }),
+      );
     } catch {
       // Keep the in-memory identity when storage is unavailable.
     }

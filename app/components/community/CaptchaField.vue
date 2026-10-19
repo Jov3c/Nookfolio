@@ -13,9 +13,12 @@ async function refresh() {
   errorMessage.value = '';
   answer.value = '';
   try {
-    const response = await $fetch<{ data: { id: string; image: string } }>('/api/v1/public/captcha', {
-      query: { purpose: props.purpose },
-    });
+    const response = await $fetch<{ data: { id: string; image: string } }>(
+      '/api/v1/public/captcha',
+      {
+        query: { purpose: props.purpose },
+      },
+    );
     image.value = response.data.image;
     emit('challenge', response.data.id);
   } catch {

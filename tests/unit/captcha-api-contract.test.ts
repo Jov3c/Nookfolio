@@ -1,12 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import { SlidingWindowRateLimiter } from '../../server/utils/rate-limit';
-import type {
-  CaptchaIssueError} from '../../server/utils/captcha';
-import {
-  issuePublicCaptcha,
-  publicCaptchaHeaders,
-} from '../../server/utils/captcha';
+import type { CaptchaIssueError } from '../../server/utils/captcha';
+import { issuePublicCaptcha, publicCaptchaHeaders } from '../../server/utils/captcha';
 
 describe('public captcha contract', () => {
   it('returns a no-store challenge without exposing its answer', async () => {

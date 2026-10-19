@@ -8,13 +8,7 @@ import { useCommunityService } from '../../../../../utils/community';
 export default defineEventHandler(async (event) => {
   const parsed = publicCommunityListQuerySchema.safeParse(getQuery(event));
   if (!parsed.success) {
-    return apiError(
-      event,
-      400,
-      'VALIDATION_ERROR',
-      '评论列表参数无效。',
-      parsed.error.flatten(),
-    );
+    return apiError(event, 400, 'VALIDATION_ERROR', '评论列表参数无效。', parsed.error.flatten());
   }
 
   const slug = getRouterParam(event, 'slug')?.trim().toLowerCase();

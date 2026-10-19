@@ -29,7 +29,10 @@ describe('public navigation contract', () => {
   });
 
   it('keeps Links standalone without the blog utility navigation', () => {
-    const links = readFileSync(resolve(import.meta.dirname, '../../app/pages/blog/links.vue'), 'utf8');
+    const links = readFileSync(
+      resolve(import.meta.dirname, '../../app/pages/blog/links.vue'),
+      'utf8',
+    );
     expect(links).toContain('<BlogChrome :show-subnav="false">');
   });
 });

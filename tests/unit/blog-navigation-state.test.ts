@@ -32,9 +32,14 @@ describe('blog list navigation state', () => {
     expect(postCard).not.toContain('<NuxtLink');
     expect(postCard).toContain('@click="openPost"');
     expect(postCard).toContain("'post-card--leaving': leaving");
+    expect(postCard).not.toContain('setTimeout');
     expect(prototypeCss).toMatch(
-      /\.post-card\.post-card--leaving\s*{[^}]*animation:[^}]*transform:\s*translateY\(0\)/s,
+      /\.post-card\.post-card--leaving\s*{[^}]*view-transition-name:\s*selected-post-card/s,
     );
+    expect(prototypeCss).toMatch(
+      /\.post-card\.post-card--leaving\s*{[^}]*transform:\s*translateY\(0\)/s,
+    );
+    expect(baseCss).toMatch(/::view-transition-old\(selected-post-card\)\s*{[^}]*animation:/s);
     expect(baseCss).toMatch(/@keyframes blog-page-in\s*{[^}]*opacity:\s*0/s);
     expect(baseCss).not.toMatch(/@keyframes blog-page-in\s*{[^}]*translateY/s);
   });

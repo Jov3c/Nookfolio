@@ -14,18 +14,13 @@ async function openPost(event: MouseEvent) {
   const startViewTransition = document.startViewTransition?.bind(document);
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if (reduceMotion) {
+  if (!startViewTransition || reduceMotion) {
     await navigateTo(target);
     return;
   }
 
   leaving.value = true;
-  await new Promise((resolve) => window.setTimeout(resolve, 170));
-
-  if (!startViewTransition) {
-    await navigateTo(target);
-    return;
-  }
+  await nextTick();
 
   document.documentElement.dataset.blogTransition = 'active';
   startViewTransition(async () => {
@@ -33,6 +28,7 @@ async function openPost(event: MouseEvent) {
     await nextTick();
   }).finished.finally(() => {
     delete document.documentElement.dataset.blogTransition;
+    leaving.value = false;
   });
 }
 </script>

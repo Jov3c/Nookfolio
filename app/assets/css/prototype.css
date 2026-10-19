@@ -535,15 +535,11 @@
 }
 
 .post-card.post-card--leaving {
-  animation: post-card-leave 170ms ease-out both;
+  animation: none;
+  opacity: 1;
   pointer-events: none;
   transform: translateY(0);
-}
-
-@keyframes post-card-leave {
-  to {
-    opacity: 0;
-  }
+  view-transition-name: selected-post-card;
 }
 
 .post-card.is-revealed:hover {

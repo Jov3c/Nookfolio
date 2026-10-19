@@ -38,6 +38,12 @@ enum AuthorType {
   ADMIN
 }
 
+enum CaptchaPurpose {
+  COMMENT
+  MESSAGE
+  REPLY
+}
+
 enum FriendLinkStatus {
   PENDING_EMAIL
   PENDING_REVIEW
@@ -149,6 +155,20 @@ model EmailVerification {
   @@index([expiresAt])
   @@index([purpose, entityId])
   @@map("email_verifications")
+}
+
+model CaptchaChallenge {
+  id         String         @id @default(uuid()) @db.Uuid
+  purpose    CaptchaPurpose
+  answerHash String         @map("answer_hash") @db.Char(64)
+  ipHash     String         @map("ip_hash") @db.Char(64)
+  expiresAt  DateTime       @map("expires_at") @db.Timestamptz(6)
+  consumedAt DateTime?      @map("consumed_at") @db.Timestamptz(6)
+  createdAt  DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([expiresAt])
+  @@index([ipHash, createdAt])
+  @@map("captcha_challenges")
 }
 
 model HomeProfile {

@@ -40,7 +40,7 @@
   color: var(--admin-pencil);
   content: 'PRIVATE EDITORIAL DESK';
   font-family: 'Courier New', monospace;
-  font-size: 0.48rem;
+  font-size: 0.58rem;
   letter-spacing: 0.14em;
 }
 
@@ -259,12 +259,6 @@
   box-shadow: 2px 2px 0 rgb(112 104 77 / 6%);
 }
 
-.admin-shortcut-card:hover {
-  border-color: #bfae91;
-  background: #eee8da;
-  transform: translate(-1px, -1px);
-}
-
 .admin-shortcut-card b {
   color: var(--admin-red);
 }
@@ -372,6 +366,55 @@ html[data-theme='dark'] .home-entry-editor,
 html[data-theme='dark'] .social-link-editor,
 html[data-theme='dark'] .about-admin-card {
   background: var(--admin-paper-light);
+}
+
+html[data-theme='dark']
+  .admin-main
+  input:not([type='checkbox']):not([type='radio']):not([type='file']),
+html[data-theme='dark'] .admin-main textarea,
+html[data-theme='dark'] .admin-main select,
+html[data-theme='dark'] .project-markdown-preview,
+html[data-theme='dark'] .home-avatar-field,
+html[data-theme='dark'] .about-admin-check,
+html[data-theme='dark'] .media-empty,
+html[data-theme='dark'] .admin-secondary-button {
+  border-color: #4a4b44;
+  background: #20211e;
+  color: var(--admin-ink);
+}
+
+html[data-theme='dark'] .admin-main input:focus,
+html[data-theme='dark'] .admin-main textarea:focus,
+html[data-theme='dark'] .admin-main select:focus {
+  border-color: var(--admin-red);
+  background: #2d2e29;
+}
+
+html[data-theme='dark'] .posts-admin-list__item:hover,
+html[data-theme='dark'] .projects-admin-list__item:hover,
+html[data-theme='dark'] .timeline-admin-list__item:hover,
+html[data-theme='dark'] .posts-admin-list__item--active,
+html[data-theme='dark'] .projects-admin-list__item--active,
+html[data-theme='dark'] .timeline-admin-list__item--active {
+  background: #383a34;
+}
+
+html[data-theme='dark'] .moderation-status,
+html[data-theme='dark'] .friend-link-tabs button.is-active {
+  background: #46503f;
+  color: #dce6d6;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .admin-shortcut-card:hover {
+    border-color: #bfae91;
+    background: #eee8da;
+    transform: translate(-1px, -1px);
+  }
+
+  html[data-theme='dark'] .admin-shortcut-card:hover {
+    background: #34362f;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

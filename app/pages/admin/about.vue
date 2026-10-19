@@ -81,7 +81,7 @@ await load();
 
 <template>
   <div class="about-admin">
-    <header class="admin-page-header">
+    <header class="admin-page-heading">
       <div>
         <p class="eyebrow">资料管理 / ABOUT</p>
         <h1>About 页面</h1>
@@ -94,7 +94,7 @@ await load();
       {{ errorMessage }}
     </p>
     <p v-if="isLoading" class="media-empty">正在加载 About 页面…</p>
-    <form v-else class="admin-panel about-admin-form-grid" @submit.prevent="save">
+    <form v-else class="home-admin-section about-admin-form-grid" @submit.prevent="save">
       <label
         ><span>页面眉题</span><input v-model="profile.eyebrow" maxlength="120" required
       /></label>

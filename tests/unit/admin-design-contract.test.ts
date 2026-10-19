@@ -45,6 +45,9 @@ describe('admin design contract', () => {
   it('uses the paper editorial workspace without oversized page titles', () => {
     const shellCss = read('app/assets/css/admin/shell.css');
     const paperCss = read('app/assets/css/admin/paper.css');
+    const responsiveCss = read('app/assets/css/admin/responsive.css');
+    const authCss = read('app/assets/css/admin/auth.css');
+    const aboutPage = read('app/pages/admin/about.vue');
 
     expect(shellCss).toContain('grid-template-columns: 245px minmax(0, 1fr)');
     expect(paperCss).toContain('--admin-paper');
@@ -54,6 +57,13 @@ describe('admin design contract', () => {
     expect(paperCss).toContain('grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr)');
     expect(paperCss).toContain('.admin-dashboard > .admin-dashboard-section:nth-of-type(3)');
     expect(paperCss).toContain('font-family: Georgia');
+    expect(paperCss).toContain("html[data-theme='dark'] .admin-main input");
+    expect(responsiveCss).not.toContain('font-size: 2.65rem');
+    expect(authCss).toContain('font-size: clamp(1.75rem, 4vw, 2.6rem)');
+    expect(aboutPage).toContain('<header class="admin-page-heading">');
+    expect(aboutPage).toContain('class="home-admin-section about-admin-form-grid"');
+    expect(aboutPage).not.toContain('admin-page-header');
+    expect(aboutPage).not.toContain('class="admin-panel');
   });
 
   it('keeps long indexes usable before editors on narrow screens', () => {

@@ -33,7 +33,7 @@ describe('blog list navigation state', () => {
     expect(postCard).toContain('@click="openPost"');
     expect(postCard).toContain("'post-card--leaving': leaving");
     expect(prototypeCss).toMatch(
-      /\.post-card\.is-revealed\.post-card--leaving\s*{[^}]*animation:/s,
+      /\.post-card\.is-revealed\.post-card--leaving\s*{[^}]*animation:[^}]*transform:\s*translateY\(0\)/s,
     );
     expect(baseCss).toMatch(/@keyframes blog-page-in\s*{[^}]*opacity:\s*0/s);
     expect(baseCss).not.toMatch(/@keyframes blog-page-in\s*{[^}]*translateY/s);

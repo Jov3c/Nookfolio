@@ -537,6 +537,7 @@
 .post-card.is-revealed.post-card--leaving {
   animation: post-card-leave 170ms ease-out both;
   pointer-events: none;
+  transform: translateY(0);
 }
 
 @keyframes post-card-leave {

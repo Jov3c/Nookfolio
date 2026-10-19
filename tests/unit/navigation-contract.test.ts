@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import { blogNavigation, primaryNavigation } from '../../app/data/navigation';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 
 describe('public navigation contract', () => {
   it('keeps the locked primary navigation order', () => {
@@ -24,5 +26,10 @@ describe('public navigation contract', () => {
 
     expect(destinations).not.toContain('#');
     expect(destinations.every((destination) => destination.startsWith('/'))).toBe(true);
+  });
+
+  it('keeps Links standalone without the blog utility navigation', () => {
+    const links = readFileSync(resolve(import.meta.dirname, '../../app/pages/blog/links.vue'), 'utf8');
+    expect(links).toContain('<BlogChrome :show-subnav="false">');
   });
 });

@@ -58,6 +58,18 @@ describe('admin localization contract', () => {
     expect(media).not.toContain('aria-label="Media assets"');
   });
 
+  it('treats comments and messages as published-content governance', () => {
+    const comments = read('app/pages/admin/comments.vue');
+    const messages = read('app/pages/admin/messages.vue');
+
+    expect(comments).toContain('内容治理');
+    expect(messages).toContain('内容治理');
+    expect(messages).toContain('私密留言');
+    expect(messages).not.toContain('审核通过');
+    expect(comments).not.toContain('admin reply');
+    expect(messages).not.toContain('admin reply');
+  });
+
   it('keeps the email verification field visible before a code is sent', () => {
     const login = read('app/pages/admin/login.vue');
 

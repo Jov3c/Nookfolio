@@ -32,7 +32,7 @@ async function load() {
     });
     comments.value = result.data;
   } catch {
-    errorMessage.value = 'Comments 加载失败，请刷新重试。';
+    errorMessage.value = '评论加载失败，请刷新重试。';
   } finally {
     isLoading.value = false;
   }
@@ -107,8 +107,8 @@ onMounted(load);
 
     <section class="home-admin-section moderation-toolbar">
       <div>
-        <p class="eyebrow">审核队列</p>
-        <h2>文章里的每一次回应</h2>
+        <p class="eyebrow">内容治理</p>
+        <h2>管理文章里的公开回应</h2>
       </div>
       <label
         >状态
@@ -135,7 +135,7 @@ onMounted(load);
         <header class="moderation-card__header">
           <div>
             <strong>{{ comment.nickname }}</strong>
-            <span>{{ comment.email || 'admin reply' }}</span>
+            <span>{{ comment.email || '未留邮箱' }}</span>
           </div>
           <span class="moderation-status">{{ MODERATION_STATUS_LABELS[comment.status] }}</span>
         </header>

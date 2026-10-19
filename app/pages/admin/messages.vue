@@ -32,7 +32,7 @@ async function load() {
     });
     messages.value = result.data;
   } catch {
-    errorMessage.value = 'Messages 加载失败，请刷新重试。';
+    errorMessage.value = '留言加载失败，请刷新重试。';
   } finally {
     isLoading.value = false;
   }
@@ -107,8 +107,8 @@ onMounted(load);
 
     <section class="home-admin-section moderation-toolbar">
       <div>
-        <p class="eyebrow">留言审核</p>
-        <h2>留言板里的来信</h2>
+        <p class="eyebrow">内容治理</p>
+        <h2>管理留言板里的公开与私密内容</h2>
       </div>
       <label
         >状态
@@ -135,26 +135,17 @@ onMounted(load);
         <header class="moderation-card__header">
           <div>
             <strong>{{ message.nickname }}</strong>
-            <span>{{ message.email || 'admin reply' }}</span>
+            <span>{{ message.email || '未留邮箱' }}</span>
           </div>
           <span class="moderation-status">{{ MODERATION_STATUS_LABELS[message.status] }}</span>
         </header>
         <p class="moderation-card__meta">
           <span>{{ formatDate(message.createdAt) }}</span>
-          <span v-if="message.isPrivate">悄悄话</span>
+          <span v-if="message.isPrivate">私密留言</span>
           <span v-if="message.parent">回复 {{ message.parent.nickname }}</span>
         </p>
         <p class="moderation-card__content">{{ message.content }}</p>
         <div class="moderation-card__actions">
-          <button
-            v-if="message.status === 'PENDING_REVIEW'"
-            class="button"
-            type="button"
-            :disabled="!!busyKey"
-            @click="updateStatus(message.id, 'PUBLISHED')"
-          >
-            审核通过
-          </button>
           <button
             v-if="message.status !== 'HIDDEN'"
             class="admin-secondary-button"

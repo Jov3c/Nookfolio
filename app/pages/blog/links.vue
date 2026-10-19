@@ -51,7 +51,7 @@ function avatarClass(index: number) {
 </script>
 
 <template>
-  <BlogChrome>
+  <BlogChrome :show-subnav="false">
     <template #hero>
       <StandardHero
         eyebrow="FRIENDS"

@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHmac } from 'node:crypto';
 
 import { getCookie, setCookie, type H3Event } from 'h3';
 
@@ -7,7 +7,9 @@ import { getTrustedClientIp } from './auth';
 
 export function getVisitorIpHash(event: H3Event) {
   const ip = getTrustedClientIp(event);
-  return createHash('sha256').update(ip, 'utf8').digest('hex');
+  const secret = process.env.CAPTCHA_SECRET ?? process.env.ADMIN_PASSWORD ?? '';
+  if (secret.length < 16) throw new Error('CAPTCHA_SECRET must contain at least 16 characters');
+  return createHmac('sha256', secret).update(ip, 'utf8').digest('hex');
 }
 
 export function getOrSetVisitorHash(event: H3Event) {

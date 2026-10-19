@@ -3,7 +3,6 @@ import type { PublicPost } from '~/types/blog';
 import { formatPostDateTime } from '~/utils/content';
 
 const props = defineProps<{ post: PublicPost; featured?: boolean; coverVariant?: number }>();
-const transitionActive = ref(false);
 
 async function openPost(event: MouseEvent) {
   if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
@@ -18,14 +17,11 @@ async function openPost(event: MouseEvent) {
     return;
   }
 
-  transitionActive.value = true;
   document.documentElement.dataset.blogTransition = 'active';
-  await nextTick();
   startViewTransition(async () => {
     await navigateTo(target);
     await nextTick();
   }).finished.finally(() => {
-    transitionActive.value = false;
     delete document.documentElement.dataset.blogTransition;
   });
 }
@@ -46,7 +42,7 @@ async function openPost(event: MouseEvent) {
         :style="post.cover ? { backgroundImage: `url(${post.cover.publicUrl})` } : undefined"
       />
     </div>
-    <div class="post-card__content" :class="{ 'is-transitioning': transitionActive }">
+    <div class="post-card__content">
       <p class="post-meta">
         <span class="post-meta__category">▱ {{ post.category.name }}</span>
         <span>◷ {{ formatPostDateTime(post.publishedAt ?? '') }}</span>

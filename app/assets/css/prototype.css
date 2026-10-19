@@ -525,11 +525,6 @@
     box-shadow 180ms ease;
 }
 
-.post-card__content.is-transitioning,
-html[data-blog-transition='active'] .article-page__header {
-  view-transition-name: blog-post-header;
-}
-
 .post-card:not(.post-card--skeleton) {
   opacity: 0;
   transform: translateY(12px);

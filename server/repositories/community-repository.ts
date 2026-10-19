@@ -89,7 +89,9 @@ export class CommunityRepository {
   }
 
   async acquireSubmissionLock(key: string) {
-    await this.prisma.$queryRaw(Prisma.sql`SELECT pg_advisory_xact_lock(hashtext(${key}))`);
+    await this.prisma.$queryRaw(
+      Prisma.sql`SELECT pg_advisory_xact_lock(hashtext(${key}))::text AS lock`,
+    );
   }
 
   publishComment(id: string, email: string, verifiedAt: Date) {

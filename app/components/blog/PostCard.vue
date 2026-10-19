@@ -3,13 +3,12 @@ import type { PublicPost } from '~/types/blog';
 import { formatPostDateTime } from '~/utils/content';
 
 const props = defineProps<{ post: PublicPost; featured?: boolean; coverVariant?: number }>();
+const transitionActive = ref(false);
 
 async function openPost(event: MouseEvent) {
   if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
     return;
   event.preventDefault();
-  const card = event.currentTarget;
-  if (!(card instanceof HTMLElement) || card.classList.contains('post-card--leaving')) return;
   const target = `/blog/${props.post.slug}`;
   const startViewTransition = document.startViewTransition?.bind(document);
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -19,24 +18,24 @@ async function openPost(event: MouseEvent) {
     return;
   }
 
-  card.classList.add('post-card--leaving');
-
+  transitionActive.value = true;
   document.documentElement.dataset.blogTransition = 'active';
+  await nextTick();
   startViewTransition(async () => {
     await navigateTo(target);
     await nextTick();
   }).finished.finally(() => {
+    transitionActive.value = false;
     delete document.documentElement.dataset.blogTransition;
-    card.classList.remove('post-card--leaving');
   });
 }
 </script>
 
 <template>
-  <a
+  <NuxtLink
     class="post-card"
     :class="{ 'post-card--featured': featured }"
-    :href="`/blog/${post.slug}`"
+    :to="`/blog/${post.slug}`"
     @click="openPost"
   >
     <div class="post-card__cover">
@@ -47,7 +46,7 @@ async function openPost(event: MouseEvent) {
         :style="post.cover ? { backgroundImage: `url(${post.cover.publicUrl})` } : undefined"
       />
     </div>
-    <div class="post-card__content">
+    <div class="post-card__content" :class="{ 'is-transitioning': transitionActive }">
       <p class="post-meta">
         <span class="post-meta__category">▱ {{ post.category.name }}</span>
         <span>◷ {{ formatPostDateTime(post.publishedAt ?? '') }}</span>
@@ -60,5 +59,5 @@ async function openPost(event: MouseEvent) {
         ><span>▤ {{ post.wordCount }} 字</span>
       </div>
     </div>
-  </a>
+  </NuxtLink>
 </template>

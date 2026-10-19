@@ -41,7 +41,6 @@
 }
 
 .blog-prototype-nav {
-  position: relative;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -49,8 +48,6 @@
 
 .blog-prototype-nav > a,
 .blog-prototype-nav .nav-link {
-  position: relative;
-  z-index: 1;
   display: inline-flex;
   min-height: 0;
   align-items: center;
@@ -73,11 +70,8 @@
 .blog-prototype-nav > a.router-link-exact-active,
 .blog-prototype-nav .nav-link:hover,
 .blog-prototype-nav .nav-link.router-link-active {
-  color: var(--color-text);
-}
-
-.blog-prototype-nav .motion-nav__indicator {
   background: rgb(0 0 0 / 3.5%);
+  color: var(--color-text);
 }
 
 .blog-prototype-nav .about-menu__panel {
@@ -521,8 +515,13 @@
   box-shadow: none;
   cursor: pointer;
   transition:
-    transform 180ms var(--motion-ease-out),
-    box-shadow 180ms ease;
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.post-card__content.is-transitioning,
+html[data-blog-transition='active'] .article-page__header {
+  view-transition-name: blog-post-header;
 }
 
 .post-card:not(.post-card--skeleton) {
@@ -531,15 +530,7 @@
 }
 
 .post-card.is-revealed {
-  animation: prototype-card-reveal 360ms var(--motion-ease-out) var(--reveal-delay, 0ms) both;
-}
-
-.post-card.post-card--leaving {
-  animation: none;
-  opacity: 1;
-  pointer-events: none;
-  transform: translateY(0);
-  view-transition-name: selected-post-card;
+  animation: prototype-card-reveal 0.5s ease var(--reveal-delay, 0ms) both;
 }
 
 .post-card.is-revealed:hover {
@@ -559,7 +550,7 @@
   background-position: center;
   background-size: cover;
   transform: scale(1);
-  transition: transform var(--motion-standard) var(--motion-ease-out);
+  transition: transform 0.3s ease;
 }
 
 .post-card:hover .post-card__cover-art {
@@ -622,13 +613,6 @@
   font-size: 1.125rem;
   letter-spacing: -0.025em;
   line-height: 1.35;
-  transition: transform 220ms var(--motion-ease-out);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .post-card:hover h2 {
-    transform: translateX(5px);
-  }
 }
 
 .post-card__content > p:not(.post-meta) {
@@ -735,8 +719,8 @@
   background: var(--color-panel);
   cursor: pointer;
   transition:
-    transform 180ms var(--motion-ease-out),
-    box-shadow 180ms ease;
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .link-card:not(.link-card--skeleton) {
@@ -745,7 +729,7 @@
 }
 
 .link-card.is-revealed {
-  animation: prototype-card-reveal 360ms var(--motion-ease-out) var(--reveal-delay, 0ms) both;
+  animation: prototype-card-reveal 0.5s ease var(--reveal-delay, 0ms) both;
 }
 
 .link-card.is-revealed:hover {

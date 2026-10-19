@@ -20,10 +20,10 @@ export default defineNuxtPlugin((nuxtApp) => {
       ].filter((candidate) => !candidate.classList.contains(`${element.classList[0]}--skeleton`));
       const index = siblings.indexOf(element);
       const delay = element.classList.contains('post-card')
-        ? Math.min(index * 55, 165)
+        ? Math.min(index * 35, 140)
         : element.classList.contains('link-card')
-          ? (index % 2) * 55
-          : Math.min(index * 60, 180);
+          ? (index % 2) * 40
+          : Math.min(index * 55, 220);
       element.style.setProperty('--reveal-delay', `${delay}ms`);
       observer?.observe(element);
     });

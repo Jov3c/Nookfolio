@@ -2,11 +2,7 @@
 import SiteBrand from '~/components/shell/SiteBrand.vue';
 import ThemeToggle from '~/components/shell/ThemeToggle.vue';
 import TravellingLink from '~/components/shell/TravellingLink.vue';
-import { useMovingNavIndicator } from '~/composables/useMovingNavIndicator';
 import { primaryNavigation } from '~/data/navigation';
-
-const nav = ref<HTMLElement | null>(null);
-useMovingNavIndicator(nav, 'a.router-link-active');
 </script>
 
 <template>
@@ -14,8 +10,7 @@ useMovingNavIndicator(nav, 'a.router-link-active');
     <header class="blog-prototype-topbar">
       <div class="blog-prototype-topbar__inner">
         <SiteBrand class="blog-prototype-brand" />
-        <nav ref="nav" class="blog-prototype-nav motion-nav" aria-label="主导航">
-          <span class="motion-nav__indicator" aria-hidden="true" />
+        <nav class="blog-prototype-nav" aria-label="主导航">
           <NuxtLink v-for="item in primaryNavigation" :key="item.to" :to="item.to">
             {{ item.label }}
           </NuxtLink>

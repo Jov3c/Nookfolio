@@ -8,6 +8,7 @@ describe('public navigation contract', () => {
       'Home',
       'Projects',
       'Blog',
+      'Links',
       'About',
     ]);
     expect(primaryNavigation.at(-1)).toEqual({ label: 'About', to: '/about' });
@@ -15,8 +16,9 @@ describe('public navigation contract', () => {
   });
 
   it('exposes the active blog utility routes without placeholder anchors', () => {
-    expect(blogNavigation.map((item) => item.label)).toEqual(['博客首页', '归档', '友链', '留言']);
+    expect(blogNavigation.map((item) => item.label)).toEqual(['博客首页', '归档', '留言']);
     expect(blogNavigation[0]).toEqual({ label: '博客首页', to: '/blog' });
+    expect(primaryNavigation[3]).toEqual({ label: 'Links', to: '/blog/links' });
 
     const destinations = [primaryNavigation, blogNavigation].flat().map((item) => item.to);
 

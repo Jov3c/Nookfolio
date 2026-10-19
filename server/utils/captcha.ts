@@ -55,7 +55,9 @@ export function publicCaptchaHeaders() {
   } as const;
 }
 
-export function useCaptchaService() {
+type CaptchaPrisma = ConstructorParameters<typeof CaptchaChallengeRepository>[0];
+
+export function useCaptchaService(prisma: CaptchaPrisma = usePrisma()) {
   const secret = process.env.CAPTCHA_SECRET ?? process.env.ADMIN_PASSWORD ?? '';
-  return new CaptchaService(new CaptchaChallengeRepository(usePrisma()), secret);
+  return new CaptchaService(new CaptchaChallengeRepository(prisma), secret);
 }

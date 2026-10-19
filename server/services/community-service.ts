@@ -53,29 +53,30 @@ export class CommunityService {
     const post = await this.repository.findPublishedPostBySlug(slug.trim().toLowerCase());
     if (!post) throw new CommunityError(404, 'POST_NOT_FOUND', 'Post not found');
 
-    const parentId = parsed.data.parentId ?? null;
-    if (parentId) await this.ensureCommentParent(parentId, post.id);
-
-    const email = parsed.data.email.trim().toLowerCase();
+    const parent = parsed.data.parentId
+      ? await this.resolveCommentParent(parsed.data.parentId, post.id)
+      : null;
+    const content = parsed.data.content.trim();
+    if (
+      await this.repository.findRecentDuplicateComment(
+        post.id,
+        ipHash,
+        content,
+        new Date(Date.now() - 10 * 60 * 1_000),
+      )
+    ) {
+      throw new CommunityError(409, 'DUPLICATE_CONTENT', '请勿重复提交相同内容。');
+    }
     const comment = await this.repository.createComment({
       postId: post.id,
-      parentId,
+      parentId: parent?.rootId ?? null,
+      replyToNickname: parent?.nickname ?? null,
       nickname: parsed.data.nickname.trim(),
-      email,
-      content: parsed.data.content.trim(),
+      email: parsed.data.email ?? null,
+      content,
       ipHash,
     });
-    try {
-      const verification = await this.issueVerification('COMMENT', comment.id, email);
-      return {
-        id: comment.id,
-        verificationRequired: true,
-        expiresAt: verification.expiresAt.toISOString(),
-      };
-    } catch (error) {
-      await this.repository.deleteComment(comment.id).catch(() => undefined);
-      throw error;
-    }
+    return { id: comment.id, published: true, private: false } as const;
   }
 
   async listPublicComments(slug: string, query: { page: number; pageSize: number }) {
@@ -94,14 +95,30 @@ export class CommunityService {
     if (!parsed.success)
       throw new CommunityError(400, 'INVALID_MESSAGE', 'Message fields are invalid');
 
+    const parent = parsed.data.parentId
+      ? await this.resolveMessageParent(parsed.data.parentId)
+      : null;
+    const content = parsed.data.content.trim();
+    if (
+      await this.repository.findRecentDuplicateMessage(
+        ipHash,
+        content,
+        new Date(Date.now() - 10 * 60 * 1_000),
+      )
+    ) {
+      throw new CommunityError(409, 'DUPLICATE_CONTENT', '请勿重复提交相同内容。');
+    }
+    const isPrivate = parent?.isPrivate ?? parsed.data.isPrivate;
     const message = await this.repository.createMessage({
+      parentId: parent?.rootId ?? null,
+      replyToNickname: parent?.nickname ?? null,
       nickname: parsed.data.nickname.trim(),
       email: parsed.data.email ?? null,
-      content: parsed.data.content.trim(),
-      isPrivate: parsed.data.isPrivate,
+      content,
+      isPrivate,
       ipHash,
     });
-    return { id: message.id, moderationRequired: true };
+    return { id: message.id, published: !isPrivate, private: isPrivate } as const;
   }
 
   async listPublicMessages(query: { page: number; pageSize: number }) {
@@ -237,16 +254,32 @@ export class CommunityService {
     return this.emailVerification.issue({ purpose, entityId, email });
   }
 
-  private async ensureCommentParent(parentId: string, postId: string) {
+  private async resolveCommentParent(parentId: string, postId: string) {
     const parent = await this.repository.findCommentById(parentId);
-    if (
-      !parent ||
-      parent.postId !== postId ||
-      parent.parentId !== null ||
-      parent.status !== 'PUBLISHED'
-    ) {
+    if (!parent || parent.postId !== postId || parent.status !== 'PUBLISHED') {
       throw new CommunityError(400, 'INVALID_COMMENT_PARENT', 'Comment reply target is invalid');
     }
+    if (!parent.parentId) return { rootId: parent.id, nickname: parent.nickname };
+    const root = await this.repository.findCommentById(parent.parentId);
+    if (!root || root.parentId || root.status !== 'PUBLISHED' || root.postId !== postId) {
+      throw new CommunityError(400, 'INVALID_COMMENT_PARENT', 'Comment reply target is invalid');
+    }
+    return { rootId: root.id, nickname: parent.nickname };
+  }
+
+  private async resolveMessageParent(parentId: string) {
+    const parent = await this.repository.findMessageById(parentId);
+    if (!parent || parent.status !== 'PUBLISHED') {
+      throw new CommunityError(400, 'INVALID_MESSAGE_PARENT', 'Message reply target is invalid');
+    }
+    if (!parent.parentId) {
+      return { rootId: parent.id, nickname: parent.nickname, isPrivate: parent.isPrivate };
+    }
+    const root = await this.repository.findMessageById(parent.parentId);
+    if (!root || root.parentId || root.status !== 'PUBLISHED') {
+      throw new CommunityError(400, 'INVALID_MESSAGE_PARENT', 'Message reply target is invalid');
+    }
+    return { rootId: root.id, nickname: parent.nickname, isPrivate: root.isPrivate };
   }
 
   private async findCommentOrThrow(id: string) {
@@ -284,12 +317,14 @@ function toPublicCommentDto(record: PublicCommentRecord) {
     id: record.id,
     nickname: record.nickname,
     content: record.content,
+    replyToNickname: record.replyToNickname,
     authorType: record.authorType,
     createdAt: record.createdAt.toISOString(),
     replies: record.replies.map((reply) => ({
       id: reply.id,
       nickname: reply.nickname,
       content: reply.content,
+      replyToNickname: reply.replyToNickname,
       authorType: reply.authorType,
       createdAt: reply.createdAt.toISOString(),
     })),
@@ -306,6 +341,7 @@ function toAdminCommentDto(record: AdminCommentRecord | ArticleComment) {
     nickname: record.nickname,
     email: record.email,
     content: record.content,
+    replyToNickname: record.replyToNickname,
     authorType: record.authorType,
     status: record.status,
     verifiedAt: record.verifiedAt?.toISOString() ?? null,
@@ -325,6 +361,7 @@ function toPublicMessageDto(record: PublicMessageRecord) {
       id: reply.id,
       nickname: reply.nickname,
       content: reply.content,
+      replyToNickname: reply.replyToNickname,
       authorType: reply.authorType,
       createdAt: reply.createdAt.toISOString(),
     })),

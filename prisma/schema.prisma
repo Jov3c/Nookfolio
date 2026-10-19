@@ -302,6 +302,7 @@ model ArticleComment {
   parentId   String?          @map("parent_id") @db.Uuid
   authorType AuthorType       @default(VISITOR) @map("author_type")
   nickname   String           @db.VarChar(80)
+  replyToNickname String?     @map("reply_to_nickname") @db.VarChar(80)
   email      String?          @db.VarChar(254)
   content    String
   status     ModerationStatus
@@ -323,6 +324,7 @@ model Message {
   parentId   String?          @map("parent_id") @db.Uuid
   authorType AuthorType       @default(VISITOR) @map("author_type")
   nickname   String           @db.VarChar(80)
+  replyToNickname String?     @map("reply_to_nickname") @db.VarChar(80)
   email      String?          @db.VarChar(254)
   content    String
   isPrivate  Boolean          @default(false) @map("is_private")

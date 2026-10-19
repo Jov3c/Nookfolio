@@ -7,22 +7,31 @@ const emailSchema = z.string().trim().toLowerCase().email().max(254);
 const contentSchema = z.string().trim().min(1).max(4_000);
 const pageSchema = z.coerce.number().int().min(1).max(10_000).default(1);
 const pageSizeSchema = z.coerce.number().int().min(1).max(50).default(20);
+const optionalEmailSchema = z
+  .union([emailSchema, z.literal('')])
+  .optional()
+  .transform((value) => value || undefined);
+const captchaFields = {
+  captchaChallengeId: z.string().uuid(),
+  captchaAnswer: z.string().trim().min(4).max(8),
+  website: z.literal('').optional().default(''),
+};
 
 export const commentCreateSchema = z.object({
   nickname: nicknameSchema,
-  email: emailSchema,
+  email: optionalEmailSchema,
   content: contentSchema,
   parentId: z.string().uuid().nullable().optional().default(null),
+  ...captchaFields,
 });
 
 export const messageCreateSchema = z.object({
   nickname: nicknameSchema,
-  email: z
-    .union([emailSchema, z.literal('')])
-    .optional()
-    .transform((value) => value || undefined),
+  email: optionalEmailSchema,
   content: contentSchema,
+  parentId: z.string().uuid().nullable().optional().default(null),
   isPrivate: z.boolean().optional().default(false),
+  ...captchaFields,
 });
 
 export const publicCommunityListQuerySchema = z.object({

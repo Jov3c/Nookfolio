@@ -21,8 +21,10 @@ const adminMessageInclude = {
   parent: { select: { id: true, nickname: true } },
 } as const;
 
+type CommunityPrisma = Pick<PrismaClient, 'post' | 'articleComment' | 'message'>;
+
 export class CommunityRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: CommunityPrisma) {}
 
   findPublishedPostBySlug(slug: string) {
     return this.prisma.post.findFirst({
@@ -59,17 +61,26 @@ export class CommunityRepository {
   createComment(input: {
     postId: string;
     parentId: string | null;
+    replyToNickname: string | null;
     nickname: string;
-    email: string;
+    email: string | null;
     content: string;
     ipHash: string;
   }) {
     return this.prisma.articleComment.create({
       data: {
         ...input,
-        status: 'PENDING_EMAIL',
+        status: 'PUBLISHED',
         authorType: 'VISITOR',
+        verifiedAt: new Date(),
       },
+    });
+  }
+
+  findRecentDuplicateComment(postId: string, ipHash: string, content: string, since: Date) {
+    return this.prisma.articleComment.findFirst({
+      where: { postId, ipHash, content, createdAt: { gte: since } },
+      select: { id: true },
     });
   }
 
@@ -85,6 +96,7 @@ export class CommunityRepository {
       data: {
         postId: input.postId,
         parentId: input.parentId,
+        replyToNickname: null,
         authorType: 'ADMIN',
         nickname: 'Nookfolio',
         email: null,
@@ -147,6 +159,8 @@ export class CommunityRepository {
   }
 
   createMessage(input: {
+    parentId: string | null;
+    replyToNickname: string | null;
     nickname: string;
     email: string | null;
     content: string;
@@ -154,7 +168,19 @@ export class CommunityRepository {
     ipHash: string;
   }) {
     return this.prisma.message.create({
-      data: { ...input, status: 'PENDING_REVIEW', authorType: 'VISITOR' },
+      data: {
+        ...input,
+        status: 'PUBLISHED',
+        authorType: 'VISITOR',
+        verifiedAt: new Date(),
+      },
+    });
+  }
+
+  findRecentDuplicateMessage(ipHash: string, content: string, since: Date) {
+    return this.prisma.message.findFirst({
+      where: { ipHash, content, createdAt: { gte: since } },
+      select: { id: true },
     });
   }
 
@@ -169,6 +195,7 @@ export class CommunityRepository {
     return this.prisma.message.create({
       data: {
         parentId: input.parentId,
+        replyToNickname: null,
         authorType: 'ADMIN',
         nickname: 'Nookfolio',
         email: null,

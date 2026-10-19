@@ -13,3 +13,6 @@ CREATE TABLE "captcha_challenges" (
 
 CREATE INDEX "captcha_challenges_expires_at_idx" ON "captcha_challenges"("expires_at");
 CREATE INDEX "captcha_challenges_ip_hash_created_at_idx" ON "captcha_challenges"("ip_hash", "created_at");
+
+ALTER TABLE "article_comments" ADD COLUMN "reply_to_nickname" VARCHAR(80);
+ALTER TABLE "messages" ADD COLUMN "reply_to_nickname" VARCHAR(80);

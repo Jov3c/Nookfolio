@@ -2,7 +2,7 @@ import type { CaptchaPurpose } from '../../shared/schemas/captcha';
 import { CaptchaChallengeRepository } from '../repositories/captcha-repository';
 import { CaptchaService } from '../services/captcha-service';
 import { usePrisma } from './prisma';
-import { SlidingWindowRateLimiter } from './rate-limit';
+import type { SlidingWindowRateLimiter } from './rate-limit';
 
 interface PublicCaptchaInput {
   purpose: CaptchaPurpose;

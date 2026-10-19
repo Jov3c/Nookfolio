@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
 import { SlidingWindowRateLimiter } from '../../server/utils/rate-limit';
+import type {
+  CaptchaIssueError} from '../../server/utils/captcha';
 import {
-  CaptchaIssueError,
   issuePublicCaptcha,
   publicCaptchaHeaders,
 } from '../../server/utils/captcha';

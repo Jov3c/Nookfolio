@@ -2,7 +2,8 @@ import { randomUUID } from 'node:crypto';
 
 import { describe, expect, it } from 'vitest';
 
-import { CommunityError, CommunityService } from '../../server/services/community-service';
+import type { CommunityError} from '../../server/services/community-service';
+import { CommunityService } from '../../server/services/community-service';
 import type { CommentCreateInput, MessageCreateInput } from '../../shared/schemas/community';
 
 const captcha = {
@@ -34,9 +35,30 @@ function messageInput(overrides: Partial<MessageCreateInput> = {}): MessageCreat
   };
 }
 
+interface MemoryCommunityRecord {
+  id: string;
+  postId?: string;
+  parentId: string | null;
+  replyToNickname: string | null;
+  nickname: string;
+  email: string | null;
+  content: string;
+  ipHash: string;
+  isPrivate?: boolean;
+  authorType: 'VISITOR';
+  status: 'PUBLISHED' | 'HIDDEN';
+  verifiedAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  replies: MemoryCommunityRecord[];
+}
+
+type MemoryCommentInput = Omit<MemoryCommunityRecord, 'id' | 'authorType' | 'status' | 'verifiedAt' | 'createdAt' | 'updatedAt' | 'replies'>;
+type MemoryMessageInput = Omit<MemoryCommentInput, 'postId'>;
+
 class MemoryCommunityRepository {
-  comments: any[] = [];
-  messages: any[] = [];
+  comments: MemoryCommunityRecord[] = [];
+  messages: MemoryCommunityRecord[] = [];
   post = { id: '22222222-2222-4222-8222-222222222222', slug: 'hello' };
 
   async findPublishedPostBySlug(slug: string) {
@@ -61,7 +83,7 @@ class MemoryCommunityRepository {
     return this.messages.find((entry) => entry.ipHash === ipHash && entry.content === content);
   }
 
-  async createComment(input: any) {
+  async createComment(input: MemoryCommentInput) {
     const now = new Date('2026-10-19T09:00:00.000Z');
     const record = {
       id: randomUUID(),
@@ -77,7 +99,7 @@ class MemoryCommunityRepository {
     return record;
   }
 
-  async createMessage(input: any) {
+  async createMessage(input: MemoryMessageInput) {
     const now = new Date('2026-10-19T09:00:00.000Z');
     const record = {
       id: randomUUID(),
@@ -215,7 +237,7 @@ describe('community service instant publication', () => {
   });
 
   it('never counts private messages in public pagination', async () => {
-    const { repository, service } = serviceFixture();
+    const { service } = serviceFixture();
     await service.submitMessage(messageInput({ content: '公开', isPrivate: false }), 'ip-public');
     await service.submitMessage(messageInput({ content: '私密', isPrivate: true }), 'ip-private');
 

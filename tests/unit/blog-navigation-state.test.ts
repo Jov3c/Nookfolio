@@ -31,7 +31,8 @@ describe('blog list navigation state', () => {
     expect(postCard).toContain('<a');
     expect(postCard).not.toContain('<NuxtLink');
     expect(postCard).toContain('@click="openPost"');
-    expect(postCard).toContain("'post-card--leaving': leaving");
+    expect(postCard).toContain("card.classList.add('post-card--leaving')");
+    expect(postCard).not.toContain("'post-card--leaving': leaving");
     expect(postCard).not.toContain('setTimeout');
     expect(prototypeCss).toMatch(
       /\.post-card\.post-card--leaving\s*{[^}]*view-transition-name:\s*selected-post-card/s,

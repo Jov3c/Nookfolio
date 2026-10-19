@@ -3,13 +3,13 @@ import type { PublicPost } from '~/types/blog';
 import { formatPostDateTime } from '~/utils/content';
 
 const props = defineProps<{ post: PublicPost; featured?: boolean; coverVariant?: number }>();
-const leaving = ref(false);
 
 async function openPost(event: MouseEvent) {
   if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
     return;
   event.preventDefault();
-  if (leaving.value) return;
+  const card = event.currentTarget;
+  if (!(card instanceof HTMLElement) || card.classList.contains('post-card--leaving')) return;
   const target = `/blog/${props.post.slug}`;
   const startViewTransition = document.startViewTransition?.bind(document);
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -19,8 +19,7 @@ async function openPost(event: MouseEvent) {
     return;
   }
 
-  leaving.value = true;
-  await nextTick();
+  card.classList.add('post-card--leaving');
 
   document.documentElement.dataset.blogTransition = 'active';
   startViewTransition(async () => {
@@ -28,7 +27,7 @@ async function openPost(event: MouseEvent) {
     await nextTick();
   }).finished.finally(() => {
     delete document.documentElement.dataset.blogTransition;
-    leaving.value = false;
+    card.classList.remove('post-card--leaving');
   });
 }
 </script>
@@ -36,7 +35,7 @@ async function openPost(event: MouseEvent) {
 <template>
   <a
     class="post-card"
-    :class="{ 'post-card--featured': featured, 'post-card--leaving': leaving }"
+    :class="{ 'post-card--featured': featured }"
     :href="`/blog/${post.slug}`"
     @click="openPost"
   >

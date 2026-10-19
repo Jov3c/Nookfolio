@@ -22,4 +22,12 @@ describe('blog list navigation state', () => {
 
     expect(baseCss).not.toMatch(/html\s*{[^}]*scroll-behavior:\s*smooth/s);
   });
+
+  it('uses one navigation handler for article cards so the transition cannot race the router link', () => {
+    const postCard = read('app/components/blog/PostCard.vue');
+
+    expect(postCard).toContain('<a');
+    expect(postCard).not.toContain('<NuxtLink');
+    expect(postCard).toContain('@click="openPost"');
+  });
 });

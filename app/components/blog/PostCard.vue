@@ -28,10 +28,10 @@ async function openPost(event: MouseEvent) {
 </script>
 
 <template>
-  <NuxtLink
+  <a
     class="post-card"
     :class="{ 'post-card--featured': featured }"
-    :to="`/blog/${post.slug}`"
+    :href="`/blog/${post.slug}`"
     @click="openPost"
   >
     <div class="post-card__cover">
@@ -55,5 +55,5 @@ async function openPost(event: MouseEvent) {
         ><span>▤ {{ post.wordCount }} 字</span>
       </div>
     </div>
-  </NuxtLink>
+  </a>
 </template>

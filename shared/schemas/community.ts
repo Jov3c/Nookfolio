@@ -37,6 +37,10 @@ export const messageCreateSchema = z.object({
 export const publicCommunityListQuerySchema = z.object({
   page: pageSchema,
   pageSize: pageSizeSchema,
+  snapshotAt: z.coerce
+    .date()
+    .optional()
+    .default(() => new Date()),
 });
 
 export const adminCommentListQuerySchema = z.object({

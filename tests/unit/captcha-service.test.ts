@@ -41,6 +41,13 @@ class MemoryCaptchaRepository implements CaptchaChallengeRepositoryContract {
     record.consumedAt = input.now;
     return true;
   }
+
+  async deleteExpired(now: Date) {
+    const retained = this.records.filter((entry) => entry.expiresAt > now);
+    const deleted = this.records.length - retained.length;
+    this.records = retained;
+    return deleted;
+  }
 }
 
 function createFixture() {
@@ -99,5 +106,14 @@ describe('captcha service', () => {
 
     expect(results.filter((result) => result.status === 'fulfilled')).toHaveLength(1);
     expect(results.filter((result) => result.status === 'rejected')).toHaveLength(1);
+  });
+
+  it('removes expired challenges when issuing a new one', async () => {
+    const { repository, service, now } = createFixture();
+    await service.issue('COMMENT', 'ip-hash-a', now);
+
+    await service.issue('COMMENT', 'ip-hash-a', new Date(now.getTime() + CAPTCHA_TTL_MS + 1));
+
+    expect(repository.records).toHaveLength(1);
   });
 });

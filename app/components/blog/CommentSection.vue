@@ -8,6 +8,7 @@ const comments = ref<PublicComment[]>([]);
 const page = ref(1);
 const total = ref(0);
 const publishedTotal = ref(0);
+const snapshotAt = ref('');
 const isLoading = ref(true);
 const isLoadingMore = ref(false);
 const isSubmitting = ref(false);
@@ -22,9 +23,10 @@ function mergeUniqueThreads(current: PublicComment[], incoming: PublicComment[])
 }
 
 async function load(targetPage = 1) {
+  if (targetPage === 1) snapshotAt.value = new Date().toISOString();
   const response = await $fetch<PublicCommentsResponse>(
     `/api/v1/public/posts/${encodeURIComponent(props.slug)}/comments`,
-    { query: { page: targetPage, pageSize: 20 } },
+    { query: { page: targetPage, pageSize: 20, snapshotAt: snapshotAt.value } },
   );
   comments.value =
     targetPage === 1 ? response.data : mergeUniqueThreads(comments.value, response.data);

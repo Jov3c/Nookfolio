@@ -5,9 +5,19 @@ import {
   commentCreateSchema,
   messageCreateSchema,
   moderationStatusUpdateSchema,
+  publicCommunityListQuerySchema,
 } from '../../shared/schemas/community';
 
 describe('community schemas', () => {
+  it('coerces a stable pagination snapshot timestamp', () => {
+    expect(
+      publicCommunityListQuerySchema.parse({
+        page: 2,
+        pageSize: 20,
+        snapshotAt: '2026-10-19T09:00:00.000Z',
+      }),
+    ).toMatchObject({ page: 2, pageSize: 20, snapshotAt: new Date('2026-10-19T09:00:00.000Z') });
+  });
   it('normalizes visitor fields and keeps replies optional', () => {
     expect(
       commentCreateSchema.parse({

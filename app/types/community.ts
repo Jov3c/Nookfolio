@@ -31,12 +31,18 @@ export interface PublicMessage {
 
 export interface PublicCommentsResponse {
   data: PublicComment[];
-  meta: { page: number; pageSize: number; total: number; publishedTotal: number };
+  meta: {
+    page: number;
+    pageSize: number;
+    total: number;
+    publishedTotal: number;
+    snapshotAt: string;
+  };
 }
 
 export interface PublicMessagesResponse {
   data: PublicMessage[];
-  meta: { page: number; pageSize: number; total: number };
+  meta: { page: number; pageSize: number; total: number; snapshotAt: string };
 }
 
 export interface AdminComment {

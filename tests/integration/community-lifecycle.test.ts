@@ -1,159 +1,174 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
+import { CaptchaChallengeRepository } from '../../server/repositories/captcha-repository';
 import { CommunityRepository } from '../../server/repositories/community-repository';
-import { EmailVerificationRepository } from '../../server/repositories/email-verification-repository';
+import { CaptchaService } from '../../server/services/captcha-service';
 import { CommunityService } from '../../server/services/community-service';
-import { EmailVerificationService } from '../../server/services/email-verification-service';
 import { createPrismaClient } from '../../server/utils/prisma';
-import type { EmailMessage, EmailSender } from '../../server/utils/smtp';
+import type { CaptchaPurpose } from '../../shared/schemas/captcha';
 
 const databaseUrl = process.env.DATABASE_URL ?? '';
 const prisma = createPrismaClient(databaseUrl);
 const suffix = `${Date.now()}`;
+const secret = 'integration-captcha-secret';
+const answer = '7K3M';
 
-class CapturingSender implements EmailSender {
-  messages: EmailMessage[] = [];
-
-  async send(message: EmailMessage) {
-    this.messages.push(message);
-  }
-}
-
-describe('comments and message board lifecycle', () => {
-  const sender = new CapturingSender();
-  const verifier = new EmailVerificationService(
-    new EmailVerificationRepository(prisma),
-    sender,
-    'https://nookfolio.example',
-  );
-  const service = new CommunityService(new CommunityRepository(prisma), verifier);
-  let commentId = '';
-  let messageId = '';
-  let privateMessageId = '';
+describe('captcha-protected community lifecycle', () => {
   let postId = '';
   let categoryId = '';
-  const postSlug = `stage-seven-post-${suffix}`;
+  const postSlug = `community-${suffix}`;
 
   beforeAll(async () => {
     const category = await prisma.postCategory.create({
-      data: {
-        slug: `stage-seven-${suffix}`,
-        name: 'Stage Seven',
-        sortOrder: 999,
-        visible: true,
-      },
+      data: { slug: `community-${suffix}`, name: 'Community', sortOrder: 999, visible: true },
     });
     categoryId = category.id;
     const post = await prisma.post.create({
       data: {
         slug: postSlug,
-        title: 'Stage Seven integration post',
-        excerpt: 'A post created for community integration tests.',
+        title: 'Community integration post',
+        excerpt: 'Community integration fixture.',
         categoryId,
         coverMediaId: null,
-        markdownBody: '# Stage Seven\n\nCommunity integration fixture.',
+        markdownBody: '# Community',
         status: 'PUBLISHED',
         publishedAt: new Date(),
-        wordCount: 4,
+        wordCount: 1,
         viewCount: BigInt(0),
         seoTitle: null,
         seoDescription: null,
       },
     });
     postId = post.id;
-    await prisma.articleComment.deleteMany({ where: { email: `stage07-${suffix}@example.com` } });
-    await prisma.message.deleteMany({ where: { email: `stage07-${suffix}@example.com` } });
-    await prisma.emailVerification.deleteMany({
-      where: { email: `stage07-${suffix}@example.com` },
-    });
   });
 
   afterAll(async () => {
-    if (commentId)
-      await prisma.articleComment.delete({ where: { id: commentId } }).catch(() => undefined);
-    if (messageId) await prisma.message.delete({ where: { id: messageId } }).catch(() => undefined);
-    if (privateMessageId)
-      await prisma.message.delete({ where: { id: privateMessageId } }).catch(() => undefined);
     if (postId) await prisma.articleComment.deleteMany({ where: { postId } });
+    await prisma.message.deleteMany({ where: { nickname: { startsWith: `Test-${suffix}` } } });
+    await prisma.captchaChallenge.deleteMany({
+      where: { ipHash: { startsWith: `test-${suffix}` } },
+    });
     if (postId) await prisma.post.delete({ where: { id: postId } }).catch(() => undefined);
     if (categoryId)
       await prisma.postCategory.delete({ where: { id: categoryId } }).catch(() => undefined);
-    await prisma.emailVerification.deleteMany({
-      where: { email: `stage07-${suffix}@example.com` },
-    });
     await prisma.$disconnect();
   });
 
-  it('keeps comments private until email verification and enforces one reply level', async () => {
-    const email = `stage07-${suffix}@example.com`;
-    const submitted = await service.submitComment(
-      postSlug,
-      {
-        nickname: 'Stage Seven',
-        email,
-        content: '<script>plain text</script>',
-        parentId: null,
-      },
-      'a'.repeat(64),
-    );
-    commentId = submitted.id;
-
-    const pending = await service.listPublicComments(postSlug, { page: 1, pageSize: 50 });
-    expect(pending.items.some((comment) => comment.id === commentId)).toBe(false);
-
-    const token = new URL(sender.messages.at(-1)!.text.split('\n')[2]!).searchParams.get('token')!;
-    const verified = await verifier.verify(token);
-    await service.completeEmailVerification(verified);
-
-    const published = await service.listPublicComments(postSlug, { page: 1, pageSize: 50 });
-    const comment = published.items.find((item) => item.id === commentId)!;
-    expect(comment.content).toContain('<script>plain text</script>');
-    expect(comment).not.toHaveProperty('email');
-    expect(published.publishedTotal).toBeGreaterThanOrEqual(1);
-
-    const reply = await service.replyToComment(commentId, 'Admin reply stays plain text.');
-    expect(reply.authorType).toBe('ADMIN');
-    await expect(
-      service.replyToComment(reply.id, 'Nested replies are blocked'),
-    ).rejects.toMatchObject({
-      code: 'REPLY_DEPTH_EXCEEDED',
+  async function submitWithCaptcha<T>(
+    purpose: CaptchaPurpose,
+    ipHash: string,
+    action: (service: CommunityService, captcha: { id: string; answer: string }) => Promise<T>,
+  ) {
+    const issuer = new CaptchaService(new CaptchaChallengeRepository(prisma), secret, () => answer);
+    const challenge = await issuer.issue(purpose, ipHash);
+    return prisma.$transaction(async (transaction) => {
+      await new CaptchaService(
+        new CaptchaChallengeRepository(transaction),
+        secret,
+        () => answer,
+      ).consume({ id: challenge.id, answer }, purpose, ipHash);
+      return action(new CommunityService(new CommunityRepository(transaction)), {
+        id: challenge.id,
+        answer,
+      });
     });
+  }
+
+  it('publishes plain-text comments immediately and normalizes visitor replies', async () => {
+    const rootIp = `test-${suffix}-comment-root`;
+    const root = await submitWithCaptcha('COMMENT', rootIp, (service, captcha) =>
+      service.submitComment(
+        postSlug,
+        {
+          nickname: `Test-${suffix}-root`,
+          content: '<script>plain text</script>',
+          parentId: null,
+          captchaChallengeId: captcha.id,
+          captchaAnswer: captcha.answer,
+          website: '',
+        },
+        rootIp,
+      ),
+    );
+    const replyIp = `test-${suffix}-comment-reply`;
+    await submitWithCaptcha('REPLY', replyIp, (service, captcha) =>
+      service.submitComment(
+        postSlug,
+        {
+          nickname: `Test-${suffix}-reply`,
+          content: 'visitor reply',
+          parentId: root.id,
+          captchaChallengeId: captcha.id,
+          captchaAnswer: captcha.answer,
+          website: '',
+        },
+        replyIp,
+      ),
+    );
+
+    const published = await new CommunityService(
+      new CommunityRepository(prisma),
+    ).listPublicComments(postSlug, { page: 1, pageSize: 20 });
+    const comment = published.items.find((item) => item.id === root.id)!;
+    expect(comment.content).toBe('<script>plain text</script>');
+    expect(comment).not.toHaveProperty('email');
+    expect(comment.replies[0]).toMatchObject({ replyToNickname: `Test-${suffix}-root` });
   });
 
-  it('holds guestbook messages for admin review without email verification', async () => {
-    const email = `stage07-${suffix}@example.com`;
-    const submitted = await service.submitMessage(
-      { nickname: 'Stage Seven', email, content: 'A guestbook message.', isPrivate: false },
-      'b'.repeat(64),
+  it('keeps private messages admin-only and rejects public replies to them', async () => {
+    const ipHash = `test-${suffix}-private`;
+    const created = await submitWithCaptcha('MESSAGE', ipHash, (service, captcha) =>
+      service.submitMessage(
+        {
+          nickname: `Test-${suffix}-private`,
+          content: 'private message',
+          isPrivate: true,
+          parentId: null,
+          captchaChallengeId: captcha.id,
+          captchaAnswer: captcha.answer,
+          website: '',
+        },
+        ipHash,
+      ),
     );
-    messageId = submitted.id;
-
-    const pending = await service.listPublicMessages({ page: 1, pageSize: 50 });
-    expect(pending.items.some((message) => message.id === messageId)).toBe(false);
-
-    expect(submitted).toMatchObject({ moderationRequired: true });
-    await service.updateMessageStatus(messageId, 'PUBLISHED');
-
-    const published = await service.listPublicMessages({ page: 1, pageSize: 50 });
-    const message = published.items.find((item) => item.id === messageId)!;
-    expect(message).not.toHaveProperty('email');
-    await expect(service.replyToMessage(messageId, '欢迎留下记录。')).resolves.toMatchObject({
-      authorType: 'ADMIN',
-    });
-    await service.updateMessageStatus(messageId, 'HIDDEN');
-    const hidden = await service.listPublicMessages({ page: 1, pageSize: 50 });
-    expect(hidden.items.some((item) => item.id === messageId)).toBe(false);
-
-    const privateSubmitted = await service.submitMessage(
-      { nickname: 'Stage Seven', content: 'A private message.', isPrivate: true },
-      'c'.repeat(64),
+    const service = new CommunityService(new CommunityRepository(prisma));
+    expect((await service.listPublicMessages({ page: 1, pageSize: 20 })).items).not.toContainEqual(
+      expect.objectContaining({ id: created.id }),
     );
-    privateMessageId = privateSubmitted.id;
-    await service.updateMessageStatus(privateMessageId, 'PUBLISHED');
+    await expect(
+      service.submitMessage(
+        {
+          nickname: `Test-${suffix}-attacker`,
+          content: 'guess reply',
+          parentId: created.id,
+          captchaChallengeId: '11111111-1111-4111-8111-111111111111',
+          captchaAnswer: answer,
+          website: '',
+        },
+        `test-${suffix}-attacker`,
+      ),
+    ).rejects.toMatchObject({ code: 'INVALID_MESSAGE_PARENT' });
+  });
 
-    const afterPrivate = await service.listPublicMessages({ page: 1, pageSize: 50 });
-    expect(afterPrivate.items.some((item) => item.id === privateMessageId)).toBe(false);
-    const adminMessages = await service.listAdminMessages({ page: 1, pageSize: 50 });
-    expect(adminMessages.items.find((item) => item.id === privateMessageId)?.isPrivate).toBe(true);
+  it('serializes identical concurrent submissions', async () => {
+    const ipHash = `test-${suffix}-duplicate`;
+    const submit = () =>
+      submitWithCaptcha('MESSAGE', ipHash, (service, captcha) =>
+        service.submitMessage(
+          {
+            nickname: `Test-${suffix}-duplicate`,
+            content: 'same content',
+            parentId: null,
+            captchaChallengeId: captcha.id,
+            captchaAnswer: captcha.answer,
+            website: '',
+          },
+          ipHash,
+        ),
+      );
+
+    const results = await Promise.allSettled([submit(), submit()]);
+    expect(results.filter((result) => result.status === 'fulfilled')).toHaveLength(1);
+    expect(results.filter((result) => result.status === 'rejected')).toHaveLength(1);
   });
 });

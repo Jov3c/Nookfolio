@@ -1,4 +1,4 @@
-import type { PrismaClient } from '../generated/prisma/client';
+import { Prisma, type PrismaClient } from '../generated/prisma/client';
 
 import type { AdminCommentListQuery, AdminMessageListQuery } from '../../shared/schemas/community';
 
@@ -21,7 +21,7 @@ const adminMessageInclude = {
   parent: { select: { id: true, nickname: true } },
 } as const;
 
-type CommunityPrisma = Pick<PrismaClient, 'post' | 'articleComment' | 'message'>;
+type CommunityPrisma = Pick<PrismaClient, 'post' | 'articleComment' | 'message' | '$queryRaw'>;
 
 export class CommunityRepository {
   constructor(private readonly prisma: CommunityPrisma) {}
@@ -33,17 +33,21 @@ export class CommunityRepository {
     });
   }
 
-  async listPublicComments(postId: string, query: { page: number; pageSize: number }) {
+  async listPublicComments(
+    postId: string,
+    query: { page: number; pageSize: number; snapshotAt?: Date },
+  ) {
+    const snapshotAt = query.snapshotAt ?? new Date();
     const [items, total, publishedTotal] = await Promise.all([
       this.prisma.articleComment.findMany({
-        where: { postId, parentId: null, status: 'PUBLISHED' },
+        where: { postId, parentId: null, status: 'PUBLISHED', createdAt: { lte: snapshotAt } },
         include: { replies: publicReplies },
         orderBy: { createdAt: 'desc' },
         skip: (query.page - 1) * query.pageSize,
         take: query.pageSize,
       }),
       this.prisma.articleComment.count({
-        where: { postId, parentId: null, status: 'PUBLISHED' },
+        where: { postId, parentId: null, status: 'PUBLISHED', createdAt: { lte: snapshotAt } },
       }),
       this.prisma.articleComment.count({ where: { postId, status: 'PUBLISHED' } }),
     ]);
@@ -82,6 +86,10 @@ export class CommunityRepository {
       where: { postId, ipHash, content, createdAt: { gte: since } },
       select: { id: true },
     });
+  }
+
+  async acquireSubmissionLock(key: string) {
+    await this.prisma.$queryRaw(Prisma.sql`SELECT pg_advisory_xact_lock(hashtext(${key}))`);
   }
 
   publishComment(id: string, email: string, verifiedAt: Date) {
@@ -138,17 +146,28 @@ export class CommunityRepository {
     return this.prisma.articleComment.delete({ where: { id } });
   }
 
-  async listPublicMessages(query: { page: number; pageSize: number }) {
+  async listPublicMessages(query: { page: number; pageSize: number; snapshotAt?: Date }) {
+    const snapshotAt = query.snapshotAt ?? new Date();
     const [items, total] = await Promise.all([
       this.prisma.message.findMany({
-        where: { parentId: null, status: 'PUBLISHED', isPrivate: false },
+        where: {
+          parentId: null,
+          status: 'PUBLISHED',
+          isPrivate: false,
+          createdAt: { lte: snapshotAt },
+        },
         include: { replies: publicMessageReplies },
         orderBy: { createdAt: 'desc' },
         skip: (query.page - 1) * query.pageSize,
         take: query.pageSize,
       }),
       this.prisma.message.count({
-        where: { parentId: null, status: 'PUBLISHED', isPrivate: false },
+        where: {
+          parentId: null,
+          status: 'PUBLISHED',
+          isPrivate: false,
+          createdAt: { lte: snapshotAt },
+        },
       }),
     ]);
     return { items, total };

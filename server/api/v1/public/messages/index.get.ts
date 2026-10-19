@@ -15,7 +15,12 @@ export default defineEventHandler(async (event) => {
     const result = await useCommunityService().listPublicMessages(parsed.data);
     return {
       data: result.items,
-      meta: { page: parsed.data.page, pageSize: parsed.data.pageSize, total: result.total },
+      meta: {
+        page: parsed.data.page,
+        pageSize: parsed.data.pageSize,
+        total: result.total,
+        snapshotAt: parsed.data.snapshotAt.toISOString(),
+      },
     };
   } catch (error) {
     const communityError = communityApiError(error);

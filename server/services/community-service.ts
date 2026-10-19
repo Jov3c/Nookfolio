@@ -57,6 +57,7 @@ export class CommunityService {
       ? await this.resolveCommentParent(parsed.data.parentId, post.id)
       : null;
     const content = parsed.data.content.trim();
+    await this.repository.acquireSubmissionLock(`comment:${post.id}:${ipHash}:${content}`);
     if (
       await this.repository.findRecentDuplicateComment(
         post.id,
@@ -79,7 +80,10 @@ export class CommunityService {
     return { id: comment.id, published: true, private: false } as const;
   }
 
-  async listPublicComments(slug: string, query: { page: number; pageSize: number }) {
+  async listPublicComments(
+    slug: string,
+    query: { page: number; pageSize: number; snapshotAt?: Date },
+  ) {
     const post = await this.repository.findPublishedPostBySlug(slug.trim().toLowerCase());
     if (!post) throw new CommunityError(404, 'POST_NOT_FOUND', 'Post not found');
     const result = await this.repository.listPublicComments(post.id, query);
@@ -99,6 +103,7 @@ export class CommunityService {
       ? await this.resolveMessageParent(parsed.data.parentId)
       : null;
     const content = parsed.data.content.trim();
+    await this.repository.acquireSubmissionLock(`message:${ipHash}:${content}`);
     if (
       await this.repository.findRecentDuplicateMessage(
         ipHash,
@@ -121,7 +126,7 @@ export class CommunityService {
     return { id: message.id, published: !isPrivate, private: isPrivate } as const;
   }
 
-  async listPublicMessages(query: { page: number; pageSize: number }) {
+  async listPublicMessages(query: { page: number; pageSize: number; snapshotAt?: Date }) {
     const result = await this.repository.listPublicMessages(query);
     return { items: result.items.map(toPublicMessageDto), total: result.total };
   }
@@ -269,14 +274,14 @@ export class CommunityService {
 
   private async resolveMessageParent(parentId: string) {
     const parent = await this.repository.findMessageById(parentId);
-    if (!parent || parent.status !== 'PUBLISHED') {
+    if (!parent || parent.status !== 'PUBLISHED' || parent.isPrivate) {
       throw new CommunityError(400, 'INVALID_MESSAGE_PARENT', 'Message reply target is invalid');
     }
     if (!parent.parentId) {
       return { rootId: parent.id, nickname: parent.nickname, isPrivate: parent.isPrivate };
     }
     const root = await this.repository.findMessageById(parent.parentId);
-    if (!root || root.parentId || root.status !== 'PUBLISHED') {
+    if (!root || root.parentId || root.status !== 'PUBLISHED' || root.isPrivate) {
       throw new CommunityError(400, 'INVALID_MESSAGE_PARENT', 'Message reply target is invalid');
     }
     return { rootId: root.id, nickname: parent.nickname, isPrivate: root.isPrivate };

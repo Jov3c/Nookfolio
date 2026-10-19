@@ -30,6 +30,7 @@ export class CaptchaService {
   }
 
   async issue(purpose: CaptchaPurpose, ipHash: string, now = new Date()) {
+    await this.repository.deleteExpired(now);
     const answer = normalizeCaptchaAnswer(this.codeGenerator());
     const expiresAt = new Date(now.getTime() + CAPTCHA_TTL_MS);
     const challenge = await this.repository.create({

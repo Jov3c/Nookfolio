@@ -86,6 +86,8 @@ class MemoryCommunityRepository {
     return this.messages.find((entry) => entry.ipHash === ipHash && entry.content === content);
   }
 
+  async acquireSubmissionLock() {}
+
   async createComment(input: MemoryCommentInput) {
     const now = new Date('2026-10-19T09:00:00.000Z');
     const record = {
@@ -255,5 +257,25 @@ describe('community service instant publication', () => {
 
     expect(page.total).toBe(1);
     expect(page.items.map((item) => item.content)).toEqual(['公开']);
+  });
+
+  it('rejects public replies to private messages', async () => {
+    const { repository, service } = serviceFixture();
+    const privateMessage = await repository.createMessage({
+      parentId: null,
+      replyToNickname: null,
+      nickname: '私密访客',
+      email: null,
+      content: '私密内容',
+      isPrivate: true,
+      ipHash: 'ip-private-root',
+    });
+
+    await expect(
+      service.submitMessage(
+        messageInput({ parentId: privateMessage.id, content: '猜测回复' }),
+        'ip-a',
+      ),
+    ).rejects.toMatchObject<Partial<CommunityError>>({ code: 'INVALID_MESSAGE_PARENT' });
   });
 });

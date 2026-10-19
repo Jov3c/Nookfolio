@@ -20,6 +20,7 @@ export interface CaptchaConsumeInput {
 export interface CaptchaChallengeRepositoryContract {
   create(input: CaptchaChallengeCreateInput): Promise<{ id: string; expiresAt: Date }>;
   consume(input: CaptchaConsumeInput): Promise<boolean>;
+  deleteExpired(now: Date): Promise<number>;
 }
 
 type CaptchaPrisma = Pick<PrismaClient, 'captchaChallenge'>;
@@ -44,5 +45,12 @@ export class CaptchaChallengeRepository implements CaptchaChallengeRepositoryCon
       data: { consumedAt: input.now },
     });
     return result.count === 1;
+  }
+
+  async deleteExpired(now: Date) {
+    const result = await this.prisma.captchaChallenge.deleteMany({
+      where: { expiresAt: { lte: now } },
+    });
+    return result.count;
   }
 }

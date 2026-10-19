@@ -12,6 +12,7 @@ const form = reactive({
 const messages = ref<PublicMessage[]>([]);
 const page = ref(1);
 const total = ref(0);
+const snapshotAt = ref('');
 const isLoading = ref(true);
 const isLoadingMore = ref(false);
 const isSubmitting = ref(false);
@@ -26,8 +27,9 @@ function mergeUniqueThreads(current: PublicMessage[], incoming: PublicMessage[])
 }
 
 async function load(targetPage = 1) {
+  if (targetPage === 1) snapshotAt.value = new Date().toISOString();
   const response = await $fetch<PublicMessagesResponse>('/api/v1/public/messages', {
-    query: { page: targetPage, pageSize: 20 },
+    query: { page: targetPage, pageSize: 20, snapshotAt: snapshotAt.value },
   });
   messages.value =
     targetPage === 1 ? response.data : mergeUniqueThreads(messages.value, response.data);

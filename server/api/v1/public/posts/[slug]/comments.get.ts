@@ -23,6 +23,7 @@ export default defineEventHandler(async (event) => {
         pageSize: parsed.data.pageSize,
         total: result.total,
         publishedTotal: result.publishedTotal,
+        snapshotAt: parsed.data.snapshotAt.toISOString(),
       },
     };
   } catch (error) {

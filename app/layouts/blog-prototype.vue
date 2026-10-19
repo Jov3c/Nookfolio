@@ -2,6 +2,7 @@
 import SiteBrand from '~/components/shell/SiteBrand.vue';
 import ThemeToggle from '~/components/shell/ThemeToggle.vue';
 import TravellingLink from '~/components/shell/TravellingLink.vue';
+import { useMovingNavIndicator } from '~/composables/useMovingNavIndicator';
 import { primaryNavigation } from '~/data/navigation';
 
 const nav = ref<HTMLElement | null>(null);

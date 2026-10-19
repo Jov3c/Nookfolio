@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { primaryNavigation } from '~/data/navigation';
+import { useMovingNavIndicator } from '~/composables/useMovingNavIndicator';
 import ThemeToggle from './ThemeToggle.vue';
 import TravellingLink from './TravellingLink.vue';
 

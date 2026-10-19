@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useVisitorIdentity } from '~/composables/useVisitorIdentity';
 import type { PublicComment, PublicCommentsResponse } from '~/types/community';
 
 const props = defineProps<{ slug: string }>();

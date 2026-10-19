@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useVisitorIdentity } from '~/composables/useVisitorIdentity';
 import type { PublicMessage, PublicMessagesResponse } from '~/types/community';
 
 const { nickname, email } = useVisitorIdentity();

@@ -83,6 +83,7 @@ async function loadMore() {
 
 onMounted(() => {
   skeletonTimer = window.setTimeout(() => (showPrototypeSkeleton.value = false), 900);
+  observeLoadMore();
 });
 onBeforeRouteLeave(() => {
   savedScrollY.value = window.scrollY;

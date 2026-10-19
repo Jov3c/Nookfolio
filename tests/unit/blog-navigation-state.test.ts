@@ -14,6 +14,7 @@ describe('blog list navigation state', () => {
     expect(blogIndex).toContain('onBeforeRouteLeave');
     expect(blogIndex).toContain('onActivated');
     expect(blogIndex).toContain("window.scrollTo({ top: savedScrollY.value, behavior: 'auto' })");
+    expect(blogIndex).toMatch(/onMounted\(\(\) => \{[^}]*observeLoadMore\(\)/);
   });
 
   it('does not animate router scroll restoration through the old blog page', () => {

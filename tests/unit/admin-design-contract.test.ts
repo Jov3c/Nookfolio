@@ -10,7 +10,7 @@ describe('admin design contract', () => {
   it('uses a small entry stylesheet with focused admin modules', () => {
     const layout = read('app/layouts/admin.vue');
     const css = read('app/assets/css/admin.css');
-    const modules = ['auth', 'shell', 'forms', 'content', 'islands', 'responsive'];
+    const modules = ['auth', 'shell', 'forms', 'content', 'dashboard', 'islands', 'responsive'];
 
     expect(layout).toContain('<style src="~/assets/css/admin.css"></style>');
     expect(layout).not.toContain('admin-shell.css');
@@ -69,6 +69,21 @@ describe('admin design contract', () => {
     expect(responsiveCss).toContain('.posts-admin-list-panel');
     expect(responsiveCss).toContain('max-height: 430px');
     expect(responsiveCss).toContain('overflow: auto');
+  });
+
+  it('builds the overview from six truthful floating desktop islands', () => {
+    const dashboard = read('app/pages/admin/index.vue');
+    const contentCss = read('app/assets/css/admin/dashboard.css');
+
+    for (const area of ['assets', 'recent', 'create', 'activity', 'inbox', 'status']) {
+      expect(dashboard).toContain(`admin-dashboard-island--${area}`);
+      expect(contentCss).toContain(`grid-area: ${area}`);
+    }
+    expect(contentCss).toContain("'assets recent create'");
+    expect(contentCss).toContain("'activity recent inbox'");
+    expect(contentCss).toContain("'activity status inbox'");
+    expect(dashboard).toContain('尚未连接最近编辑记录');
+    expect(dashboard).not.toMatch(/Math\.random|假数据|模拟数据/);
   });
 
   it('keeps long markdown articles inside a stable split editor viewport', () => {

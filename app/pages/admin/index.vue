@@ -10,81 +10,161 @@ const overview = computed(() => [
   {
     label: '累计访问量',
     value: statsResponse.value?.data.totalPageViews.toLocaleString('zh-CN') ?? '—',
-    note: '全站页面访问次数',
   },
   {
     label: '当前在线',
     value: statsResponse.value?.data.onlineVisitors.toLocaleString('zh-CN') ?? '—',
-    note: '最近五分钟活跃访客',
   },
 ]);
 
-const shortcuts = [
-  { title: '发布文章', description: '撰写新文章并自动保存草稿', to: '/admin/write' },
-  { title: '文章管理', description: '修改或删除已经发布的文章', to: '/admin/posts' },
-  { title: '项目管理', description: '维护项目展示和项目详情', to: '/admin/projects' },
-  { title: '互动管理', description: '处理评论、留言和友链', to: '/admin/comments' },
-  { title: '首页资料', description: '更新身份信息和首页入口', to: '/admin/home' },
+const contentAssets = [
+  { label: '文章', note: '发布与维护内容', to: '/admin/posts' },
+  { label: '项目', note: '整理作品展示', to: '/admin/projects' },
+  { label: '资料', note: '配置首页与关于页', to: '/admin/home' },
+];
+
+const createActions = [
+  { label: '新建文章', note: '进入 Markdown 编辑器', to: '/admin/write' },
+  { label: '继续草稿', note: '查看自动保存的内容', to: '/admin/write/drafts' },
+];
+
+const inboxActions = [
+  { label: '评论', to: '/admin/comments' },
+  { label: '留言', to: '/admin/messages' },
+  { label: '友链', to: '/admin/links' },
 ];
 
 useSeoMeta({ title: '仪表盘 — Nookfolio 管理后台', robots: 'noindex, nofollow' });
 </script>
 
 <template>
-  <div class="admin-dashboard">
-    <header class="admin-page-heading">
+  <div class="admin-dashboard admin-floating-dashboard">
+    <header class="admin-dashboard-intro">
       <div>
         <p>管理概览</p>
-        <h1>仪表盘</h1>
+        <h1>{{ admin?.displayName }}，欢迎回来。</h1>
       </div>
-      <span>{{ admin?.email }}</span>
+      <span>{{ pending ? '正在同步站点数据…' : '站点数据已同步' }}</span>
     </header>
 
-    <section class="admin-welcome">
-      <div>
-        <p>欢迎回来</p>
-        <h2>{{ admin?.displayName }}，今天也继续记录吧。</h2>
-      </div>
-      <NuxtLink to="/" target="_blank">查看公开站点 ↗</NuxtLink>
-    </section>
-
-    <section class="admin-dashboard-section" aria-labelledby="site-data-heading">
-      <div class="admin-section-heading">
+    <section
+      class="admin-dashboard-island admin-dashboard-island--assets"
+      aria-labelledby="assets-heading"
+    >
+      <div class="admin-dashboard-island__heading">
         <div>
-          <p>实时数据</p>
-          <h2 id="site-data-heading">网站概览</h2>
+          <p>内容资产</p>
+          <h2 id="assets-heading">管理你的站点</h2>
         </div>
-        <span>{{ pending ? '正在更新…' : '数据已同步' }}</span>
+        <span>常用入口</span>
       </div>
-      <div class="admin-overview-grid">
-        <article v-for="item in overview" :key="item.label">
-          <span>{{ item.label }}</span
-          ><strong>{{ item.value }}</strong
-          ><small>{{ item.note }}</small>
-        </article>
-      </div>
-    </section>
-
-    <section class="admin-dashboard-section" aria-labelledby="shortcuts-heading">
-      <div class="admin-section-heading">
-        <div>
-          <p>常用功能</p>
-          <h2 id="shortcuts-heading">快捷入口</h2>
-        </div>
-      </div>
-      <div class="admin-shortcut-grid">
-        <NuxtLink
-          v-for="item in shortcuts"
-          :key="item.to"
-          :to="item.to"
-          class="admin-shortcut-card"
-        >
-          <span
-            ><strong>{{ item.title }}</strong
-            ><small>{{ item.description }}</small></span
-          ><b>›</b>
+      <div class="admin-dashboard-assets">
+        <NuxtLink v-for="item in contentAssets" :key="item.to" :to="item.to">
+          <strong>{{ item.label }}</strong
+          ><small>{{ item.note }}</small
+          ><b>↗</b>
         </NuxtLink>
       </div>
+    </section>
+
+    <section
+      class="admin-dashboard-island admin-dashboard-island--recent"
+      aria-labelledby="recent-heading"
+    >
+      <div class="admin-dashboard-island__heading">
+        <div>
+          <p>最近编辑</p>
+          <h2 id="recent-heading">接着上次继续</h2>
+        </div>
+      </div>
+      <div class="admin-dashboard-empty">
+        <strong>尚未连接最近编辑记录</strong>
+        <span>编辑记录可用后会在这里显示，不会使用模拟内容。</span>
+      </div>
+    </section>
+
+    <section
+      class="admin-dashboard-island admin-dashboard-island--create"
+      aria-labelledby="create-heading"
+    >
+      <div class="admin-dashboard-island__heading">
+        <div>
+          <p>快速创作</p>
+          <h2 id="create-heading">从一个想法开始</h2>
+        </div>
+      </div>
+      <NuxtLink
+        v-for="item in createActions"
+        :key="item.to"
+        :to="item.to"
+        class="admin-dashboard-action"
+      >
+        <span
+          ><strong>{{ item.label }}</strong
+          ><small>{{ item.note }}</small></span
+        ><b>＋</b>
+      </NuxtLink>
+    </section>
+
+    <section
+      class="admin-dashboard-island admin-dashboard-island--activity"
+      aria-labelledby="activity-heading"
+    >
+      <div class="admin-dashboard-island__heading">
+        <div>
+          <p>站点活动</p>
+          <h2 id="activity-heading">真实访问数据</h2>
+        </div>
+        <span>{{ pending ? '更新中' : '实时' }}</span>
+      </div>
+      <div class="admin-dashboard-metrics">
+        <article v-for="item in overview" :key="item.label">
+          <strong>{{ item.value }}</strong
+          ><span>{{ item.label }}</span>
+        </article>
+      </div>
+      <p class="admin-dashboard-note">近七日趋势尚未接入，当前仅展示站点已有统计。</p>
+    </section>
+
+    <section
+      class="admin-dashboard-island admin-dashboard-island--inbox"
+      aria-labelledby="inbox-heading"
+    >
+      <div class="admin-dashboard-island__heading">
+        <div>
+          <p>互动收件箱</p>
+          <h2 id="inbox-heading">处理社区消息</h2>
+        </div>
+      </div>
+      <nav class="admin-dashboard-inbox" aria-label="互动管理入口">
+        <NuxtLink v-for="item in inboxActions" :key="item.to" :to="item.to">
+          <span>{{ item.label }}</span
+          ><b>查看</b>
+        </NuxtLink>
+      </nav>
+    </section>
+
+    <section
+      class="admin-dashboard-island admin-dashboard-island--status"
+      aria-labelledby="status-heading"
+    >
+      <div class="admin-dashboard-island__heading">
+        <div>
+          <p>站点状态</p>
+          <h2 id="status-heading">服务连接</h2>
+        </div>
+        <i :data-online="Boolean(statsResponse?.data)"></i>
+      </div>
+      <p>
+        {{
+          pending
+            ? '正在检查统计服务…'
+            : statsResponse?.data
+              ? '站点统计服务连接正常。'
+              : '暂时无法读取站点统计。'
+        }}
+      </p>
+      <NuxtLink to="/" target="_blank">查看公开站点 ↗</NuxtLink>
     </section>
   </div>
 </template>

@@ -7,6 +7,8 @@ import ThemeToggle from '~/components/shell/ThemeToggle.vue';
 const admin = useAdminSession();
 const isSigningOut = ref(false);
 const isMobileOpen = ref(false);
+const primaryNav = ref<{ focusFirst: () => void } | null>(null);
+const mobileMenuButton = ref<HTMLButtonElement | null>(null);
 
 async function signOut() {
   isSigningOut.value = true;
@@ -19,8 +21,25 @@ async function signOut() {
   }
 }
 
+async function toggleMobileNavigation() {
+  isMobileOpen.value = !isMobileOpen.value;
+  if (isMobileOpen.value) {
+    await nextTick();
+    primaryNav.value?.focusFirst();
+  }
+}
+
+async function closeMobileNavigation({ restoreFocus = false } = {}) {
+  if (!isMobileOpen.value) return;
+  isMobileOpen.value = false;
+  if (restoreFocus) {
+    await nextTick();
+    mobileMenuButton.value?.focus();
+  }
+}
+
 function handleKeydown(event: KeyboardEvent) {
-  if (event.key === 'Escape') isMobileOpen.value = false;
+  if (event.key === 'Escape') void closeMobileNavigation({ restoreFocus: true });
 }
 onMounted(() => window.addEventListener('keydown', handleKeydown));
 onBeforeUnmount(() => window.removeEventListener('keydown', handleKeydown));
@@ -33,8 +52,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleKeydown));
       <header class="admin-floating-bar">
         <SiteBrand to="/admin" aria-label="返回概览仪表盘" />
         <AdminPrimaryNav
+          ref="primaryNav"
           :class="{ 'admin-primary-nav--open': isMobileOpen }"
-          @click="isMobileOpen = false"
+          @click="closeMobileNavigation()"
         />
         <div class="admin-floating-bar__actions">
           <NuxtLink class="admin-view-site" to="/" target="_blank">查看站点</NuxtLink>
@@ -52,11 +72,13 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleKeydown));
             </div>
           </details>
           <button
+            ref="mobileMenuButton"
             class="admin-mobile-menu"
             type="button"
-            aria-label="打开导航"
+            :aria-label="isMobileOpen ? '关闭导航' : '打开导航'"
+            aria-controls="admin-primary-navigation"
             :aria-expanded="isMobileOpen"
-            @click="isMobileOpen = !isMobileOpen"
+            @click="toggleMobileNavigation"
           >
             ☰
           </button>

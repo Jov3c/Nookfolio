@@ -155,28 +155,13 @@ html[data-theme-transition='to-light']::view-transition-old(root) {
 }
 
 html[data-theme='dark'] .topbar,
-html[data-theme='dark'] .blog-prototype-topbar,
-html[data-theme='dark'] .admin-topbar {
+html[data-theme='dark'] .blog-prototype-topbar {
   border-color: color-mix(in srgb, var(--color-line) 88%, transparent);
   background: color-mix(in srgb, var(--color-bg) 90%, transparent);
 }
 
 html[data-theme='dark'] .home-prototype__card {
   background: color-mix(in srgb, var(--color-panel) 88%, transparent);
-}
-
-html[data-theme='dark'] .admin-sidebar {
-  background: #151815;
-}
-
-html[data-theme='dark'] .admin-nav-group__trigger,
-html[data-theme='dark'] .admin-nav-link {
-  color: var(--color-muted);
-}
-
-html[data-theme='dark'] .admin-nav-link:hover,
-html[data-theme='dark'] .admin-nav-link.router-link-exact-active {
-  color: var(--color-text);
 }
 
 html[data-theme='dark'] .skeleton-block {

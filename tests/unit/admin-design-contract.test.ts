@@ -39,6 +39,10 @@ describe('admin design contract', () => {
     expect(shellCss).toContain('var(--color-accent)');
     expect(shellCss).not.toContain('#f5f7fa');
     expect(shellCss).not.toContain('#303133');
+    expect(shellCss).toContain('.sr-only');
+    expect(layout).toContain('aria-controls="admin-primary-navigation"');
+    expect(layout).toContain("isMobileOpen ? '关闭导航' : '打开导航'");
+    expect(layout).toContain('primaryNav.value?.focusFirst()');
   });
 
   it('uses floating islands without the retired paper theme', () => {

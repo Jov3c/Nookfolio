@@ -24,6 +24,12 @@ function updateIndicator() {
   indicator.opacity = '1';
 }
 
+function focusFirst() {
+  nav.value?.querySelector<HTMLAnchorElement>('a')?.focus();
+}
+
+defineExpose({ focusFirst });
+
 watch(
   () => route.path,
   async () => {
@@ -40,7 +46,7 @@ onBeforeUnmount(() => observer?.disconnect());
 </script>
 
 <template>
-  <nav ref="nav" class="admin-primary-nav" aria-label="后台主导航">
+  <nav id="admin-primary-navigation" ref="nav" class="admin-primary-nav" aria-label="后台主导航">
     <span class="admin-primary-nav__indicator" :style="indicator" aria-hidden="true" />
     <NuxtLink
       v-for="group in adminNavigation"

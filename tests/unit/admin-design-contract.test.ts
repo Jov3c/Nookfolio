@@ -24,17 +24,16 @@ describe('admin design contract', () => {
     expect(css.split('\n').length).toBeLessThan(20);
   });
 
-  it('uses the approved restrained sidebar workspace', () => {
+  it('uses the approved floating top navigation workspace', () => {
     const layout = read('app/layouts/admin.vue');
     const shellCss = read('app/assets/css/admin/shell.css');
 
     expect(layout).toContain('<SiteBrand');
     expect(layout).toContain('aria-label="返回概览仪表盘"');
-    expect(layout).not.toContain('admin-collapse-button');
-    expect(layout).toContain(':aria-label="item.label"');
-    expect(layout).toContain('aria-controls="admin-sidebar"');
-    expect(layout).toContain(':aria-expanded="isMobileOpen"');
-    expect(shellCss).toContain('grid-template-columns: 245px minmax(0, 1fr)');
+    expect(layout).toContain('<AdminPrimaryNav');
+    expect(layout).toContain('<AdminSecondaryNav');
+    expect(layout).not.toContain('admin-sidebar');
+    expect(shellCss).toContain('.admin-floating-bar');
     expect(shellCss).toContain('var(--color-bg)');
     expect(shellCss).toContain('var(--color-panel)');
     expect(shellCss).toContain('var(--color-accent)');
@@ -42,17 +41,16 @@ describe('admin design contract', () => {
     expect(shellCss).not.toContain('#303133');
   });
 
-  it('uses the paper editorial workspace without oversized page titles', () => {
+  it('keeps page titles restrained while the floating shell is introduced', () => {
     const shellCss = read('app/assets/css/admin/shell.css');
     const paperCss = read('app/assets/css/admin/paper.css');
     const responsiveCss = read('app/assets/css/admin/responsive.css');
     const authCss = read('app/assets/css/admin/auth.css');
     const aboutPage = read('app/pages/admin/about.vue');
 
-    expect(shellCss).toContain('grid-template-columns: 245px minmax(0, 1fr)');
+    expect(shellCss).toContain('grid-template-columns: minmax(150px,1fr) auto minmax(150px,1fr)');
     expect(paperCss).toContain('--admin-paper');
     expect(paperCss).toContain('.admin-page-heading h1');
-    expect(shellCss).toContain('font-size: clamp(1.55rem, 2.2vw, 2.1rem)');
     expect(paperCss).toContain('.admin-dashboard-section::before');
     expect(paperCss).toContain('grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr)');
     expect(paperCss).toContain('.admin-dashboard > .admin-dashboard-section:nth-of-type(3)');

@@ -1,7 +1,8 @@
 import { describe, expect, test } from 'vitest';
 import {
+  adminNavigation,
+  getAdminNavigationState,
   getAdminNavIndicatorGeometry,
-  getDefaultExpandedAdminGroups,
 } from '../../app/utils/admin-navigation';
 
 describe('admin navigation motion', () => {
@@ -14,7 +15,33 @@ describe('admin navigation motion', () => {
     ).toEqual({ x: 16, y: 88, width: 176, height: 36 });
   });
 
-  test('keeps every navigation group collapsed by default', () => {
-    expect(getDefaultExpandedAdminGroups()).toEqual(new Set());
+  test.each([
+    ['/admin', 'overview', '/admin'],
+    ['/admin/write', 'content', '/admin/write'],
+    ['/admin/write/drafts', 'content', '/admin/write/drafts'],
+    ['/admin/posts', 'content', '/admin/posts'],
+    ['/admin/home', 'profile', '/admin/home'],
+    ['/admin/about', 'profile', '/admin/about'],
+    ['/admin/comments', 'community', '/admin/comments'],
+    ['/admin/messages', 'community', '/admin/messages'],
+    ['/admin/media', 'media', '/admin/media'],
+  ])('maps %s to %s and %s', (path, groupKey, itemPath) => {
+    const state = getAdminNavigationState(path);
+
+    expect(state.activeGroup.key).toBe(groupKey);
+    expect(state.activeItem.to).toBe(itemPath);
+  });
+
+  test('exposes five primary destinations with content secondary tabs', () => {
+    expect(adminNavigation.map((group) => group.label)).toEqual([
+      '概览',
+      '内容',
+      '资料',
+      '互动',
+      '媒体库',
+    ]);
+    expect(getAdminNavigationState('/admin/projects').secondaryItems.map((item) => item.label)).toContain(
+      '项目管理',
+    );
   });
 });

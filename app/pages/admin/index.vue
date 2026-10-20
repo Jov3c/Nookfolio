@@ -153,7 +153,7 @@ useSeoMeta({ title: '仪表盘 — Nookfolio 管理后台', robots: 'noindex, no
           <p>站点状态</p>
           <h2 id="status-heading">服务连接</h2>
         </div>
-        <i :data-online="Boolean(statsResponse?.data)"></i>
+        <i :data-online="Boolean(statsResponse?.data)" />
       </div>
       <p>
         {{

@@ -9,7 +9,6 @@ const root = resolve(import.meta.dirname, '../..');
 const read = (path: string) => readFileSync(resolve(root, path), 'utf8');
 
 const pageTitles = new Map([
-  ['index.vue', '仪表盘'],
   ['posts.vue', '文章管理'],
   ['categories.vue', '分类管理'],
   ['projects.vue', '项目管理'],
@@ -30,6 +29,7 @@ describe('admin localization contract', () => {
 
   it('keeps the current Chinese admin shell instead of the retired prototype shell', () => {
     const layout = read('app/layouts/admin.vue');
+    const navigation = read('app/utils/admin-navigation.ts');
     const posts = read('app/pages/admin/posts.vue');
 
     expect(layout).toContain('aria-label="返回概览仪表盘"');
@@ -38,7 +38,9 @@ describe('admin localization contract', () => {
     expect(posts).not.toContain('<h1>Posts</h1>');
     expect(posts).not.toContain('Manage categories');
     expect(posts).not.toContain('New post');
-    expect(layout).toContain("{ label: 'About 页面', text: 'About 页面', to: '/admin/about' }");
+    expect(navigation).toContain("{ label: 'About 页面', to: '/admin/about' }");
+    expect(layout).toContain('class="admin-identity-menu"');
+    expect(layout).toContain('退出登录');
   });
 
   it('presents article workflow statuses in Chinese', () => {

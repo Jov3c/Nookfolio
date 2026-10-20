@@ -80,6 +80,45 @@
   cursor: pointer;
   font-size: 0.7rem;
   font-weight: 750;
+  list-style: none;
+}
+.admin-identity-button::-webkit-details-marker {
+  display: none;
+}
+.admin-identity-menu {
+  position: relative;
+}
+.admin-identity-menu__panel {
+  position: absolute;
+  z-index: 50;
+  top: calc(100% + 10px);
+  right: 0;
+  display: grid;
+  width: min(250px, calc(100vw - 32px));
+  gap: 5px;
+  padding: 16px;
+  border: 1px solid var(--color-line);
+  border-radius: 16px;
+  background: var(--color-panel);
+  box-shadow: var(--shadow-soft);
+}
+.admin-identity-menu__panel strong {
+  font-size: 0.78rem;
+}
+.admin-identity-menu__panel span {
+  overflow: hidden;
+  color: var(--color-muted);
+  font-size: 0.65rem;
+  text-overflow: ellipsis;
+}
+.admin-identity-menu__panel button {
+  min-height: 36px;
+  margin-top: 9px;
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  cursor: pointer;
 }
 .admin-mobile-menu {
   display: none;

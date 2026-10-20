@@ -106,6 +106,33 @@ describe('admin design contract', () => {
     expect(publicHome).not.toContain("item.icon || '↗'");
   });
 
+  it('keeps every admin workflow in the shared heading and island system', () => {
+    const pages = [
+      'write.vue',
+      'write/drafts.vue',
+      'posts.vue',
+      'categories.vue',
+      'projects.vue',
+      'timeline.vue',
+      'home.vue',
+      'cv.vue',
+      'about.vue',
+      'comments.vue',
+      'messages.vue',
+      'links.vue',
+      'media.vue',
+    ];
+
+    for (const page of pages) {
+      const source = read(`app/pages/admin/${page}`);
+      expect(source).toContain('admin-page-heading');
+      expect(source).toMatch(/home-admin-section|moderation-card|friend-link-|media-/);
+    }
+    expect(read('app/pages/admin/write.vue')).toContain('@submit.prevent="publishPost"');
+    expect(read('app/pages/admin/write/drafts.vue')).toContain('draft-list');
+    expect(read('app/pages/admin/posts.vue')).toContain('@submit.prevent="savePost"');
+  });
+
   it('supports uploaded and remote homepage icons without hiding entries after the fourth', () => {
     const adminHome = read('app/pages/admin/home.vue');
     const publicHome = read('app/pages/index.vue');

@@ -39,15 +39,18 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleKeydown));
         <div class="admin-floating-bar__actions">
           <NuxtLink class="admin-view-site" to="/" target="_blank">查看站点</NuxtLink>
           <ThemeToggle />
-          <button
-            class="admin-identity-button"
-            type="button"
-            :title="admin?.email"
-            :disabled="isSigningOut"
-            @click="signOut"
-          >
-            {{ isSigningOut ? '…' : admin?.displayName.slice(0, 2).toUpperCase() }}
-          </button>
+          <details class="admin-identity-menu">
+            <summary class="admin-identity-button" :title="admin?.email">
+              {{ admin?.displayName.slice(0, 2).toUpperCase() }}
+            </summary>
+            <div class="admin-identity-menu__panel">
+              <strong>{{ admin?.displayName }}</strong>
+              <span>{{ admin?.email }}</span>
+              <button type="button" :disabled="isSigningOut" @click="signOut">
+                {{ isSigningOut ? '正在退出…' : '退出登录' }}
+              </button>
+            </div>
+          </details>
           <button
             class="admin-mobile-menu"
             type="button"

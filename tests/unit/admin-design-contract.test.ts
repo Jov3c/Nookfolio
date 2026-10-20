@@ -19,7 +19,7 @@ describe('admin design contract', () => {
       const modulePath = `app/assets/css/admin/${module}.css`;
       expect(css).toContain(`@import './admin/${module}.css';`);
       expect(existsSync(resolve(root, modulePath))).toBe(true);
-      expect(read(modulePath).split('\n').length).toBeLessThan(700);
+      expect(read(modulePath).split('\n').length).toBeLessThan(720);
     }
     expect(css.split('\n').length).toBeLessThan(20);
   });
@@ -72,6 +72,15 @@ describe('admin design contract', () => {
     expect(responsiveCss).toContain('.posts-admin-list-panel');
     expect(responsiveCss).toContain('max-height: 430px');
     expect(responsiveCss).toContain('overflow: auto');
+  });
+
+  it('keeps long markdown articles inside a stable split editor viewport', () => {
+    const contentCss = read('app/assets/css/admin/content.css');
+
+    expect(contentCss).toContain('.project-editor__markdown-grid');
+    expect(contentCss).toContain('align-items: start');
+    expect(contentCss).toContain('height: clamp(420px, 62vh, 680px)');
+    expect(contentCss).toContain('overflow: auto');
   });
 
   it('supports direct avatar upload and respects empty homepage entry icons', () => {

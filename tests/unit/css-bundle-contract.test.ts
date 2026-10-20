@@ -36,4 +36,10 @@ describe('CSS bundle contract', () => {
       /\.(?:post-card|blog-subnav|archive-group|link-card|life-chapter|cv-prototype)/,
     );
   });
+
+  it('does not ship the retired paper admin theme', () => {
+    const adminCss = read('app/assets/css/admin.css');
+    expect(adminCss).toContain("@import './admin/islands.css';");
+    expect(adminCss).not.toContain('paper.css');
+  });
 });

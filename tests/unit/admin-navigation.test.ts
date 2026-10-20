@@ -40,8 +40,8 @@ describe('admin navigation motion', () => {
       '互动',
       '媒体库',
     ]);
-    expect(getAdminNavigationState('/admin/projects').secondaryItems.map((item) => item.label)).toContain(
-      '项目管理',
-    );
+    expect(
+      getAdminNavigationState('/admin/projects').secondaryItems.map((item) => item.label),
+    ).toContain('项目管理');
   });
 });

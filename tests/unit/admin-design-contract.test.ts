@@ -10,7 +10,7 @@ describe('admin design contract', () => {
   it('uses a small entry stylesheet with focused admin modules', () => {
     const layout = read('app/layouts/admin.vue');
     const css = read('app/assets/css/admin.css');
-    const modules = ['auth', 'shell', 'forms', 'content', 'paper', 'responsive'];
+    const modules = ['auth', 'shell', 'forms', 'content', 'islands', 'responsive'];
 
     expect(layout).toContain('<style src="~/assets/css/admin.css"></style>');
     expect(layout).not.toContain('admin-shell.css');
@@ -41,21 +41,20 @@ describe('admin design contract', () => {
     expect(shellCss).not.toContain('#303133');
   });
 
-  it('keeps page titles restrained while the floating shell is introduced', () => {
+  it('uses floating islands without the retired paper theme', () => {
     const shellCss = read('app/assets/css/admin/shell.css');
-    const paperCss = read('app/assets/css/admin/paper.css');
+    const islandsCss = read('app/assets/css/admin/islands.css');
     const responsiveCss = read('app/assets/css/admin/responsive.css');
     const authCss = read('app/assets/css/admin/auth.css');
     const aboutPage = read('app/pages/admin/about.vue');
 
-    expect(shellCss).toContain('grid-template-columns: minmax(150px,1fr) auto minmax(150px,1fr)');
-    expect(paperCss).toContain('--admin-paper');
-    expect(paperCss).toContain('.admin-page-heading h1');
-    expect(paperCss).toContain('.admin-dashboard-section::before');
-    expect(paperCss).toContain('grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr)');
-    expect(paperCss).toContain('.admin-dashboard > .admin-dashboard-section:nth-of-type(3)');
-    expect(paperCss).toContain('font-family: Georgia');
-    expect(paperCss).toContain("html[data-theme='dark'] .admin-main input");
+    expect(shellCss).toContain('grid-template-columns: minmax(150px, 1fr) auto minmax(150px, 1fr)');
+    expect(existsSync(resolve(root, 'app/assets/css/admin/paper.css'))).toBe(false);
+    expect(islandsCss).toContain('.admin-island');
+    expect(islandsCss).toContain('border-radius: var(--radius-lg)');
+    expect(islandsCss).not.toMatch(/tape|rotate\(|Courier New|Georgia/);
+    expect(islandsCss).toContain("html[data-theme='dark']");
+    expect(islandsCss).toContain('.admin-main');
     expect(responsiveCss).not.toContain('font-size: 2.65rem');
     expect(authCss).toContain('font-size: clamp(1.75rem, 4vw, 2.6rem)');
     expect(aboutPage).toContain('<header class="admin-page-heading">');

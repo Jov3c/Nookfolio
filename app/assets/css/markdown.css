@@ -1,0 +1,74 @@
+:root {
+  --font-reading-serif:
+    'Noto Serif SC', 'Source Han Serif SC', 'PingFang SC', 'Microsoft YaHei', 'Songti SC', serif;
+  --font-reading-mono: 'Maple Mono', 'Cascadia Code', Consolas, 'SFMono-Regular', monospace;
+}
+
+html .readme__content,
+html .article-body {
+  font-family: var(--font-reading-serif);
+  font-kerning: normal;
+  line-height: 1.92;
+  text-wrap: pretty;
+  word-wrap: break-word;
+}
+
+html .readme__content :is(h1, h2, h3, h4, h5, h6),
+html .article-body :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--font-reading-serif);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.035em;
+}
+
+html .readme__content :is(code, pre),
+html .article-body :is(code, pre) {
+  font-family: var(--font-reading-mono);
+}
+
+html .readme__content pre,
+html .article-body pre {
+  line-height: 1.7;
+}
+
+html .readme__content blockquote,
+html .article-body blockquote {
+  line-height: 1.8;
+}
+
+html .readme__content :is(th, td),
+html .article-body :is(th, td) {
+  line-height: 1.55;
+}
+
+html .readme__content .spoiler,
+html .article-body .spoiler {
+  border-radius: 0.2em;
+  background: color-mix(in srgb, currentColor 15%, transparent);
+  filter: blur(3px);
+  cursor: help;
+  transition:
+    filter 50ms ease-out,
+    background-color 150ms ease-out;
+}
+
+html .readme__content .spoiler:hover,
+html .readme__content .spoiler:focus-visible,
+html .article-body .spoiler:hover,
+html .article-body .spoiler:focus-visible {
+  background: transparent;
+  filter: none;
+}
+
+html .readme__content .spoiler:focus-visible,
+html .article-body .spoiler:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html .readme__content .spoiler,
+  html .article-body .spoiler {
+    transition-duration: 0.01ms;
+  }
+}

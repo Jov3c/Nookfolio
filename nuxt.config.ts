@@ -1,6 +1,6 @@
 export default defineNuxtConfig({
   compatibilityDate: '2026-09-29',
-  css: ['~/assets/css/base.css'],
+  css: ['~/assets/css/base.css', '~/assets/css/markdown.css'],
   devtools: { enabled: false },
   modules: ['@nuxt/eslint'],
   app: {

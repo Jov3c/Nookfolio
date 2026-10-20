@@ -34,4 +34,12 @@ const status = 'active';
     expect(html).not.toContain('<script>');
     expect(html).not.toContain('javascript:');
   });
+
+  it('renders !!content!! as keyboard-focusable spoiler text while preserving inline Markdown', () => {
+    const html = renderMarkdown('阅读 !!隐藏 **重点**!!。');
+
+    expect(html).toContain(
+      '<span class="spoiler" tabindex="0" title="悬停或聚焦查看">隐藏 <strong>重点</strong></span>',
+    );
+  });
 });

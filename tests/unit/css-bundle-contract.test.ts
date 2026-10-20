@@ -10,7 +10,7 @@ describe('CSS bundle contract', () => {
   it('keeps layout-specific styles out of the global Nuxt bundle', () => {
     const nuxtConfig = read('nuxt.config.ts');
 
-    expect(nuxtConfig).toContain("css: ['~/assets/css/base.css']");
+    expect(nuxtConfig).toContain("css: ['~/assets/css/base.css', '~/assets/css/markdown.css']");
     expect(read('app/layouts/blog-prototype.vue')).toContain(
       '<style src="~/assets/css/prototype.css"></style>',
     );
@@ -24,7 +24,7 @@ describe('CSS bundle contract', () => {
     );
   });
 
-  it.each(['base.css', 'public.css', 'prototype.css', 'admin.css'])(
+  it.each(['base.css', 'markdown.css', 'public.css', 'prototype.css', 'admin.css'])(
     'keeps %s below the source-size ceiling',
     (file) => {
       expect(statSync(resolve(root, 'app/assets/css', file)).size).toBeLessThan(60_000);

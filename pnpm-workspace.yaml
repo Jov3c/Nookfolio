@@ -16,3 +16,7 @@ overrides:
   source-map-js: 1.2.2
   '@modelcontextprotocol/client': 2.3.0
   '@modelcontextprotocol/server': 2.3.0
+
+patchedDependencies:
+  braces@3.0.3: patches/braces@3.0.3.patch
+  node-forge@1.4.0: patches/node-forge@1.4.0.patch

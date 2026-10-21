@@ -6,10 +6,11 @@ export const siteRelativePathSchema = z
   .min(1)
   .max(500)
   .refine(
-    (value) => value.startsWith('/')
-      && !value.startsWith('//')
-      && !value.includes('\\')
-      && ![...value].some((character) => {
+    (value) =>
+      value.startsWith('/') &&
+      !value.startsWith('//') &&
+      !value.includes('\\') &&
+      ![...value].some((character) => {
         const code = character.charCodeAt(0);
         return code <= 31 || code === 127;
       }),

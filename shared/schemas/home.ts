@@ -50,9 +50,10 @@ function validateEntryDestination(
     context.addIssue({
       code: 'custom',
       path: ['url'],
-      message: value.targetType === 'INTERNAL'
-        ? 'Internal entries require a site-relative path'
-        : 'External entries require an HTTP or HTTPS URL',
+      message:
+        value.targetType === 'INTERNAL'
+          ? 'Internal entries require a site-relative path'
+          : 'External entries require an HTTP or HTTPS URL',
     });
   }
 }
@@ -70,7 +71,9 @@ export const socialLinkSchema = z.object({
 export const siteProfileUpdateSchema = siteProfileSchema.partial();
 export const homeProfileUpdateSchema = homeProfileSchema.partial();
 export const homeEntryCreateSchema = homeEntrySchema;
-export const homeEntryUpdateSchema = homeEntryFieldsSchema.partial().superRefine(validateEntryDestination);
+export const homeEntryUpdateSchema = homeEntryFieldsSchema
+  .partial()
+  .superRefine(validateEntryDestination);
 export const socialLinkCreateSchema = socialLinkSchema;
 export const socialLinkUpdateSchema = socialLinkSchema.partial();
 

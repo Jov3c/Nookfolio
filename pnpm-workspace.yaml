@@ -14,3 +14,5 @@ overrides:
   deepmerge-ts: 8.0.0
   mysql2: 3.23.1
   source-map-js: 1.2.2
+  '@modelcontextprotocol/client': 2.3.0
+  '@modelcontextprotocol/server': 2.3.0

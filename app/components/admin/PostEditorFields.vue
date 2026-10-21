@@ -1,17 +1,23 @@
 <script setup lang="ts">
 import { renderMarkdown } from '#shared/markdown';
-import type { AdminMediaOption, BlogCategory } from '~/types/blog';
+import type { BlogCategory } from '~/types/blog';
 import type { PostEditorFormValue } from '~/utils/post-editor';
 
 withDefaults(
   defineProps<{
     categories: BlogCategory[];
-    media: AdminMediaOption[];
+    coverUrl?: string | null;
     showSlug?: boolean;
   }>(),
-  { showSlug: true },
+  { coverUrl: null, showSlug: true },
 );
-const emit = defineEmits<{ imported: [fileName: string]; importError: [message: string] }>();
+const emit = defineEmits<{
+  imported: [fileName: string];
+  importError: [message: string];
+  coverUploaded: [media: { id: string; publicUrl: string }];
+  coverRemoved: [];
+  uploadError: [message: string];
+}>();
 const form = defineModel<PostEditorFormValue>({ required: true });
 const previewHtml = computed(() => renderMarkdown(form.value.markdownBody));
 
@@ -47,15 +53,22 @@ async function importMarkdown(event: Event) {
         </option>
       </select>
     </label>
-    <label>
-      <span>封面图片</span>
-      <select v-model="form.coverMediaId">
-        <option value="">不使用封面，显示默认样式</option>
-        <option v-for="item in media" :key="item.id" :value="item.id">
-          {{ item.originalName }}
-        </option>
-      </select>
-    </label>
+    <AdminDirectImageUpload
+      label="文章封面"
+      category="blog"
+      :current-url="coverUrl"
+      :fallback-text="form.title || '封面'"
+      :alt-text="`${form.title || '文章'}封面`"
+      @uploaded="
+        form.coverMediaId = $event.id;
+        emit('coverUploaded', $event);
+      "
+      @removed="
+        form.coverMediaId = '';
+        emit('coverRemoved');
+      "
+      @error="emit('uploadError', $event)"
+    />
     <label class="post-form-grid__wide">
       <span>摘要</span>
       <textarea v-model="form.excerpt" rows="2" maxlength="500" />

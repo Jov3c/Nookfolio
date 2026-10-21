@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AdminMediaOption, AdminPost, BlogCategory } from '~/types/blog';
+import type { AdminPost, BlogCategory } from '~/types/blog';
 import {
   createAutomaticPostSlug,
   createDraftPayload,
@@ -11,7 +11,7 @@ definePageMeta({ layout: 'admin', middleware: 'admin' });
 
 const route = useRoute();
 const categories = ref<BlogCategory[]>([]);
-const media = ref<AdminMediaOption[]>([]);
+const coverUrl = ref('');
 const draftId = ref('');
 const fallbackSlug = ref(createFallbackSlug());
 const isLoading = ref(true);
@@ -35,14 +35,8 @@ useSeoMeta({ title: '发布文章 — Nookfolio 管理后台', robots: 'noindex,
 
 async function load() {
   try {
-    const [categoryResult, mediaResult] = await Promise.all([
-      $fetch<{ data: BlogCategory[] }>('/api/v1/admin/categories'),
-      $fetch<{ data: AdminMediaOption[] }>('/api/v1/admin/media', {
-        query: { page: 1, pageSize: 60, q: '' },
-      }),
-    ]);
+    const categoryResult = await $fetch<{ data: BlogCategory[] }>('/api/v1/admin/categories');
     categories.value = categoryResult.data;
-    media.value = mediaResult.data;
     form.categoryId = categories.value[0]?.id ?? '';
 
     const requestedDraft = typeof route.query.draft === 'string' ? route.query.draft : '';
@@ -64,6 +58,7 @@ async function load() {
         seoTitle: draft.seoTitle ?? '',
         seoDescription: draft.seoDescription ?? '',
       });
+      coverUrl.value = draft.cover?.publicUrl ?? '';
     }
   } catch (error) {
     errorMessage.value =
@@ -218,8 +213,11 @@ onMounted(load);
       <AdminPostEditorFields
         v-model="form"
         :categories="categories"
-        :media="media"
+        :cover-url="coverUrl"
         :show-slug="false"
+        @cover-uploaded="coverUrl = $event.publicUrl"
+        @cover-removed="coverUrl = ''"
+        @upload-error="errorMessage = $event"
         @imported="notice = `已导入 ${$event}，正在自动保存。`"
         @import-error="errorMessage = $event"
       />

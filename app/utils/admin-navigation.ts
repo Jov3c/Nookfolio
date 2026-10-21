@@ -4,7 +4,7 @@ export interface AdminNavigationItem {
 }
 
 export interface AdminNavigationGroup {
-  key: 'overview' | 'content' | 'profile' | 'community' | 'media';
+  key: 'overview' | 'content' | 'profile' | 'community';
   label: string;
   to: string;
   items: AdminNavigationItem[];
@@ -51,12 +51,6 @@ export const adminNavigation: AdminNavigationGroup[] = [
       { label: '留言管理', to: '/admin/messages' },
       { label: '友链管理', to: '/admin/links' },
     ],
-  },
-  {
-    key: 'media',
-    label: '媒体库',
-    to: '/admin/media',
-    items: [{ label: '媒体库', to: '/admin/media' }],
   },
 ];
 

@@ -101,11 +101,12 @@ describe('admin design contract', () => {
 
   it('supports direct avatar upload and respects empty homepage entry icons', () => {
     const adminHome = read('app/pages/admin/home.vue');
+    const uploader = read('app/components/admin/DirectImageUpload.vue');
     const publicHome = read('app/pages/index.vue');
 
-    expect(adminHome).toContain('id="home-avatar-file"');
-    expect(adminHome).toContain("body.append('category', 'avatars')");
-    expect(adminHome).toContain('uploadAvatar');
+    expect(adminHome).toContain('<AdminDirectImageUpload');
+    expect(adminHome).toContain('crop="square"');
+    expect(uploader).toContain("body.append('category', props.category)");
     expect(publicHome).toContain('v-else-if="entryIconText(item)"');
     expect(publicHome).not.toContain("item.icon || '↗'");
   });
@@ -124,7 +125,6 @@ describe('admin design contract', () => {
       'comments.vue',
       'messages.vue',
       'links.vue',
-      'media.vue',
     ];
 
     for (const page of pages) {
@@ -142,8 +142,8 @@ describe('admin design contract', () => {
     const publicHome = read('app/pages/index.vue');
     const publicCss = read('app/assets/css/public.css');
 
-    expect(adminHome).toContain("body.append('category', 'icons')");
-    expect(adminHome).toContain('uploadEntryIcon');
+    expect(adminHome).toContain('category="icons"');
+    expect(adminHome).toContain('handleEntryIconUploaded');
     expect(publicHome).toContain('entryIconUrl(item)');
     expect(publicHome).toContain("key: 'public-home-page'");
     expect(publicHome).toContain("'--entry-index': index");

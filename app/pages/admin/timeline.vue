@@ -54,7 +54,7 @@ interface TimelineDraft {
 
 const entries = ref<AdminTimelineEntry[]>([]);
 const projects = ref<AdminProject[]>([]);
-const media = ref<AdminMedia[]>([]);
+const uploadedMedia = ref<Record<string, AdminMedia>>({});
 const selectedEntryId = ref<string | null>(null);
 const form = reactive<TimelineDraft>(createEmptyForm());
 const isLoading = ref(true);
@@ -73,16 +73,12 @@ async function load() {
   isLoading.value = true;
   errorMessage.value = '';
   try {
-    const [timelineResult, projectResult, mediaResult] = await Promise.all([
+    const [timelineResult, projectResult] = await Promise.all([
       $fetch<{ data: AdminTimelineEntry[] }>('/api/v1/admin/timeline'),
       $fetch<{ data: { items: AdminProject[] } }>('/api/v1/admin/projects'),
-      $fetch<{ data: AdminMedia[] }>('/api/v1/admin/media', {
-        query: { page: 1, pageSize: 100, q: '' },
-      }),
     ]);
     entries.value = timelineResult.data;
     projects.value = projectResult.data.items;
-    media.value = mediaResult.data;
 
     if (selectedEntryId.value) {
       const current = entries.value.find((entry) => entry.id === selectedEntryId.value);
@@ -155,6 +151,15 @@ function addLink() {
 
 function removeLink(index: number) {
   form.links.splice(index, 1);
+}
+
+function addUploadedMedia(item: AdminMedia) {
+  uploadedMedia.value[item.id] = item;
+  if (!form.mediaIds.includes(item.id)) form.mediaIds.push(item.id);
+}
+
+function removeMedia(id: string) {
+  form.mediaIds = form.mediaIds.filter((mediaId) => mediaId !== id);
 }
 
 async function runAction(key: string, action: () => Promise<void>) {
@@ -310,11 +315,30 @@ onMounted(load);
             <div class="timeline-admin-relations about-admin-form-grid__wide">
               <div class="timeline-admin-relation-group">
                 <strong>媒体</strong>
-                <select v-model="form.mediaIds" multiple size="5" aria-label="时间线媒体">
-                  <option v-for="item in media" :key="item.id" :value="item.id">
-                    {{ item.originalName }}
-                  </option>
-                </select>
+                <AdminDirectImageUpload
+                  label="添加时间线图片"
+                  category="timeline"
+                  :removable="false"
+                  :fallback-text="'图片'"
+                  :alt-text="`${form.title || '时间线'}图片`"
+                  @uploaded="addUploadedMedia"
+                  @error="errorMessage = $event"
+                />
+                <div v-if="form.mediaIds.length" class="timeline-media-list">
+                  <div v-for="id in form.mediaIds" :key="id" class="timeline-media-list__item">
+                    <img
+                      v-if="uploadedMedia[id]"
+                      :src="uploadedMedia[id].publicUrl"
+                      :alt="uploadedMedia[id].altText || '时间线图片'"
+                    />
+                    <span>{{
+                      uploadedMedia[id]?.originalName || `已绑定图片 ${id.slice(0, 8)}`
+                    }}</span>
+                    <button type="button" class="admin-danger-button" @click="removeMedia(id)">
+                      移除
+                    </button>
+                  </div>
+                </div>
               </div>
               <div class="timeline-admin-relation-group">
                 <strong>关联项目</strong>

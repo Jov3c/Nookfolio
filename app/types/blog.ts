@@ -78,10 +78,3 @@ export interface ArchiveYear {
 export interface PublicArchiveResponse {
   data: { years: ArchiveYear[]; total: number };
 }
-
-export interface AdminMediaOption {
-  id: string;
-  originalName: string;
-  publicUrl: string;
-  altText: string | null;
-}

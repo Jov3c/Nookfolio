@@ -24,7 +24,6 @@ describe('admin navigation motion', () => {
     ['/admin/about', 'profile', '/admin/about'],
     ['/admin/comments', 'community', '/admin/comments'],
     ['/admin/messages', 'community', '/admin/messages'],
-    ['/admin/media', 'media', '/admin/media'],
   ])('maps %s to %s and %s', (path, groupKey, itemPath) => {
     const state = getAdminNavigationState(path);
 
@@ -32,14 +31,8 @@ describe('admin navigation motion', () => {
     expect(state.activeItem.to).toBe(itemPath);
   });
 
-  test('exposes five primary destinations with content secondary tabs', () => {
-    expect(adminNavigation.map((group) => group.label)).toEqual([
-      '概览',
-      '内容',
-      '资料',
-      '互动',
-      '媒体库',
-    ]);
+  test('exposes four primary destinations with content secondary tabs', () => {
+    expect(adminNavigation.map((group) => group.label)).toEqual(['概览', '内容', '资料', '互动']);
     expect(
       getAdminNavigationState('/admin/projects').secondaryItems.map((item) => item.label),
     ).toContain('项目管理');

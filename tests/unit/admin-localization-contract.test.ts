@@ -19,7 +19,6 @@ const pageTitles = new Map([
   ['comments.vue', '评论管理'],
   ['messages.vue', '留言管理'],
   ['links.vue', '友链管理'],
-  ['media.vue', '媒体库'],
 ]);
 
 describe('admin localization contract', () => {
@@ -52,12 +51,12 @@ describe('admin localization contract', () => {
 
   it('keeps operational interface copy in Chinese', () => {
     const login = read('app/pages/admin/login.vue');
-    const media = read('app/pages/admin/media.vue');
+    const uploader = read('app/components/admin/DirectImageUpload.vue');
 
     expect(login).not.toContain('fetchError.data?.error?.message');
-    expect(media).toContain('独立持久化存储');
-    expect(media).not.toContain('stored outside the build');
-    expect(media).not.toContain('aria-label="Media assets"');
+    expect(uploader).toContain('点击上传');
+    expect(uploader).toContain('调整头像尺寸');
+    expect(uploader).not.toContain('stored outside the build');
   });
 
   it('treats comments and messages as published-content governance', () => {

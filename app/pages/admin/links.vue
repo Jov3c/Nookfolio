@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { FRIEND_LINK_STATUS_LABELS, type FriendLinkStatus } from '#shared/constants/friend-links';
-import type { AdminMediaOption } from '~/types/blog';
 import type {
   AdminFriendLink,
   AdminFriendLinksResponse,
@@ -15,7 +14,7 @@ const tabs: Array<{ value: AdminFriendLinkStatus; label: string }> = [
   { value: 'REJECTED', label: '已拒绝' },
 ];
 const links = ref<AdminFriendLink[]>([]);
-const media = ref<AdminMediaOption[]>([]);
+const logoUrl = ref('');
 const selectedStatus = ref<AdminFriendLinkStatus>('PUBLISHED');
 const isLoading = ref(true);
 const isCreating = ref(false);
@@ -49,17 +48,6 @@ async function load() {
   }
 }
 
-async function loadMedia() {
-  try {
-    const result = await $fetch<{ data: AdminMediaOption[] }>('/api/v1/admin/media', {
-      query: { page: 1, pageSize: 60, q: '' },
-    });
-    media.value = result.data;
-  } catch {
-    media.value = [];
-  }
-}
-
 function selectTab(status: AdminFriendLinkStatus) {
   selectedStatus.value = status;
   void load();
@@ -90,6 +78,7 @@ async function createLink() {
       sortOrder: 0,
       visible: true,
     });
+    logoUrl.value = '';
     showCreate.value = false;
     selectedStatus.value = 'PUBLISHED';
     await load();
@@ -168,9 +157,7 @@ function domain(url: string) {
   }
 }
 
-onMounted(async () => {
-  await Promise.all([load(), loadMedia()]);
-});
+onMounted(load);
 </script>
 
 <template>
@@ -202,15 +189,22 @@ onMounted(async () => {
           ><span>描述</span><input v-model="form.description" required maxlength="300"
         /></label>
         <div class="form-row">
-          <label>
-            <span>站点图标</span>
-            <select v-model="form.logoMediaId">
-              <option value="">不使用图标，显示名称缩写</option>
-              <option v-for="asset in media" :key="asset.id" :value="asset.id">
-                {{ asset.originalName }}
-              </option>
-            </select>
-          </label>
+          <AdminDirectImageUpload
+            label="站点图标"
+            category="links"
+            :current-url="logoUrl"
+            :fallback-text="form.name || '友链'"
+            :alt-text="`${form.name || '友链'}图标`"
+            @uploaded="
+              form.logoMediaId = $event.id;
+              logoUrl = $event.publicUrl;
+            "
+            @removed="
+              form.logoMediaId = '';
+              logoUrl = '';
+            "
+            @error="errorMessage = $event"
+          />
           <label><span>排序</span><input v-model.number="form.sortOrder" type="number" /></label>
         </div>
         <label class="friend-link-checkbox"

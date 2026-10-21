@@ -12,6 +12,7 @@ interface AdminCvProfile {
   statusText: string;
   statement: string;
   portraitMediaId: string | null;
+  portrait: AdminMedia | null;
 }
 
 interface AdminCvExperience {
@@ -69,6 +70,7 @@ interface CvAggregateResponse {
   statusText: string | null;
   statement: string;
   portraitMediaId: string | null;
+  portrait: AdminMedia | null;
   experiences: AdminCvExperience[];
   educations: AdminCvEducation[];
   skills: AdminCvSkill[];
@@ -107,7 +109,6 @@ const experiences = ref<AdminCvExperience[]>([]);
 const educations = ref<AdminCvEducation[]>([]);
 const skills = ref<AdminCvSkill[]>([]);
 const projects = ref<AdminProject[]>([]);
-const media = ref<AdminMedia[]>([]);
 const selectedProjectIds = ref<string[]>([]);
 const newExperience = reactive<ExperienceDraft>(createEmptyExperience(10));
 const newEducation = reactive<EducationDraft>(createEmptyEducation(10));
@@ -123,16 +124,12 @@ async function load() {
   isLoading.value = true;
   errorMessage.value = '';
   try {
-    const [cvResult, projectResult, mediaResult] = await Promise.all([
+    const [cvResult, projectResult] = await Promise.all([
       $fetch<{ data: CvAggregateResponse }>('/api/v1/admin/cv/profile'),
       $fetch<{ data: { items: AdminProject[] } }>('/api/v1/admin/projects'),
-      $fetch<{ data: AdminMedia[] }>('/api/v1/admin/media', {
-        query: { page: 1, pageSize: 100, q: '' },
-      }),
     ]);
     applyAggregate(cvResult.data);
     projects.value = projectResult.data.items;
-    media.value = mediaResult.data;
   } catch {
     errorMessage.value = '个人简历配置加载失败，请刷新重试。';
   } finally {
@@ -294,6 +291,7 @@ function applyAggregate(data: CvAggregateResponse) {
     statusText: data.statusText ?? '',
     statement: data.statement,
     portraitMediaId: data.portraitMediaId,
+    portrait: data.portrait,
   });
   experiences.value = data.experiences;
   educations.value = data.educations;
@@ -342,6 +340,7 @@ function createEmptyProfile(): AdminCvProfile {
     statusText: '',
     statement: '',
     portraitMediaId: null,
+    portrait: null,
   };
 }
 
@@ -414,15 +413,23 @@ onMounted(load);
           <label><span>所在地</span><input v-model="profile.location" required /></label>
           <label><span>个人网站</span><input v-model="profile.website" type="url" /></label>
           <label><span>状态文字</span><input v-model="profile.statusText" /></label>
-          <label
-            ><span>个人照片</span
-            ><select v-model="profile.portraitMediaId">
-              <option :value="null">不使用个人照片</option>
-              <option v-for="item in media" :key="item.id" :value="item.id">
-                {{ item.originalName }}
-              </option>
-            </select></label
-          >
+          <AdminDirectImageUpload
+            label="简历头像"
+            category="avatars"
+            crop="square"
+            :current-url="profile.portrait?.publicUrl"
+            :fallback-text="profile.name || '头像'"
+            :alt-text="`${profile.name || '个人'}简历头像`"
+            @uploaded="
+              profile.portraitMediaId = $event.id;
+              profile.portrait = $event;
+            "
+            @removed="
+              profile.portraitMediaId = null;
+              profile.portrait = null;
+            "
+            @error="errorMessage = $event"
+          />
           <label class="about-admin-form-grid__wide"
             ><span>个人简介</span><textarea v-model="profile.bio" rows="5" required />
           </label>

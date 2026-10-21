@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { AdminMediaOption, AdminPost, BlogCategory } from '~/types/blog';
+import type { AdminPost, BlogCategory } from '~/types/blog';
 import { validatePostForPublish, type PostEditorFormValue } from '~/utils/post-editor';
 
 definePageMeta({ layout: 'admin', middleware: 'admin' });
 
 const posts = ref<AdminPost[]>([]);
 const categories = ref<BlogCategory[]>([]);
-const media = ref<AdminMediaOption[]>([]);
+const coverUrl = ref('');
 const selectedPostId = ref<string | null>(null);
 const isLoading = ref(true);
 const busyKey = ref('');
@@ -21,18 +21,14 @@ useSeoMeta({ title: '文章管理 — Nookfolio 管理后台', robots: 'noindex,
 async function load() {
   isLoading.value = true;
   try {
-    const [postResult, categoryResult, mediaResult] = await Promise.all([
+    const [postResult, categoryResult] = await Promise.all([
       $fetch<{ data: AdminPost[] }>('/api/v1/admin/posts', {
         query: { status: 'PUBLISHED', page: 1, pageSize: 100 },
       }),
       $fetch<{ data: BlogCategory[] }>('/api/v1/admin/categories'),
-      $fetch<{ data: AdminMediaOption[] }>('/api/v1/admin/media', {
-        query: { page: 1, pageSize: 60, q: '' },
-      }),
     ]);
     posts.value = postResult.data;
     categories.value = categoryResult.data;
-    media.value = mediaResult.data;
     if (posts.value[0]) selectPost(posts.value[0]);
   } catch {
     errorMessage.value = '已发布文章加载失败，请刷新重试。';
@@ -53,6 +49,7 @@ function selectPost(post: AdminPost) {
     seoTitle: post.seoTitle ?? '',
     seoDescription: post.seoDescription ?? '',
   });
+  coverUrl.value = post.cover?.publicUrl ?? '';
   notice.value = '';
   errorMessage.value = '';
 }
@@ -191,7 +188,10 @@ onMounted(load);
           <AdminPostEditorFields
             v-model="form"
             :categories="categories"
-            :media="media"
+            :cover-url="coverUrl"
+            @cover-uploaded="coverUrl = $event.publicUrl"
+            @cover-removed="coverUrl = ''"
+            @upload-error="errorMessage = $event"
             @imported="notice = `已导入 ${$event}，保存后生效。`"
             @import-error="errorMessage = $event"
           />

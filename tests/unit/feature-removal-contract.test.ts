@@ -28,7 +28,6 @@ describe('removed feature contract', () => {
   it('removes Footprint from current navigation, configuration and data models', () => {
     const currentSources = [
       'app/layouts/admin.vue',
-      'app/pages/admin/media.vue',
       'prisma/schema.prisma',
       'server/repositories/media-repository.ts',
       'server/services/site-content-seed.ts',

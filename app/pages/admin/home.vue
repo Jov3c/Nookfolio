@@ -17,6 +17,7 @@ interface HomeProfile {
   role: string;
   intro: string;
   avatarMediaId: string | null;
+  avatar: { id: string; url: string; altText: string | null } | null;
   statusText: string | null;
   statusVisible: boolean;
 }
@@ -64,15 +65,12 @@ const identity = reactive<HomeProfile>({
   role: '',
   intro: '',
   avatarMediaId: null,
+  avatar: null,
   statusText: '',
   statusVisible: true,
 });
 const entries = ref<HomeEntry[]>([]);
 const socialLinks = ref<SocialLink[]>([]);
-const mediaItems = ref<MediaItem[]>([]);
-const avatarFile = ref<File | null>(null);
-const brandIconFile = ref<File | null>(null);
-const entryIconFiles = reactive<Record<string, File | null>>({});
 const newEntry = reactive({
   title: '',
   description: '',
@@ -95,19 +93,16 @@ useSeoMeta({ title: '首页资料 — Nookfolio 管理后台', robots: 'noindex,
 async function load() {
   isLoading.value = true;
   try {
-    const [siteResult, identityResult, entriesResult, socialsResult, mediaResult] =
-      await Promise.all([
-        $fetch<{ data: SiteProfile }>('/api/v1/admin/site-profile'),
-        $fetch<{ data: HomeProfile }>('/api/v1/admin/home-profile'),
-        $fetch<{ data: HomeEntry[] }>('/api/v1/admin/home-entries'),
-        $fetch<{ data: SocialLink[] }>('/api/v1/admin/social-links'),
-        $fetch<{ data: MediaItem[] }>('/api/v1/admin/media', { query: { page: 1, pageSize: 100 } }),
-      ]);
+    const [siteResult, identityResult, entriesResult, socialsResult] = await Promise.all([
+      $fetch<{ data: SiteProfile }>('/api/v1/admin/site-profile'),
+      $fetch<{ data: HomeProfile }>('/api/v1/admin/home-profile'),
+      $fetch<{ data: HomeEntry[] }>('/api/v1/admin/home-entries'),
+      $fetch<{ data: SocialLink[] }>('/api/v1/admin/social-links'),
+    ]);
     Object.assign(site, siteResult.data);
     Object.assign(identity, identityResult.data);
     entries.value = entriesResult.data;
     socialLinks.value = socialsResult.data;
-    mediaItems.value = mediaResult.data;
   } catch {
     errorMessage.value = '首页配置加载失败，请刷新重试。';
   } finally {
@@ -133,39 +128,26 @@ async function saveSite() {
   });
 }
 
-function chooseBrandIcon(event: Event) {
-  brandIconFile.value = (event.target as HTMLInputElement).files?.[0] ?? null;
-}
-
-async function uploadBrandIcon() {
-  if (!brandIconFile.value) {
-    errorMessage.value = '请先选择一张角标图片。';
-    return;
-  }
+async function handleBrandUploaded(uploaded: MediaItem) {
   await runAction('brand-icon', async () => {
-    const body = new FormData();
-    body.append('file', brandIconFile.value!);
-    body.append('category', 'icons');
-    body.append('altText', `${site.brandText} 站点角标`);
-    const uploaded = await $fetch<{ data: MediaItem }>('/api/v1/admin/media/upload', {
-      method: 'POST',
-      body,
-    });
-    mediaItems.value = [uploaded.data, ...mediaItems.value];
-    site.brandIconMediaId = uploaded.data.id;
+    site.brandIconMediaId = uploaded.id;
+    site.brandIcon = { id: uploaded.id, url: uploaded.publicUrl, altText: uploaded.altText };
     await $fetch('/api/v1/admin/site-profile', {
       method: 'PATCH',
       body: {
         brandText: site.brandText,
-        brandIconMediaId: uploaded.data.id,
+        brandIconMediaId: uploaded.id,
       },
     });
     await refreshNuxtData(['public-home-brand', 'public-home-meta', 'public-home-page']);
-    brandIconFile.value = null;
-    const input = document.querySelector<HTMLInputElement>('#site-brand-icon-file');
-    if (input) input.value = '';
     notice.value = '站点角标已上传并保存。';
   });
+}
+
+async function removeBrandIcon() {
+  site.brandIconMediaId = null;
+  site.brandIcon = null;
+  await saveSite();
 }
 
 async function saveIdentity() {
@@ -185,43 +167,29 @@ async function saveIdentity() {
   });
 }
 
-function chooseAvatar(event: Event) {
-  avatarFile.value = (event.target as HTMLInputElement).files?.[0] ?? null;
-}
-
-async function uploadAvatar() {
-  if (!avatarFile.value) {
-    errorMessage.value = '请先选择一张头像图片。';
-    return;
-  }
-
+async function handleAvatarUploaded(uploaded: MediaItem) {
   await runAction('avatar', async () => {
-    const body = new FormData();
-    body.append('file', avatarFile.value!);
-    body.append('category', 'avatars');
-    body.append('altText', `${identity.nickname} 头像`);
-    const result = await $fetch<{ data: MediaItem }>('/api/v1/admin/media/upload', {
-      method: 'POST',
-      body,
-    });
-    mediaItems.value = [result.data, ...mediaItems.value];
-    identity.avatarMediaId = result.data.id;
+    identity.avatarMediaId = uploaded.id;
+    identity.avatar = { id: uploaded.id, url: uploaded.publicUrl, altText: uploaded.altText };
     await $fetch('/api/v1/admin/home-profile', {
       method: 'PATCH',
       body: {
         nickname: identity.nickname,
         role: identity.role,
         intro: identity.intro,
-        avatarMediaId: result.data.id,
+        avatarMediaId: uploaded.id,
         statusText: identity.statusText || null,
         statusVisible: identity.statusVisible,
       },
     });
-    avatarFile.value = null;
-    const input = document.querySelector<HTMLInputElement>('#home-avatar-file');
-    if (input) input.value = '';
     notice.value = '头像已上传并保存。';
   });
+}
+
+async function removeAvatar() {
+  identity.avatarMediaId = null;
+  identity.avatar = null;
+  await saveIdentity();
 }
 
 async function addEntry() {
@@ -267,35 +235,13 @@ async function saveEntry(entry: HomeEntry) {
   });
 }
 
-function chooseEntryIcon(entry: HomeEntry, event: Event) {
-  entryIconFiles[entry.id] = (event.target as HTMLInputElement).files?.[0] ?? null;
-}
-
-async function uploadEntryIcon(entry: HomeEntry) {
-  const file = entryIconFiles[entry.id];
-  if (!file) {
-    errorMessage.value = '请先选择一张图标图片。';
-    return;
-  }
-
+async function handleEntryIconUploaded(entry: HomeEntry, uploaded: MediaItem) {
   await runAction('entry-icon-' + entry.id, async () => {
-    const body = new FormData();
-    body.append('file', file);
-    body.append('category', 'icons');
-    body.append('altText', `${entry.title} 图标`);
-    const uploaded = await $fetch<{ data: MediaItem }>('/api/v1/admin/media/upload', {
-      method: 'POST',
-      body,
-    });
     const updated = await $fetch<{ data: HomeEntry }>(entryEndpoint(entry.id), {
       method: 'PATCH',
-      body: { icon: null, iconMediaId: uploaded.data.id },
+      body: { icon: null, iconMediaId: uploaded.id },
     });
-    mediaItems.value = [uploaded.data, ...mediaItems.value];
     Object.assign(entry, updated.data);
-    entryIconFiles[entry.id] = null;
-    const input = document.querySelector<HTMLInputElement>(`#entry-icon-${entry.id}`);
-    if (input) input.value = '';
     notice.value = `入口「${entry.title}」的图标已上传并保存。`;
   });
 }
@@ -479,45 +425,18 @@ onMounted(load);
           <label
             ><span>角标文字</span><input v-model="site.brandText" maxlength="80" required
           /></label>
-          <div class="home-avatar-field home-form-grid__wide">
-            <div class="home-avatar-field__preview">
-              <img
-                v-if="site.brandIconMediaId"
-                :src="
-                  mediaItems.find((item) => item.id === site.brandIconMediaId)?.publicUrl ||
-                  site.brandIcon?.url
-                "
-                :alt="site.brandIcon?.altText || site.brandText"
-              />
-              <span v-else>{{ site.brandText.slice(0, 2) }}</span>
-            </div>
-            <div class="home-avatar-field__controls">
-              <label for="site-brand-icon-file"><span>上传角标图标</span></label>
-              <input
-                id="site-brand-icon-file"
-                type="file"
-                accept="image/jpeg,image/png,image/webp,image/gif"
-                @change="chooseBrandIcon"
-              />
-              <button
-                class="admin-secondary-button"
-                type="button"
-                :disabled="busyKey === 'brand-icon' || !brandIconFile"
-                @click="uploadBrandIcon"
-              >
-                {{ busyKey === 'brand-icon' ? '正在上传…' : '上传并使用' }}
-              </button>
-            </div>
-            <label class="home-avatar-field__library">
-              <span>或从媒体库选择</span>
-              <select v-model="site.brandIconMediaId">
-                <option :value="null">不使用图片，显示默认圆点</option>
-                <option v-for="media in mediaItems" :key="media.id" :value="media.id">
-                  {{ media.originalName }}
-                </option>
-              </select>
-            </label>
-          </div>
+          <AdminDirectImageUpload
+            class="home-form-grid__wide"
+            label="站点角标"
+            category="icons"
+            :current-url="site.brandIcon?.url"
+            :fallback-text="site.brandText"
+            :alt-text="`${site.brandText} 站点角标`"
+            :disabled="busyKey === 'brand-icon'"
+            @uploaded="handleBrandUploaded"
+            @removed="removeBrandIcon"
+            @error="errorMessage = $event"
+          />
           <button class="button" type="submit" :disabled="busyKey === 'site'">保存站点资料</button>
         </form>
       </section>
@@ -528,7 +447,7 @@ onMounted(load);
             <p class="eyebrow">个人身份</p>
             <h2>设置访客看到的第一印象</h2>
           </div>
-          <span>可直接上传，也可从媒体库选择</span>
+          <span>头像上传后直接绑定</span>
         </div>
         <form class="home-form-grid" @submit.prevent="saveIdentity">
           <label
@@ -541,48 +460,19 @@ onMounted(load);
             ><span>简介</span
             ><textarea v-model="identity.intro" rows="4" maxlength="2000" required />
           </label>
-          <div class="home-avatar-field home-form-grid__wide">
-            <div class="home-avatar-field__preview">
-              <img
-                v-if="
-                  identity.avatarMediaId &&
-                  mediaItems.find((item) => item.id === identity.avatarMediaId)
-                "
-                :src="mediaItems.find((item) => item.id === identity.avatarMediaId)?.publicUrl"
-                :alt="
-                  mediaItems.find((item) => item.id === identity.avatarMediaId)?.altText ||
-                  identity.nickname
-                "
-              />
-              <span v-else>{{ identity.nickname.slice(0, 2) || 'J3' }}</span>
-            </div>
-            <div class="home-avatar-field__controls">
-              <label for="home-avatar-file"><span>上传新头像</span></label>
-              <input
-                id="home-avatar-file"
-                type="file"
-                accept="image/jpeg,image/png,image/webp,image/gif"
-                @change="chooseAvatar"
-              />
-              <button
-                class="admin-secondary-button"
-                type="button"
-                :disabled="busyKey === 'avatar' || !avatarFile"
-                @click="uploadAvatar"
-              >
-                {{ busyKey === 'avatar' ? '正在上传…' : '上传并使用' }}
-              </button>
-            </div>
-            <label class="home-avatar-field__library">
-              <span>或从媒体库选择</span>
-              <select v-model="identity.avatarMediaId">
-                <option :value="null">不使用头像，显示名称缩写</option>
-                <option v-for="media in mediaItems" :key="media.id" :value="media.id">
-                  {{ media.originalName }}
-                </option>
-              </select>
-            </label>
-          </div>
+          <AdminDirectImageUpload
+            class="home-form-grid__wide"
+            label="个人头像"
+            category="avatars"
+            crop="square"
+            :current-url="identity.avatar?.url"
+            :fallback-text="identity.nickname || 'J3'"
+            :alt-text="`${identity.nickname} 头像`"
+            :disabled="busyKey === 'avatar'"
+            @uploaded="handleAvatarUploaded"
+            @removed="removeAvatar"
+            @error="errorMessage = $event"
+          />
           <label
             ><span>状态文字</span
             ><input v-model="identity.statusText" maxlength="120" placeholder="最近正在做什么"
@@ -629,38 +519,17 @@ onMounted(load);
             <div class="home-entry-editor__fields">
               <label><span>标题</span><input v-model="entry.title" maxlength="80" /></label>
               <label><span>描述</span><input v-model="entry.description" maxlength="180" /></label>
-              <div class="home-entry-icon-field">
-                <span>图标</span>
-                <div class="home-entry-icon-field__row">
-                  <span class="home-entry-icon-field__preview">
-                    <img
-                      v-if="entryIconPreview(entry)"
-                      :src="entryIconPreview(entry)!"
-                      :alt="entry.iconMedia?.altText || ''"
-                      referrerpolicy="no-referrer"
-                    />
-                    <b v-else-if="entry.icon && !entry.icon.includes('<')">{{ entry.icon }}</b>
-                    <small v-else>无</small>
-                  </span>
-                  <input v-model="entry.icon" maxlength="500" placeholder="https://... 或 Emoji" />
-                </div>
-                <div class="home-entry-icon-field__upload">
-                  <input
-                    :id="`entry-icon-${entry.id}`"
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp,image/gif"
-                    @change="chooseEntryIcon(entry, $event)"
-                  />
-                  <button
-                    type="button"
-                    :disabled="!entryIconFiles[entry.id] || busyKey === 'entry-icon-' + entry.id"
-                    @click="uploadEntryIcon(entry)"
-                  >
-                    上传图标
-                  </button>
-                  <button type="button" @click="clearEntryIcon(entry)">清除</button>
-                </div>
-              </div>
+              <AdminDirectImageUpload
+                label="入口图标"
+                category="icons"
+                :current-url="entryIconPreview(entry)"
+                :fallback-text="entry.icon || entry.title"
+                :alt-text="`${entry.title} 图标`"
+                :disabled="busyKey === 'entry-icon-' + entry.id"
+                @uploaded="handleEntryIconUploaded(entry, $event)"
+                @removed="clearEntryIcon(entry)"
+                @error="errorMessage = $event"
+              />
               <label><span>地址</span><input v-model="entry.url" maxlength="500" /></label>
               <label
                 ><span>类型</span

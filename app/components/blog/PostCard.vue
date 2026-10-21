@@ -1,9 +1,17 @@
 <script setup lang="ts">
 import type { PublicPost } from '~/types/blog';
 import { formatPostDateTime } from '~/utils/content';
+import { createDefaultPostCoverLabel } from '~/utils/post-cover';
 
 const props = defineProps<{ post: PublicPost; featured?: boolean; coverVariant?: number }>();
 const transitionActive = ref(false);
+const defaultCoverLabel = computed(() => createDefaultPostCoverLabel(props.post.category.name));
+const defaultCoverNumber = computed(() => String(props.coverVariant || 1).padStart(2, '0'));
+const defaultCoverYear = computed(() =>
+  props.post.publishedAt
+    ? new Date(props.post.publishedAt).getFullYear()
+    : new Date().getFullYear(),
+);
 
 async function openPost(event: MouseEvent) {
   if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
@@ -41,10 +49,20 @@ async function openPost(event: MouseEvent) {
     <div class="post-card__cover">
       <div
         class="post-card__cover-art"
+        :class="{ 'post-card__cover-art--default': !post.cover }"
         :data-cover="post.category.slug"
         :data-cover-index="coverVariant"
         :style="post.cover ? { backgroundImage: `url(${post.cover.publicUrl})` } : undefined"
-      />
+      >
+        <template v-if="!post.cover">
+          <span class="post-card__cover-index">NOOKFOLIO / {{ post.category.name }}</span>
+          <strong class="post-card__cover-label">{{ defaultCoverLabel }}</strong>
+          <i class="post-card__cover-rule" aria-hidden="true" />
+          <small class="post-card__cover-number">
+            {{ defaultCoverNumber }} — {{ defaultCoverYear }}
+          </small>
+        </template>
+      </div>
     </div>
     <div class="post-card__content" :class="{ 'is-transitioning': transitionActive }">
       <p class="post-meta">

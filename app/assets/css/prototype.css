@@ -557,34 +557,97 @@ html[data-blog-transition='active'] .article-page__header {
   transform: scale(1.05);
 }
 
-.post-card__cover-art::after {
+.post-card__cover-art--default::after {
+  position: absolute;
+  inset: 0;
   display: block;
-  width: 100%;
-  height: 100%;
-  background:
-    radial-gradient(circle at 30% 24%, rgb(255 255 255 / 72%), transparent 22%),
-    repeating-linear-gradient(165deg, transparent 0 22px, rgb(255 255 255 / 11%) 23px 24px);
+  border: 1px solid rgb(45 54 45 / 16%);
+  margin: 14px;
   content: '';
 }
 
 .post-card__cover-art[data-cover-index='1'] {
-  background-image: linear-gradient(145deg, #cbddea, #eef5f7 55%, #a9c7d7);
+  background: #e7ece6;
 }
 
 .post-card__cover-art[data-cover-index='2'] {
-  background-image: linear-gradient(145deg, #76916f, #d7d8c2 46%, #7a6654);
+  background: #e7ebef;
 }
 
 .post-card__cover-art[data-cover-index='3'] {
-  background-image: linear-gradient(145deg, #b5a4c9, #e6dde9 50%, #7585a8);
+  background: #eee8df;
 }
 
 .post-card__cover-art[data-cover-index='4'] {
-  background-image: linear-gradient(145deg, #dec7a3, #f5eee3 48%, #86989c);
+  background: #ebe7ec;
 }
 
 .post-card__cover-art[data-cover-index='5'] {
-  background-image: linear-gradient(145deg, #8aa6b9, #e9eef2 52%, #687a91);
+  background: #e7ecec;
+}
+
+.post-card__cover-art--default {
+  position: relative;
+  color: #2c332c;
+}
+
+.post-card__cover-index {
+  position: absolute;
+  top: 18px;
+  left: 22px;
+  z-index: 1;
+  max-width: 130px;
+  overflow: hidden;
+  font-size: 0.5625rem;
+  letter-spacing: 0.16em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.post-card__cover-label {
+  position: absolute;
+  right: 18px;
+  bottom: 11px;
+  z-index: 1;
+  font-family: 'Songti SC', STSong, SimSun, serif;
+  font-size: 4rem;
+  font-weight: 500;
+  letter-spacing: -0.1em;
+  line-height: 1;
+}
+
+.post-card__cover-rule {
+  position: absolute;
+  right: 22px;
+  bottom: 25px;
+  left: 22px;
+  z-index: 1;
+  height: 1px;
+  background: rgb(45 54 45 / 24%);
+}
+
+.post-card__cover-number {
+  position: absolute;
+  bottom: 12px;
+  left: 22px;
+  z-index: 1;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.5625rem;
+  letter-spacing: 0.05em;
+}
+
+:root[data-theme='dark'] .post-card__cover-art--default {
+  background: #242924;
+  color: #d9ded6;
+}
+
+:root[data-theme='dark'] .post-card__cover-art--default::after {
+  border-color: rgb(217 222 214 / 15%);
+}
+
+:root[data-theme='dark'] .post-card__cover-rule {
+  background: rgb(217 222 214 / 22%);
 }
 
 .post-card__content {

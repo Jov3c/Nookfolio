@@ -170,5 +170,6 @@ describe('admin design contract', () => {
     expect(publicCss).toContain('width: 215px');
     expect(publicCss).toContain('height: 120px');
     expect(publicCss).toContain('justify-content: flex-start');
+    expect(publicCss).toContain('padding: 72px 36px 48px');
   });
 });

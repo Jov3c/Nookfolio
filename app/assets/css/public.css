@@ -80,7 +80,7 @@
 }
 .home-prototype__body {
   position: relative;
-  padding: 72px clamp(28px, 7vw, 78px) 48px;
+  padding: 72px 36px 48px;
   text-align: center;
 }
 .home-prototype__avatar {

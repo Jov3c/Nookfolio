@@ -9,12 +9,20 @@ const source = readFileSync(
 );
 
 describe('travelling link popover', () => {
-  it('opens two independent-blog routes from the train button', () => {
+  it('opens three official independent-blog routes in the selected order', () => {
     expect(source).toContain('<button');
     expect(source).toContain('aria-haspopup="menu"');
-    expect(source).toContain('https://www.travellings.cn/go.html');
-    expect(source).toContain('https://www.foreverblog.cn/go.html');
-    expect(source).toContain('十年之约虫洞');
+    const travelling = source.indexOf('https://www.travellings.cn/go.html');
+    const blogscn = source.indexOf('https://blogscn.fun/random.html');
+    const forever = source.indexOf('https://www.foreverblog.cn/go.html');
+
+    expect(travelling).toBeGreaterThan(-1);
+    expect(blogscn).toBeGreaterThan(travelling);
+    expect(forever).toBeGreaterThan(blogscn);
+    expect(source).toContain('https://www.travellings.cn/assets/logo.gif');
+    expect(source).toContain('https://photo.xiangming.site/img/footer.gif');
+    expect(source).toContain('https://www.foreverblog.cn/assets/logo/wormhole_v2_dark.webp');
+    expect(source).toContain('width: 188px');
   });
 
   it('supports dismissing the route popover', () => {

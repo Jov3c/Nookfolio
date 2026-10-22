@@ -54,42 +54,62 @@ onBeforeUnmount(() => {
 
     <Transition name="route-popover">
       <section v-if="isOpen" class="route-popover" role="menu" aria-label="博客漫游路线">
-        <header class="route-popover__header">
-          <span>选择漫游路线</span>
-          <span>ONLINE</span>
-        </header>
-        <div class="route-popover__list">
-          <a
-            class="route-option"
-            href="https://www.travellings.cn/go.html"
-            target="_blank"
-            rel="noopener noreferrer"
-            role="menuitem"
-            @click="closePopover"
-          >
-            <span class="route-option__dot" aria-hidden="true" />
-            <span>
-              <strong>开往</strong>
-              <small>随机前往一座独立博客</small>
-            </span>
-            <span class="route-option__code">TR-01</span>
-          </a>
-          <a
-            class="route-option"
-            href="https://www.foreverblog.cn/go.html"
-            target="_blank"
-            rel="noopener noreferrer"
-            role="menuitem"
-            @click="closePopover"
-          >
-            <span class="route-option__dot" aria-hidden="true" />
-            <span>
-              <strong>十年之约虫洞</strong>
-              <small>遇见仍在更新的成员博客</small>
-            </span>
-            <span class="route-option__code">WH-10</span>
-          </a>
-        </div>
+        <a
+          class="route-option"
+          href="https://www.travellings.cn/go.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          role="menuitem"
+          title="开往 · 友链接力"
+          @click="closePopover"
+        >
+          <img
+            src="https://www.travellings.cn/assets/logo.gif"
+            alt="开往 · 友链接力"
+            decoding="async"
+            referrerpolicy="no-referrer"
+          />
+        </a>
+        <a
+          class="route-option"
+          href="https://blogscn.fun/random.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          role="menuitem"
+          title="笔墨迹 · 随机穿梭"
+          @click="closePopover"
+        >
+          <img
+            src="https://photo.xiangming.site/img/footer.gif"
+            alt="笔墨迹 · 随机穿梭"
+            decoding="async"
+            referrerpolicy="no-referrer"
+          />
+        </a>
+        <a
+          class="route-option"
+          href="https://www.foreverblog.cn/go.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          role="menuitem"
+          title="十年之约虫洞"
+          @click="closePopover"
+        >
+          <img
+            class="route-option__logo route-option__logo--light"
+            src="https://www.foreverblog.cn/assets/logo/wormhole_v2_dark.webp"
+            alt="十年之约虫洞"
+            decoding="async"
+            referrerpolicy="no-referrer"
+          />
+          <img
+            class="route-option__logo route-option__logo--dark"
+            src="https://www.foreverblog.cn/assets/logo/wormhole_v2_light.webp"
+            alt=""
+            decoding="async"
+            referrerpolicy="no-referrer"
+          />
+        </a>
       </section>
     </Transition>
   </div>
@@ -146,59 +166,30 @@ onBeforeUnmount(() => {
   z-index: 80;
   top: calc(100% + 8px);
   right: 0;
-  width: 310px;
-  padding: 14px 12px 12px;
+  width: 188px;
+  padding: 5px 7px;
   border: 1px solid var(--color-border);
-  border-radius: 17px;
+  border-radius: 14px;
   background: var(--color-surface);
-  box-shadow: 0 18px 48px rgb(23 25 23 / 11%);
+  box-shadow: 0 18px 42px rgb(23 25 23 / 12%);
   transform-origin: top right;
-}
-
-.route-popover__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 6px 12px;
-  color: var(--color-text);
-  font-size: 0.7rem;
-  font-weight: 600;
-}
-
-.route-popover__header span:last-child,
-.route-option__code {
-  color: var(--color-muted);
-  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-  font-size: 0.58rem;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-}
-
-.route-popover__list {
-  position: relative;
-}
-
-.route-popover__list::before {
-  position: absolute;
-  top: 25px;
-  bottom: 25px;
-  left: 22px;
-  width: 1px;
-  background: var(--color-border);
-  content: '';
 }
 
 .route-option {
   position: relative;
   display: grid;
-  grid-template-columns: 32px minmax(0, 1fr) auto;
-  gap: 10px;
-  align-items: center;
-  padding: 10px 9px;
-  border-radius: 11px;
+  min-height: 44px;
+  place-items: center;
+  padding: 6px 8px;
+  border-bottom: 1px dashed var(--color-border);
+  border-radius: 10px;
   color: var(--color-text);
   text-decoration: none;
   transition: background-color 160ms ease-out;
+}
+
+.route-option:last-child {
+  border-bottom-color: transparent;
 }
 
 .route-option:hover,
@@ -211,41 +202,24 @@ onBeforeUnmount(() => {
   outline-offset: -2px;
 }
 
-.route-option__dot {
-  z-index: 1;
-  display: grid;
-  width: 26px;
-  height: 26px;
-  place-items: center;
-  border: 1px solid var(--color-border);
-  border-radius: 50%;
-  background: var(--color-surface);
-}
-
-.route-option__dot::after {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--color-accent);
-  content: '';
-}
-
-.route-option strong,
-.route-option small {
+.route-option img {
   display: block;
+  max-width: 138px;
+  max-height: 26px;
+  object-fit: contain;
+  object-position: center;
 }
 
-.route-option strong {
-  font-size: 0.8rem;
+.route-option__logo--dark {
+  display: none !important;
 }
 
-.route-option small {
-  margin-top: 3px;
-  overflow: hidden;
-  color: var(--color-muted);
-  font-size: 0.65rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+:global(html[data-theme='dark']) .route-option__logo--light {
+  display: none;
+}
+
+:global(html[data-theme='dark']) .route-option__logo--dark {
+  display: block !important;
 }
 
 .route-popover-enter-active,
@@ -264,7 +238,6 @@ onBeforeUnmount(() => {
 @media (max-width: 700px) {
   .route-popover {
     right: -44px;
-    width: min(310px, calc(100vw - 28px));
   }
 }
 

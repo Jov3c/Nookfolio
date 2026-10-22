@@ -49,4 +49,12 @@ describe('direct image upload admin experience', () => {
     expect(uploader).toContain('在线链接');
     expect(uploader).toContain('/api/v1/admin/media/import');
   });
+
+  it('shows non-cropped uploads centered without visually clipping them', () => {
+    const uploader = read('app/components/admin/DirectImageUpload.vue');
+
+    expect(uploader).toContain("'direct-image-upload--contain': crop === 'none'");
+    expect(uploader).toContain('.direct-image-upload--contain .direct-image-upload__preview img');
+    expect(uploader).toContain('object-fit: contain');
+  });
 });

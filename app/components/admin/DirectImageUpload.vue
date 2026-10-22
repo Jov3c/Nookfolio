@@ -221,7 +221,13 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="direct-image-upload" :class="{ 'direct-image-upload--compact': compact }">
+  <div
+    class="direct-image-upload"
+    :class="{
+      'direct-image-upload--compact': compact,
+      'direct-image-upload--contain': crop === 'none',
+    }"
+  >
     <span class="direct-image-upload__label">{{ label }}</span>
     <div class="direct-image-upload__card">
       <button
@@ -394,6 +400,10 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+.direct-image-upload--contain .direct-image-upload__preview img {
+  object-fit: contain;
+  object-position: center;
 }
 .direct-image-upload__preview > span {
   font-size: 1.4rem;

@@ -18,14 +18,16 @@ const { data: homeData } = await useFetch<PublicHomeResponse>('/api/v1/public/ho
 });
 const runtimeConfig = useRuntimeConfig();
 const copiedField = ref('');
-const siteOrigin = computed(() => String(runtimeConfig.public.siteUrl || 'https://jov3.cloud').replace(/\/$/, ''));
+const siteOrigin = computed(() =>
+  String(runtimeConfig.public.siteUrl || 'https://jov3.cloud').replace(/\/$/, ''),
+);
 const siteInfo = computed(() => {
   const home = homeData.value?.data;
   return {
     name: home?.siteProfile.siteTitle || 'Nookfolio',
     url: siteOrigin.value,
     feed: `${siteOrigin.value}/rss.xml`,
-    icon: absoluteUrl(home?.homeProfile.avatar?.url || '/favicon.ico'),
+    icon: `${siteOrigin.value}/avatar`,
     description: '保持好奇。',
   };
 });
@@ -141,17 +143,28 @@ async function copySiteField(field: string, value: string) {
 
     <section class="site-link-info" aria-labelledby="site-link-info-heading">
       <p>若能得您垂青，还望链接小站：</p>
-      <div class="site-link-info__panel">
-        <header>
-          <span aria-hidden="true">♧</span>
-          <h2 id="site-link-info-heading">站点信息</h2>
+      <div class="site-link-card">
+        <header class="site-link-card__header">
+          <img
+            :src="absoluteUrl(homeData?.data.homeProfile.avatar?.url || '/favicon.ico')"
+            alt="Nookfolio 头像"
+          />
+          <div>
+            <h2 id="site-link-info-heading">Nookfolio 站点信息</h2>
+            <p>点击任意一行即可复制</p>
+          </div>
         </header>
-        <dl>
+        <dl class="site-link-card__code">
           <div v-for="(value, field) in siteInfo" :key="field">
-            <dt>{{ { name: '名称', url: '地址', feed: '订阅', icon: '图标', description: '描述' }[field] }}：</dt>
+            <dt>
+              {{
+                { name: '名称', url: '地址', feed: '订阅', icon: '图标', description: '描述' }[
+                  field
+                ]
+              }}：
+            </dt>
             <dd>
               <button type="button" :title="`复制${value}`" @click="copySiteField(field, value)">
-                <img v-if="field === 'icon'" :src="value" alt="当前站点头像" />
                 <code>{{ value }}</code>
                 <span>{{ copiedField === field ? '已复制' : '复制' }}</span>
               </button>

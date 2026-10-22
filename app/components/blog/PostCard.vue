@@ -49,7 +49,10 @@ async function openPost(event: MouseEvent) {
     <div class="post-card__cover">
       <div
         class="post-card__cover-art"
-        :class="{ 'post-card__cover-art--default': !post.cover }"
+        :class="{
+          'post-card__cover-art--default': !post.cover,
+          'post-card__cover-art--image': post.cover,
+        }"
         :data-cover="post.category.slug"
         :data-cover-index="coverVariant"
         :style="post.cover ? { backgroundImage: `url(${post.cover.publicUrl})` } : undefined"

@@ -289,7 +289,8 @@ svg {
 
 @media (min-width: 901px) {
   .back-to-top--admin {
-    left: 304px;
+    right: 24px;
+    left: auto;
   }
 }
 
@@ -581,6 +582,11 @@ svg {
   .back-to-top {
     bottom: 16px;
     left: 16px;
+  }
+
+  .back-to-top--admin {
+    right: 16px;
+    left: auto;
   }
 
   .page-container,

@@ -31,4 +31,14 @@ describe('direct image upload admin experience', () => {
     expect(uploader).toContain('拖动图片调整位置');
     expect(uploader).toContain("props.crop === 'square'");
   });
+
+  it('uses the compact uploader inside homepage entry rows', () => {
+    const uploader = read('app/components/admin/DirectImageUpload.vue');
+    const homeAdmin = read('app/pages/admin/home.vue');
+
+    expect(uploader).toContain('compact?: boolean');
+    expect(uploader).toContain("'direct-image-upload--compact': compact");
+    expect(uploader).toContain('.direct-image-upload--compact .direct-image-upload__preview');
+    expect(homeAdmin).toMatch(/label="入口图标"[\s\S]*?compact/);
+  });
 });

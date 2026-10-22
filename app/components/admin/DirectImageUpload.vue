@@ -16,6 +16,7 @@ const props = withDefaults(
     crop?: 'none' | 'square';
     disabled?: boolean;
     removable?: boolean;
+    compact?: boolean;
   }>(),
   {
     currentUrl: null,
@@ -23,6 +24,7 @@ const props = withDefaults(
     crop: 'none',
     disabled: false,
     removable: true,
+    compact: false,
   },
 );
 
@@ -194,7 +196,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="direct-image-upload">
+  <div class="direct-image-upload" :class="{ 'direct-image-upload--compact': compact }">
     <span class="direct-image-upload__label">{{ label }}</span>
     <div class="direct-image-upload__card">
       <button
@@ -369,6 +371,45 @@ onBeforeUnmount(() => {
 }
 .direct-image-upload__input {
   display: none;
+}
+.direct-image-upload--compact {
+  gap: 5px;
+}
+.direct-image-upload--compact .direct-image-upload__label {
+  font-size: 0.66rem;
+}
+.direct-image-upload--compact .direct-image-upload__card {
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 8px;
+  padding: 7px;
+  border-radius: 9px;
+}
+.direct-image-upload--compact .direct-image-upload__preview {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+}
+.direct-image-upload--compact .direct-image-upload__preview > span {
+  font-size: 0.85rem;
+}
+.direct-image-upload--compact .direct-image-upload__preview small,
+.direct-image-upload--compact .direct-image-upload__content p,
+.direct-image-upload--compact .direct-image-upload__content > small {
+  display: none;
+}
+.direct-image-upload--compact .direct-image-upload__content strong {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.68rem;
+  line-height: 1.3;
+}
+.direct-image-upload--compact .direct-image-upload__actions {
+  gap: 4px;
+}
+.direct-image-upload--compact .direct-image-upload__actions button {
+  min-height: 27px;
+  padding: 4px 7px;
+  font-size: 0.62rem;
 }
 .image-crop-dialog {
   position: fixed;

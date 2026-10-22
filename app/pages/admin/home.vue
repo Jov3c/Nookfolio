@@ -522,6 +522,7 @@ onMounted(load);
               <AdminDirectImageUpload
                 label="入口图标"
                 category="icons"
+                compact
                 :current-url="entryIconPreview(entry)"
                 :fallback-text="entry.icon || entry.title"
                 :alt-text="`${entry.title} 图标`"

@@ -79,6 +79,13 @@ function startNewProject() {
 }
 
 async function saveProject() {
+  const validationError = validateProjectForm();
+  if (validationError) {
+    notice.value = '';
+    errorMessage.value = validationError;
+    return;
+  }
+
   await runAction('save', async () => {
     const body = formPayload();
     if (selectedProjectId.value) {
@@ -101,6 +108,13 @@ async function saveProject() {
     fillForm(result.data);
     notice.value = `项目「${result.data.name}」已创建。`;
   });
+}
+
+function validateProjectForm() {
+  if (!form.name.trim()) return '请填写项目名称。';
+  if (!form.slug.trim()) return '请填写路径标识。';
+  if (!form.summary.trim()) return '请填写项目摘要。';
+  return '';
 }
 
 async function deleteProject() {
@@ -238,7 +252,6 @@ onMounted(load);
     <p v-if="isLoading" class="media-empty">正在加载项目…</p>
     <template v-else>
       <AdminNotice :message="notice" />
-      <p v-if="errorMessage" class="admin-error" role="alert">{{ errorMessage }}</p>
 
       <div class="projects-admin-layout">
         <section class="home-admin-section projects-admin-list-panel">
@@ -288,7 +301,7 @@ onMounted(load);
           </ol>
         </section>
 
-        <form class="home-admin-section project-editor" @submit.prevent="saveProject">
+        <form class="home-admin-section project-editor" novalidate @submit.prevent="saveProject">
           <div class="home-admin-section__heading">
             <div>
               <p class="eyebrow">{{ isNewProject ? '新建项目' : '编辑项目' }}</p>
@@ -369,6 +382,9 @@ onMounted(load);
             </div>
           </section>
 
+          <p v-if="errorMessage" class="admin-error project-editor__error" role="alert">
+            {{ errorMessage }}
+          </p>
           <div class="project-editor__actions">
             <button class="button" type="submit" :disabled="busyKey === 'save'">
               {{ isNewProject ? '创建项目' : '保存项目' }}

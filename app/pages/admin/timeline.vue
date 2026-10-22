@@ -240,7 +240,7 @@ onMounted(load);
 </script>
 
 <template>
-  <div class="timeline-admin">
+  <div class="timeline-admin admin-management-page">
     <header class="admin-page-heading">
       <div>
         <p>内容管理 / 时间线</p>

@@ -96,7 +96,7 @@ onMounted(load);
 </script>
 
 <template>
-  <div class="moderation-admin">
+  <div class="moderation-admin admin-management-page">
     <header class="admin-page-heading">
       <div>
         <p>互动管理 / 评论</p>

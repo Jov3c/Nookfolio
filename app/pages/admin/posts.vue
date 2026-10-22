@@ -132,7 +132,7 @@ onMounted(load);
 </script>
 
 <template>
-  <div class="posts-admin">
+  <div class="posts-admin admin-management-page">
     <header class="admin-page-heading">
       <div>
         <p>内容管理 / 已发布文章</p>

@@ -131,7 +131,7 @@ onMounted(load);
 </script>
 
 <template>
-  <div class="categories-admin">
+  <div class="categories-admin admin-management-page">
     <header class="admin-page-heading">
       <div>
         <p>内容管理 / 分类</p>

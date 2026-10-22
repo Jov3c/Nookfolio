@@ -10,7 +10,16 @@ describe('admin design contract', () => {
   it('uses a small entry stylesheet with focused admin modules', () => {
     const layout = read('app/layouts/admin.vue');
     const css = read('app/assets/css/admin.css');
-    const modules = ['auth', 'shell', 'forms', 'content', 'dashboard', 'islands', 'responsive'];
+    const modules = [
+      'auth',
+      'shell',
+      'forms',
+      'content',
+      'management',
+      'dashboard',
+      'islands',
+      'responsive',
+    ];
 
     expect(layout).toContain('<style src="~/assets/css/admin.css"></style>');
     expect(layout).not.toContain('admin-shell.css');
@@ -162,6 +171,26 @@ describe('admin design contract', () => {
     expect(islandsCss).toContain('border-radius: 12px');
     expect(formsCss).toContain('min-height: 42px');
     expect(contentCss).toContain('height: clamp(480px, 66vh, 760px)');
+  });
+
+  it('keeps management and moderation records in compact scannable rows', () => {
+    const contentCss = read('app/assets/css/admin/management.css');
+    const pages = [
+      'posts.vue',
+      'categories.vue',
+      'timeline.vue',
+      'comments.vue',
+      'messages.vue',
+      'links.vue',
+    ];
+
+    for (const page of pages) {
+      expect(read(`app/pages/admin/${page}`)).toContain('admin-management-page');
+    }
+    expect(contentCss).toContain('.admin-management-page');
+    expect(contentCss).toContain('border-radius: 10px');
+    expect(contentCss).toContain('box-shadow: none');
+    expect(contentCss).toContain('gap: 6px');
   });
 
   it('supports uploaded and remote homepage icons without hiding entries after the fourth', () => {

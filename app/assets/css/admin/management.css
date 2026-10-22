@@ -1,0 +1,37 @@
+.admin-management-page {
+  width: 100%;
+}
+
+.admin-management-page .posts-admin-layout,
+.admin-management-page .categories-admin-layout,
+.admin-management-page .projects-admin-layout,
+.admin-management-page .timeline-admin-layout {
+  gap: 16px;
+}
+
+.admin-management-page .home-admin-section,
+.admin-management-page .moderation-card,
+.admin-management-page .friend-link-create-panel,
+.admin-management-page .friend-link-admin-card {
+  border-radius: 10px;
+  box-shadow: none;
+}
+
+.admin-management-page .moderation-list,
+.admin-management-page .friend-link-admin-list {
+  gap: 6px;
+}
+
+.admin-management-page .moderation-card,
+.admin-management-page .friend-link-admin-card {
+  padding: 16px 18px;
+}
+
+.admin-management-page .moderation-card__content {
+  padding: 13px 0;
+}
+
+.admin-management-page .moderation-card__actions,
+.admin-management-page .friend-link-admin-card__actions {
+  gap: 6px;
+}

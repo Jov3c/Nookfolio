@@ -161,7 +161,7 @@ onMounted(load);
 </script>
 
 <template>
-  <div class="friend-links-admin">
+  <div class="friend-links-admin admin-management-page">
     <header class="admin-page-heading">
       <div>
         <p>互动管理 / 友链</p>

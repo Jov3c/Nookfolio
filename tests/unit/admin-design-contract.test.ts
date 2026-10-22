@@ -173,6 +173,17 @@ describe('admin design contract', () => {
     expect(publicCss).toContain('padding: 72px 36px 48px');
   });
 
+  it('supports bundled static SVG icons for homepage entries', () => {
+    const publicHome = read('app/pages/index.vue');
+    const defaults = read('server/services/home-defaults.ts');
+
+    expect(publicHome).toContain("item.icon.startsWith('/') && !item.icon.startsWith('//')");
+    expect(defaults).toContain("icon: '/icons/home-blog.svg'");
+    expect(defaults).toContain("icon: '/icons/home-projects.svg'");
+    expect(defaults).toContain("icon: '/icons/home-cv.svg'");
+    expect(defaults).toContain("icon: '/icons/home-about.svg'");
+  });
+
   it('keeps the homepage footer free of a misleading static theme label', () => {
     const publicHome = read('app/pages/index.vue');
 

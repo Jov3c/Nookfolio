@@ -18,8 +18,8 @@ export const DEFAULT_HOME_PROFILE = {
 export const DEFAULT_HOME_ENTRIES = [
   {
     title: 'Blog',
-    description: '阅读文章与记录。',
-    icon: '↗',
+    description: '记录想法和生活。',
+    icon: '/icons/home-blog.svg',
     url: '/blog',
     targetType: 'INTERNAL' as const,
     openNewTab: false,
@@ -28,8 +28,8 @@ export const DEFAULT_HOME_ENTRIES = [
   },
   {
     title: 'Projects',
-    description: '查看项目与作品。',
-    icon: '↗',
+    description: '项目卡片集。',
+    icon: '/icons/home-projects.svg',
     url: '/projects',
     targetType: 'INTERNAL' as const,
     openNewTab: false,
@@ -38,8 +38,8 @@ export const DEFAULT_HOME_ENTRIES = [
   },
   {
     title: 'CV',
-    description: '查看个人简历与经历。',
-    icon: '↗',
+    description: '经历、技能与作品。',
+    icon: '/icons/home-cv.svg',
     url: '/about/cv',
     targetType: 'INTERNAL' as const,
     openNewTab: false,
@@ -48,8 +48,8 @@ export const DEFAULT_HOME_ENTRIES = [
   },
   {
     title: 'About',
-    description: '了解我与这个网站。',
-    icon: '↗',
+    description: '关于我与这个网站。',
+    icon: '/icons/home-about.svg',
     url: '/about',
     targetType: 'INTERNAL' as const,
     openNewTab: false,

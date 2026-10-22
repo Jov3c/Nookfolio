@@ -170,7 +170,7 @@ onBeforeUnmount(() => {
   padding: 5px 7px;
   border: 1px solid var(--color-border);
   border-radius: 14px;
-  background: var(--color-surface);
+  background: var(--color-panel);
   box-shadow: 0 18px 42px rgb(23 25 23 / 12%);
   transform-origin: top right;
 }

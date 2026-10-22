@@ -30,4 +30,9 @@ describe('travelling link popover', () => {
     expect(source).toContain("event.key !== 'Escape'");
     expect(source).toContain("document.addEventListener('keydown', onKeyStroke)");
   });
+
+  it('uses an opaque project color so the topbar divider cannot show through', () => {
+    expect(source).toContain('background: var(--color-panel)');
+    expect(source).not.toContain('background: var(--color-surface)');
+  });
 });

@@ -26,7 +26,9 @@ function isExternalSocialUrl(url: string) {
 
 function entryIconUrl(item: PublicHomeResponse['data']['entries'][number]) {
   if (item.iconMedia) return item.iconMedia.url;
-  return item.icon && /^https?:\/\//i.test(item.icon) ? item.icon : null;
+  if (!item.icon) return null;
+  if (item.icon.startsWith('/') && !item.icon.startsWith('//')) return item.icon;
+  return /^https?:\/\//i.test(item.icon) ? item.icon : null;
 }
 
 function entryIconText(item: PublicHomeResponse['data']['entries'][number]) {

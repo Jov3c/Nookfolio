@@ -363,23 +363,12 @@ onMounted(load);
                 />
               </label>
             </div>
-            <div class="project-editor__markdown-grid">
-              <label class="project-markdown-input"
-                ><span>Markdown 源码</span
-                ><textarea
-                  v-model="form.readmeMarkdown"
-                  rows="22"
-                  spellcheck="false"
-                  aria-label="README Markdown 源码"
-                />
-              </label>
-              <div class="project-markdown-preview">
-                <span>实时预览</span>
-                <!-- The shared renderer sanitizes the browser preview and the public API output. -->
-                <!-- eslint-disable-next-line vue/no-v-html -->
-                <div class="readme__content" v-html="previewHtml" />
-              </div>
-            </div>
+            <AdminMarkdownEditor
+              v-model="form.readmeMarkdown"
+              :preview-html="previewHtml"
+              source-label="README Markdown 源码"
+              textarea-label="README Markdown 源码"
+            />
           </section>
 
           <p v-if="errorMessage" class="admin-error project-editor__error" role="alert">

@@ -8,6 +8,8 @@ definePageMeta({ layout: 'admin', middleware: 'admin' });
 const admin = useAdminSession();
 const publishedPosts = ref<AdminPost[]>([]);
 const drafts = ref<AdminPost[]>([]);
+const publishedTotal = ref(0);
+const draftTotal = ref(0);
 const pendingCount = ref(0);
 const isLoadingWorkspace = ref(true);
 const workspaceError = ref('');
@@ -23,8 +25,8 @@ const recentPosts = computed(() =>
     .slice(0, 4),
 );
 const metrics = computed(() => [
-  { label: '已发布文章', value: publishedPosts.value.length, to: '/admin/posts' },
-  { label: '草稿', value: drafts.value.length, to: '/admin/write/drafts' },
+  { label: '已发布文章', value: publishedTotal.value, to: '/admin/posts' },
+  { label: '草稿', value: draftTotal.value, to: '/admin/write/drafts' },
   { label: '待处理互动', value: pendingCount.value, to: '/admin/comments' },
 ]);
 
@@ -33,16 +35,16 @@ async function loadWorkspace() {
   workspaceError.value = '';
   try {
     const [published, draftResult, comments, messages, links] = await Promise.all([
-      $fetch<{ data: AdminPost[] }>('/api/v1/admin/posts', {
+      $fetch<{ data: AdminPost[]; meta: { total: number } }>('/api/v1/admin/posts', {
         query: { status: 'PUBLISHED', page: 1, pageSize: 100 },
       }),
-      $fetch<{ data: AdminPost[] }>('/api/v1/admin/posts', {
+      $fetch<{ data: AdminPost[]; meta: { total: number } }>('/api/v1/admin/posts', {
         query: { status: 'DRAFT', page: 1, pageSize: 100 },
       }),
-      $fetch<{ data: AdminComment[] }>('/api/v1/admin/comments', {
+      $fetch<{ data: AdminComment[]; meta: { total: number } }>('/api/v1/admin/comments', {
         query: { status: 'PENDING_REVIEW', page: 1, pageSize: 100 },
       }),
-      $fetch<{ data: AdminMessage[] }>('/api/v1/admin/messages', {
+      $fetch<{ data: AdminMessage[]; meta: { total: number } }>('/api/v1/admin/messages', {
         query: { status: 'PENDING_REVIEW', page: 1, pageSize: 100 },
       }),
       $fetch<AdminFriendLinksResponse>('/api/v1/admin/links', {
@@ -51,7 +53,9 @@ async function loadWorkspace() {
     ]);
     publishedPosts.value = published.data;
     drafts.value = draftResult.data;
-    pendingCount.value = comments.data.length + messages.data.length + links.data.length;
+    publishedTotal.value = published.meta.total;
+    draftTotal.value = draftResult.meta.total;
+    pendingCount.value = comments.meta.total + messages.meta.total + links.meta.total;
   } catch {
     workspaceError.value = '工作台数据暂时无法读取，请稍后刷新。';
   } finally {
@@ -154,7 +158,13 @@ useSeoMeta({ title: '仪表盘 — Nookfolio 管理后台', robots: 'noindex, no
     <section class="admin-dashboard-panel admin-dashboard-panel--health">
       <div>
         <i :data-online="Boolean(statsResponse?.data)" />
-        <span>{{ statsPending ? '正在检查站点状态' : '公开站点运行正常' }}</span>
+        <span>{{
+          statsPending
+            ? '正在检查站点状态'
+            : statsResponse?.data
+              ? '公开站点运行正常'
+              : '站点状态暂时不可用'
+        }}</span>
       </div>
       <p>
         <strong>{{ statsResponse?.data.totalPageViews.toLocaleString('zh-CN') ?? '—' }}</strong>

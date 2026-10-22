@@ -104,6 +104,8 @@ describe('admin design contract', () => {
     expect(dashboard).toContain('继续写作');
     expect(dashboard).toContain('最近翻阅');
     expect(dashboard).toContain('暂无草稿，开始写一篇新文章');
+    expect(dashboard).toContain('meta.total');
+    expect(dashboard).toContain("'站点状态暂时不可用'");
     expect(dashboard).not.toMatch(/Math\.random|假数据|模拟数据/);
   });
 
@@ -114,6 +116,10 @@ describe('admin design contract', () => {
     expect(contentCss).toContain('align-items: start');
     expect(contentCss).toContain('height: clamp(480px, 66vh, 760px)');
     expect(contentCss).toContain('overflow: auto');
+    expect(read('app/components/admin/PostEditorFields.vue')).toContain('<AdminMarkdownEditor');
+    expect(read('app/pages/admin/projects.vue')).toContain('<AdminMarkdownEditor');
+    expect(read('app/components/admin/MarkdownEditor.vue')).toContain('role="tablist"');
+    expect(read('app/components/admin/MarkdownEditor.vue')).toContain(':data-active');
   });
 
   it('supports direct avatar upload and respects empty homepage entry icons', () => {

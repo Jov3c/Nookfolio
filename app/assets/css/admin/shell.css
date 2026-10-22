@@ -54,7 +54,7 @@
   position: relative;
   z-index: 1;
   display: grid;
-  height: 38px;
+  min-height: 44px;
   padding: 0 14px;
   place-items: center;
   border-radius: 12px;

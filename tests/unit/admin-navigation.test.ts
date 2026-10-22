@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
 import { describe, expect, test } from 'vitest';
 import {
   adminNavigation,
@@ -57,5 +60,20 @@ describe('admin navigation motion', () => {
       '05',
       '06',
     ]);
+  });
+
+  test('keeps touch navigation targets at least 44 pixels tall', () => {
+    const shell = readFileSync(
+      resolve(import.meta.dirname, '../../app/assets/css/admin/shell.css'),
+      'utf8',
+    );
+    const responsive = readFileSync(
+      resolve(import.meta.dirname, '../../app/assets/css/admin/responsive.css'),
+      'utf8',
+    );
+
+    expect(shell).toContain('min-height: 44px');
+    expect(responsive).toContain('width: 44px');
+    expect(responsive).toContain('height: 44px');
   });
 });

@@ -288,6 +288,10 @@
   gap: 12px;
 }
 
+.admin-markdown-editor__tabs {
+  display: none;
+}
+
 .project-markdown-input,
 .project-markdown-preview {
   min-width: 0;

@@ -93,21 +93,6 @@ async function importMarkdown(event: Event) {
         />
       </label>
     </div>
-    <div class="project-editor__markdown-grid">
-      <label class="project-markdown-input">
-        <span>Markdown 源码</span>
-        <textarea
-          v-model="form.markdownBody"
-          rows="22"
-          spellcheck="false"
-          aria-label="Markdown 源码"
-        />
-      </label>
-      <div class="project-markdown-preview">
-        <span>实时预览</span>
-        <!-- eslint-disable-next-line vue/no-v-html -->
-        <div class="readme__content" v-html="previewHtml" />
-      </div>
-    </div>
+    <AdminMarkdownEditor v-model="form.markdownBody" :preview-html="previewHtml" />
   </section>
 </template>

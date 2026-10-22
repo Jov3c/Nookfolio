@@ -150,4 +150,25 @@ describe('admin design contract', () => {
     expect(publicCss).toContain('animation-delay: calc(var(--entry-index) * 0.06s + 0.36s)');
     expect(publicCss).not.toContain('.home-prototype__entry:nth-child(4)');
   });
+
+  it('renders compact homepage entries with the configured icon before the title', () => {
+    const publicHome = read('app/pages/index.vue');
+    const publicCss = read('app/assets/css/public.css');
+    const internalEntry = publicHome.slice(
+      publicHome.indexOf('v-if="item.targetType === \'INTERNAL\'"'),
+      publicHome.indexOf('<a\n              v-else'),
+    );
+    const externalEntry = publicHome.slice(publicHome.indexOf('<a\n              v-else'));
+
+    expect(internalEntry.indexOf('entryIconUrl(item)')).toBeLessThan(
+      internalEntry.indexOf('{{ item.title }}'),
+    );
+    expect(externalEntry.indexOf('entryIconUrl(item)')).toBeLessThan(
+      externalEntry.indexOf('{{ item.title }}'),
+    );
+    expect(publicCss).toContain('flex: 0 0 215px');
+    expect(publicCss).toContain('width: 215px');
+    expect(publicCss).toContain('height: 120px');
+    expect(publicCss).toContain('justify-content: flex-start');
+  });
 });

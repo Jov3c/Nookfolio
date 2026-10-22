@@ -144,15 +144,16 @@
   margin: 48px auto 0;
 }
 .home-prototype__entry {
-  flex: 0 1 calc((100% - 36px) / 4);
+  flex: 0 0 215px;
   display: flex;
-  min-height: 124px;
+  width: 215px;
+  height: 120px;
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
-  padding: 20px 18px 18px;
+  padding: 19px 20px;
   border: 1px solid var(--color-line);
-  border-radius: 20px;
+  border-radius: 17px;
   color: var(--color-muted);
   font-size: 0.81rem;
   line-height: 1.55;
@@ -186,7 +187,8 @@
   display: flex;
   width: 100%;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 10px;
   color: var(--color-text);
   font-size: 1.1rem;
   font-weight: 680;

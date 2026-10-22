@@ -85,7 +85,6 @@ function entryIconText(item: PublicHomeResponse['data']['entries'][number]) {
               :rel="item.openNewTab ? 'noreferrer' : undefined"
             >
               <span class="home-prototype__entry-top">
-                {{ item.title }}
                 <span v-if="entryIconUrl(item)" class="home-prototype__entry-icon">
                   <img
                     :src="entryIconUrl(item)!"
@@ -95,6 +94,7 @@ function entryIconText(item: PublicHomeResponse['data']['entries'][number]) {
                   />
                 </span>
                 <b v-else-if="entryIconText(item)" aria-hidden="true">{{ entryIconText(item) }}</b>
+                {{ item.title }}
               </span>
               <span>{{ item.description }}</span>
             </NuxtLink>
@@ -107,7 +107,6 @@ function entryIconText(item: PublicHomeResponse['data']['entries'][number]) {
               :rel="item.openNewTab ? 'noreferrer' : undefined"
             >
               <span class="home-prototype__entry-top">
-                {{ item.title }}
                 <span v-if="entryIconUrl(item)" class="home-prototype__entry-icon">
                   <img
                     :src="entryIconUrl(item)!"
@@ -117,6 +116,7 @@ function entryIconText(item: PublicHomeResponse['data']['entries'][number]) {
                   />
                 </span>
                 <b v-else-if="entryIconText(item)" aria-hidden="true">{{ entryIconText(item) }}</b>
+                {{ item.title }}
               </span>
               <span>{{ item.description }}</span>
             </a>

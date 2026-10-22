@@ -59,7 +59,7 @@ export const DEFAULT_HOME_ENTRIES = [
   {
     title: 'Timeline',
     description: '浏览人生时间线。',
-    icon: '↗',
+    icon: null,
     url: '/about/timeline',
     targetType: 'INTERNAL' as const,
     openNewTab: false,

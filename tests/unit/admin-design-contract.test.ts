@@ -108,7 +108,7 @@ describe('admin design contract', () => {
     expect(adminHome).toContain('crop="square"');
     expect(uploader).toContain("body.append('category', props.category)");
     expect(publicHome).toContain('v-else-if="entryIconText(item)"');
-    expect(publicHome).not.toContain("item.icon || '↗'");
+    expect(publicHome).toContain('if (!item.icon) return null;');
   });
 
   it('keeps every admin workflow in the shared heading and island system', () => {

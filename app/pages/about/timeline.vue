@@ -156,7 +156,7 @@ usePageSeo({
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {{ link.label }} ↗
+                  {{ link.label }}
                 </a>
                 <NuxtLink
                   v-for="project in entry.projects"

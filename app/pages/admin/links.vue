@@ -245,7 +245,7 @@ onMounted(load);
           <header>
             <div>
               <strong>{{ link.name }}</strong>
-              <a :href="link.url" target="_blank" rel="noreferrer">{{ domain(link.url) }} ↗</a>
+              <a :href="link.url" target="_blank" rel="noreferrer">{{ domain(link.url) }}</a>
             </div>
             <span class="moderation-status">{{
               FRIEND_LINK_STATUS_LABELS[link.status as FriendLinkStatus]

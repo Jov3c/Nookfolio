@@ -74,7 +74,7 @@ const socialLinks = ref<SocialLink[]>([]);
 const newEntry = reactive({
   title: '',
   description: '',
-  icon: '↗',
+  icon: '',
   iconMediaId: null as string | null,
   url: '/',
   targetType: 'INTERNAL' as 'INTERNAL' | 'EXTERNAL',
@@ -202,7 +202,7 @@ async function addEntry() {
     Object.assign(newEntry, {
       title: '',
       description: '',
-      icon: '↗',
+      icon: '',
       iconMediaId: null,
       url: '/',
       targetType: 'INTERNAL',

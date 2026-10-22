@@ -61,8 +61,7 @@ useSeoMeta({ title: '仪表盘 — Nookfolio 管理后台', robots: 'noindex, no
       <div class="admin-dashboard-assets">
         <NuxtLink v-for="item in contentAssets" :key="item.to" :to="item.to">
           <strong>{{ item.label }}</strong
-          ><small>{{ item.note }}</small
-          ><b>↗</b>
+          ><small>{{ item.note }}</small>
         </NuxtLink>
       </div>
     </section>
@@ -164,7 +163,7 @@ useSeoMeta({ title: '仪表盘 — Nookfolio 管理后台', robots: 'noindex, no
               : '暂时无法读取站点统计。'
         }}
       </p>
-      <NuxtLink to="/" target="_blank">查看公开站点 ↗</NuxtLink>
+      <NuxtLink to="/" target="_blank">查看公开站点</NuxtLink>
     </section>
   </div>
 </template>

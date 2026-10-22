@@ -384,7 +384,7 @@ onMounted(load);
         <h1>个人简历</h1>
       </div>
       <NuxtLink class="admin-secondary-button" to="/about/cv" target="_blank">
-        查看公开简历 ↗
+        查看公开简历
       </NuxtLink>
     </header>
 

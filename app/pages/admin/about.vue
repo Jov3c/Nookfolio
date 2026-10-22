@@ -87,7 +87,7 @@ await load();
         <h1>About 页面</h1>
         <p>独立维护关于页面内容，不会修改首页个人身份或个人简历。</p>
       </div>
-      <NuxtLink class="admin-secondary-button" to="/about" target="_blank">查看公开页面 ↗</NuxtLink>
+      <NuxtLink class="admin-secondary-button" to="/about" target="_blank">查看公开页面</NuxtLink>
     </header>
     <AdminNotice :message="notice" />
     <p v-if="errorMessage" class="admin-notice admin-notice--error" role="alert">

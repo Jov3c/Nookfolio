@@ -26,7 +26,7 @@ defineProps<{ project: PublicProject }>();
         target="_blank"
         rel="noopener noreferrer"
       >
-        项目源码 ↗
+        项目源码
       </a>
       <span v-else class="project-card__action project-card__action--muted">项目源码</span>
       <a
@@ -36,7 +36,7 @@ defineProps<{ project: PublicProject }>();
         target="_blank"
         rel="noopener noreferrer"
       >
-        在线预览 ↗
+        在线预览
       </a>
       <span
         v-else

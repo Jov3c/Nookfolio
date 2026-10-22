@@ -295,7 +295,7 @@
 
 .project-markdown-input textarea,
 .project-markdown-preview {
-  height: clamp(420px, 62vh, 680px);
+  height: clamp(480px, 66vh, 760px);
   min-height: 0;
 }
 
@@ -317,6 +317,14 @@
   color: var(--color-text);
   font-size: 0.78rem;
   line-height: 1.8;
+}
+
+.admin-editorial-page {
+  width: min(100%, 1060px);
+}
+
+.admin-editorial-page--wide {
+  width: 100%;
 }
 
 .home-entry-list,

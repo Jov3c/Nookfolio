@@ -43,7 +43,7 @@ onMounted(load);
 </script>
 
 <template>
-  <div class="posts-admin">
+  <div class="posts-admin admin-editorial-page">
     <header class="admin-page-heading">
       <div>
         <p>内容管理 / 发布文章 / 草稿箱</p>

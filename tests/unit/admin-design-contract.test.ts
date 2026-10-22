@@ -58,8 +58,8 @@ describe('admin design contract', () => {
     expect(shellCss).toContain('grid-template-columns: 190px minmax(0, 1fr)');
     expect(existsSync(resolve(root, 'app/assets/css/admin/paper.css'))).toBe(false);
     expect(islandsCss).toContain('.admin-island');
-    expect(islandsCss).toContain('border-radius: var(--radius-lg)');
-    expect(islandsCss).not.toMatch(/tape|rotate\(|Courier New|Georgia/);
+    expect(islandsCss).toContain('border-radius: 12px');
+    expect(islandsCss).not.toMatch(/tape|rotate\(|Courier New/);
     expect(islandsCss).toContain("html[data-theme='dark']");
     expect(islandsCss).toContain('.admin-main');
     expect(responsiveCss).not.toContain('font-size: 2.65rem');
@@ -100,7 +100,7 @@ describe('admin design contract', () => {
 
     expect(contentCss).toContain('.project-editor__markdown-grid');
     expect(contentCss).toContain('align-items: start');
-    expect(contentCss).toContain('height: clamp(420px, 62vh, 680px)');
+    expect(contentCss).toContain('height: clamp(480px, 66vh, 760px)');
     expect(contentCss).toContain('overflow: auto');
   });
 
@@ -140,6 +140,28 @@ describe('admin design contract', () => {
     expect(read('app/pages/admin/write.vue')).toContain('@submit.prevent="publishPost"');
     expect(read('app/pages/admin/write/drafts.vue')).toContain('draft-list');
     expect(read('app/pages/admin/posts.vue')).toContain('@submit.prevent="savePost"');
+  });
+
+  it('gives writing and profile workflows a compact editorial document frame', () => {
+    const islandsCss = read('app/assets/css/admin/islands.css');
+    const formsCss = read('app/assets/css/admin/forms.css');
+    const contentCss = read('app/assets/css/admin/content.css');
+    const editorialPages = [
+      'write.vue',
+      'write/drafts.vue',
+      'projects.vue',
+      'home.vue',
+      'cv.vue',
+      'about.vue',
+    ];
+
+    for (const page of editorialPages) {
+      expect(read(`app/pages/admin/${page}`)).toContain('admin-editorial-page');
+    }
+    expect(islandsCss).toContain("font-family: Georgia, 'Songti SC', serif");
+    expect(islandsCss).toContain('border-radius: 12px');
+    expect(formsCss).toContain('min-height: 42px');
+    expect(contentCss).toContain('height: clamp(480px, 66vh, 760px)');
   });
 
   it('supports uploaded and remote homepage icons without hiding entries after the fourth', () => {

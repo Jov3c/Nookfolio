@@ -238,7 +238,7 @@ onMounted(load);
 </script>
 
 <template>
-  <div class="projects-admin">
+  <div class="projects-admin admin-editorial-page admin-editorial-page--wide">
     <header class="admin-page-heading">
       <div>
         <p>内容管理 / 项目</p>

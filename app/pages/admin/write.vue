@@ -183,7 +183,7 @@ onMounted(load);
 </script>
 
 <template>
-  <div class="posts-admin">
+  <div class="posts-admin admin-editorial-page admin-editorial-page--wide">
     <header class="admin-page-heading">
       <div>
         <p>内容管理 / 发布文章</p>

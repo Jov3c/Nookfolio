@@ -377,7 +377,7 @@ onMounted(load);
 </script>
 
 <template>
-  <div class="about-admin">
+  <div class="about-admin admin-editorial-page">
     <header class="admin-page-heading">
       <div>
         <p>资料管理 / 关于</p>

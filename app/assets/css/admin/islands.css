@@ -28,15 +28,15 @@
 .projects-admin-editor-panel,
 .timeline-admin-editor-panel {
   border: 1px solid var(--color-line);
-  border-radius: var(--radius-lg);
-  background: color-mix(in srgb, var(--color-panel) 90%, transparent);
-  box-shadow: 0 16px 45px rgb(23 25 23 / 5%);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--color-panel) 94%, transparent);
+  box-shadow: none;
 }
 
 .admin-page-heading {
   align-items: flex-end;
-  padding: 12px 2px 28px;
-  border: 0;
+  padding: 4px 2px 22px;
+  border-bottom: 1px solid var(--color-line);
 }
 .admin-page-heading p,
 .eyebrow {
@@ -44,21 +44,22 @@
   letter-spacing: 0.12em;
 }
 .admin-page-heading h1 {
-  font-size: clamp(1.8rem, 3vw, 2.6rem);
-  letter-spacing: -0.055em;
+  font-family: Georgia, 'Songti SC', serif;
+  font-size: clamp(1.55rem, 2.5vw, 2.1rem);
+  letter-spacing: -0.045em;
 }
 .admin-page-heading h1,
 .admin-section-heading h2,
 .home-admin-section__heading h2,
 .project-editor__subheading h3 {
-  font-weight: 680;
+  font-weight: 560;
 }
 
 .admin-dashboard-section,
 .home-admin-section,
 .friend-link-create-panel,
 .media-upload-panel {
-  padding: 24px;
+  padding: clamp(20px, 2.5vw, 30px);
 }
 .admin-section-heading,
 .home-admin-section__heading,

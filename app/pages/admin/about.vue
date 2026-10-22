@@ -80,7 +80,7 @@ await load();
 </script>
 
 <template>
-  <div class="about-admin">
+  <div class="about-admin admin-editorial-page">
     <header class="admin-page-heading">
       <div>
         <p class="eyebrow">资料管理 / ABOUT</p>

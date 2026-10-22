@@ -136,7 +136,8 @@ export function validateImageUpload(buffer: Buffer, originalName: string) {
 export function prepareImageUpload(buffer: Buffer, originalName: string) {
   const detected = validateImageUpload(buffer, originalName);
   return {
-    buffer: detected.mimeType === 'image/svg+xml' ? Buffer.from(sanitizeSvg(buffer), 'utf8') : buffer,
+    buffer:
+      detected.mimeType === 'image/svg+xml' ? Buffer.from(sanitizeSvg(buffer), 'utf8') : buffer,
     detected,
   };
 }
@@ -248,7 +249,10 @@ function readWebpDimensions(buffer: Buffer) {
 }
 
 function sanitizeSvg(buffer: Buffer) {
-  const source = buffer.toString('utf8').replace(/^\uFEFF/, '').trim();
+  const source = buffer
+    .toString('utf8')
+    .replace(/^\uFEFF/, '')
+    .trim();
   if (
     /<(?:script|foreignObject|iframe|object|embed|audio|video)\b/i.test(source) ||
     /\son[a-z]+\s*=/i.test(source) ||
@@ -260,17 +264,73 @@ function sanitizeSvg(buffer: Buffer) {
 
   const sanitized = sanitizeHtml(source, {
     allowedTags: [
-      'svg', 'g', 'path', 'circle', 'ellipse', 'rect', 'line', 'polyline', 'polygon',
-      'defs', 'linearGradient', 'radialGradient', 'stop', 'clipPath', 'mask', 'title', 'desc',
+      'svg',
+      'g',
+      'path',
+      'circle',
+      'ellipse',
+      'rect',
+      'line',
+      'polyline',
+      'polygon',
+      'defs',
+      'linearGradient',
+      'radialGradient',
+      'stop',
+      'clipPath',
+      'mask',
+      'title',
+      'desc',
     ],
     allowedAttributes: {
-      svg: ['xmlns', 'viewBox', 'viewbox', 'width', 'height', 'fill', 'stroke', 'role', 'aria-label'],
+      svg: [
+        'xmlns',
+        'viewBox',
+        'viewbox',
+        'width',
+        'height',
+        'fill',
+        'stroke',
+        'role',
+        'aria-label',
+      ],
       '*': [
-        'id', 'd', 'x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'rx', 'ry',
-        'width', 'height', 'points', 'transform', 'viewBox', 'viewbox', 'fill', 'fill-rule',
-        'clip-rule', 'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin', 'opacity',
-        'offset', 'stop-color', 'stop-opacity', 'gradientUnits', 'gradientunits',
-        'gradientTransform', 'gradienttransform', 'clipPathUnits', 'clippathunits',
+        'id',
+        'd',
+        'x',
+        'y',
+        'x1',
+        'y1',
+        'x2',
+        'y2',
+        'cx',
+        'cy',
+        'r',
+        'rx',
+        'ry',
+        'width',
+        'height',
+        'points',
+        'transform',
+        'viewBox',
+        'viewbox',
+        'fill',
+        'fill-rule',
+        'clip-rule',
+        'stroke',
+        'stroke-width',
+        'stroke-linecap',
+        'stroke-linejoin',
+        'opacity',
+        'offset',
+        'stop-color',
+        'stop-opacity',
+        'gradientUnits',
+        'gradientunits',
+        'gradientTransform',
+        'gradienttransform',
+        'clipPathUnits',
+        'clippathunits',
       ],
     },
     allowedSchemes: [],

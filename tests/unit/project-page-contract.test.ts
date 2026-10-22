@@ -33,7 +33,7 @@ describe('project and blog page presentation', () => {
     expect(css).toContain(".project-card__status-dot[data-status='active']");
     expect(css).toContain(".project-card__status-dot[data-status='done']");
     expect(css).toContain(".project-card__status-dot[data-status='paused']");
-    expect(css).toContain('font-family: "Noto Serif SC"');
+    expect(css).toContain("font-family: 'Noto Serif SC'");
     expect(css).toContain('animation: project-status-breathe');
   });
 

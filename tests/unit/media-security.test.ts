@@ -28,8 +28,12 @@ describe('media upload security', () => {
       height: 1,
     });
     expect(() => validateImageUpload(onePixelPng, 'not-really-a-document.txt')).not.toThrow();
-    expect(validateImageUpload(Buffer.from('<svg viewBox="0 0 24 24"><path d="M0 0"/></svg>'), 'icon.svg'))
-      .toMatchObject({ mimeType: 'image/svg+xml', extension: 'svg' });
+    expect(
+      validateImageUpload(
+        Buffer.from('<svg viewBox="0 0 24 24"><path d="M0 0"/></svg>'),
+        'icon.svg',
+      ),
+    ).toMatchObject({ mimeType: 'image/svg+xml', extension: 'svg' });
     expect(() =>
       validateImageUpload(Buffer.from('<svg><script>alert(1)</script></svg>'), 'icon.svg'),
     ).toThrow('unsafe content');

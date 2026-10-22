@@ -7,7 +7,7 @@ async function signIn(page: import('@playwright/test').Page, forwardedFor: strin
   await page.setExtraHTTPHeaders({ 'x-forwarded-for': forwardedFor });
   await createAdminSession(page);
   await page.goto('/admin');
-  await expect(page.getByRole('heading', { name: '仪表盘' })).toBeVisible();
+  await expect(page.locator('.admin-dashboard-intro h1')).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('data-hydrated', 'true');
 }
 
@@ -24,7 +24,7 @@ test('admin login protects the shell and logout invalidates access', async ({ pa
 
   await createAdminSession(page);
   await page.goto('/admin');
-  await expect(page.getByRole('heading', { name: '仪表盘' })).toBeVisible();
+  await expect(page.locator('.admin-dashboard-intro h1')).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('data-hydrated', 'true');
   await expect(page.getByText(adminEmail, { exact: true }).first()).toBeVisible();
   expect(await page.evaluate(() => localStorage.getItem('admin_token'))).toBeNull();
@@ -44,34 +44,18 @@ test('mobile navigation exposes every admin destination and manages focus', asyn
   await signIn(page, '10.0.0.22');
 
   const menuButton = page.getByRole('button', { name: '打开导航' });
-  const closeButton = page.getByRole('button', { name: '关闭导航' }).last();
-  const destinations = [
-    '仪表盘',
-    '文章管理',
-    '分类管理',
-    '项目管理',
-    '时间线',
-    '首页资料',
-    '个人简历',
-    'About 页面',
-    '评论管理',
-    '留言管理',
-    '友链管理',
-    '媒体库',
-  ];
+  const primaryDestinations = ['概览', '内容', '资料', '互动'];
 
   for (const width of [390, 800, 900]) {
     await page.setViewportSize({ width, height: 844 });
     await expect(menuButton).toHaveAttribute('aria-expanded', 'false');
     await menuButton.click();
     await expect(menuButton).toHaveAttribute('aria-expanded', 'true');
-    await expect(closeButton).toBeFocused();
-    for (const groupName of ['内容管理', '资料管理', '互动管理', '系统管理']) {
-      const group = page.getByRole('button', { name: groupName });
-      if ((await group.getAttribute('aria-expanded')) === 'false') await group.click();
-    }
-    for (const name of destinations) {
-      await expect(page.getByRole('link', { name, exact: true })).toBeVisible();
+    await expect(page.getByRole('link', { name: '概览', exact: true })).toBeFocused();
+    for (const name of primaryDestinations) {
+      await expect(
+        page.locator('#admin-primary-navigation').getByRole('link', { name, exact: true }),
+      ).toBeVisible();
     }
     await page.keyboard.press('Escape');
     await expect(menuButton).toHaveAttribute('aria-expanded', 'false');
@@ -79,7 +63,7 @@ test('mobile navigation exposes every admin destination and manages focus', asyn
   }
 });
 
-test('desktop navigation groups collapse and the active indicator follows the route', async ({
+test('desktop navigation keeps the active primary group and indexed secondary route visible', async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop admin navigation runs once');
@@ -88,40 +72,17 @@ test('desktop navigation groups collapse and the active indicator follows the ro
   await expect(page.getByRole('heading', { name: '文章管理' })).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('data-hydrated', 'true');
 
-  const contentGroup = page.getByRole('button', { name: '内容管理' });
-  const postsLink = page.getByRole('link', { name: '文章管理', exact: true });
-  const indicator = page.locator('.admin-nav-indicator');
+  const contentGroup = page.locator('#admin-primary-navigation').getByRole('link', {
+    name: '内容',
+    exact: true,
+  });
+  const postsLink = page
+    .getByRole('navigation', { name: '当前分区页面' })
+    .getByRole('link', { name: /03\s*文章管理/ });
+  const indicator = page.locator('.admin-primary-nav__indicator');
 
-  await expect(contentGroup).toHaveAttribute('aria-expanded', 'false');
-  await expect(postsLink).toBeHidden();
-  await expect(indicator).toHaveCSS('opacity', '0');
-  await contentGroup.click();
-  await expect(contentGroup).toHaveAttribute('aria-expanded', 'true');
+  await expect(contentGroup).toHaveAttribute('data-active', 'true');
   await expect(postsLink).toBeVisible();
-
-  await postsLink.click();
-  await expect(page).toHaveURL(/\/admin\/posts$/);
   await expect(indicator).toBeVisible();
-  await expect
-    .poll(() =>
-      page.evaluate(() => {
-        const active = document.querySelector<HTMLElement>(
-          '.admin-nav-link.router-link-exact-active',
-        );
-        const highlight = document.querySelector<HTMLElement>('.admin-nav-indicator');
-        if (!active || !highlight) return false;
-        const activeRect = active.getBoundingClientRect();
-        const highlightRect = highlight.getBoundingClientRect();
-        return (
-          Math.abs(activeRect.top - highlightRect.top) < 1 &&
-          Math.abs(activeRect.height - highlightRect.height) < 1
-        );
-      }),
-    )
-    .toBe(true);
-
-  await contentGroup.click();
-  await expect(contentGroup).toHaveAttribute('aria-expanded', 'false');
-  await expect(postsLink).toBeHidden();
-  await expect(indicator).toHaveCSS('opacity', '0');
+  await expect(postsLink).toHaveAttribute('data-active', 'true');
 });

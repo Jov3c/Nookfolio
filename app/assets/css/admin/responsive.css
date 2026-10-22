@@ -1,13 +1,4 @@
 @media (max-width: 1080px) {
-  .admin-floating-dashboard {
-    grid-template-areas:
-      'intro intro'
-      'assets create'
-      'recent recent'
-      'activity inbox'
-      'status inbox';
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
   .home-entry-editor__fields,
   .social-link-editor__fields,
   .media-grid {
@@ -39,7 +30,7 @@
     right: 0;
     left: 0;
     display: none;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     padding: 8px;
     border: 1px solid var(--color-line);
     border-radius: 18px;
@@ -96,39 +87,14 @@
   }
 }
 @media (max-width: 640px) {
-  .admin-floating-dashboard {
-    grid-template-areas:
-      'intro'
-      'assets'
-      'recent'
-      'create'
-      'activity'
-      'inbox'
-      'status';
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .admin-dashboard-intro {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .admin-dashboard-island {
-    padding: 18px;
-  }
-  .admin-dashboard-island--recent {
-    min-height: 0;
-  }
-  .admin-dashboard-empty {
-    min-height: 160px;
-  }
   .admin-layout {
     width: min(calc(100% - 20px), 1280px);
     padding-top: 10px;
   }
   .admin-topbar {
-    top: 8px;
+    top: 0;
     min-height: 58px;
     padding: 8px 9px 8px 14px;
-    border-radius: 18px;
   }
   .admin-primary-nav {
     top: 66px;
@@ -138,7 +104,7 @@
     display: none;
   }
   .admin-main {
-    padding-top: 22px;
+    padding-top: 0;
   }
   .admin-page-heading,
   .admin-welcome,

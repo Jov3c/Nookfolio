@@ -296,7 +296,7 @@
   margin: 0;
   padding-bottom: 3px;
   border-bottom: 3px solid var(--color-text);
-  font-family: "Noto Serif SC", "Songti SC", STSong, serif;
+  font-family: 'Noto Serif SC', 'Songti SC', STSong, serif;
   font-size: 1.1875rem;
   letter-spacing: -0.02em;
   line-height: 1.15;
@@ -373,13 +373,25 @@
 }
 
 @keyframes project-status-breathe {
-  0%, 100% { transform: scale(0.9); }
-  50% { transform: scale(1.25); }
+  0%,
+  100% {
+    transform: scale(0.9);
+  }
+  50% {
+    transform: scale(1.25);
+  }
 }
 
 @keyframes project-status-ring {
-  0% { opacity: 0.42; transform: scale(0.45); }
-  70%, 100% { opacity: 0; transform: scale(1.35); }
+  0% {
+    opacity: 0.42;
+    transform: scale(0.45);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
 }
 
 .tag-list {

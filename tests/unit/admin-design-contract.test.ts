@@ -36,6 +36,7 @@ describe('admin design contract', () => {
   it('uses the approved editorial top navigation and indexed workspace', () => {
     const layout = read('app/layouts/admin.vue');
     const shellCss = read('app/assets/css/admin/shell.css');
+    const responsiveCss = read('app/assets/css/admin/responsive.css');
 
     expect(layout).toContain('<SiteBrand');
     expect(layout).toContain('aria-label="返回概览仪表盘"');
@@ -55,6 +56,8 @@ describe('admin design contract', () => {
     expect(layout).toContain('aria-controls="admin-primary-navigation"');
     expect(layout).toContain("isMobileOpen ? '关闭导航' : '打开导航'");
     expect(layout).toContain('primaryNav.value?.focusFirst()');
+    expect(responsiveCss).toContain('grid-template-columns: repeat(4, 1fr)');
+    expect(responsiveCss).not.toContain('.admin-floating-dashboard');
   });
 
   it('uses editorial surfaces without the retired paper theme', () => {

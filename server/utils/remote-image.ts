@@ -19,20 +19,32 @@ export async function downloadRemoteImage(input: string) {
         headers: { 'user-agent': 'Nookfolio-Media-Importer/1.0' },
       });
     } catch {
-      throw new MediaUploadError(400, 'REMOTE_IMAGE_UNAVAILABLE', 'The online image could not be downloaded');
+      throw new MediaUploadError(
+        400,
+        'REMOTE_IMAGE_UNAVAILABLE',
+        'The online image could not be downloaded',
+      );
     }
 
     if (response.status >= 300 && response.status < 400) {
       const location = response.headers.get('location');
       if (!location || redirect === MAX_REDIRECTS) {
-        throw new MediaUploadError(400, 'REMOTE_REDIRECT_INVALID', 'The image URL redirected too many times');
+        throw new MediaUploadError(
+          400,
+          'REMOTE_REDIRECT_INVALID',
+          'The image URL redirected too many times',
+        );
       }
       url = parseRemoteUrl(new URL(location, url).toString());
       continue;
     }
 
     if (!response.ok) {
-      throw new MediaUploadError(400, 'REMOTE_IMAGE_UNAVAILABLE', 'The online image could not be downloaded');
+      throw new MediaUploadError(
+        400,
+        'REMOTE_IMAGE_UNAVAILABLE',
+        'The online image could not be downloaded',
+      );
     }
     const declaredSize = Number(response.headers.get('content-length') || 0);
     if (declaredSize > MEDIA_MAX_BYTES) {
@@ -48,7 +60,11 @@ export async function downloadRemoteImage(input: string) {
     };
   }
 
-  throw new MediaUploadError(400, 'REMOTE_IMAGE_UNAVAILABLE', 'The online image could not be downloaded');
+  throw new MediaUploadError(
+    400,
+    'REMOTE_IMAGE_UNAVAILABLE',
+    'The online image could not be downloaded',
+  );
 }
 
 function parseRemoteUrl(input: string) {
@@ -61,13 +77,21 @@ function parseRemoteUrl(input: string) {
 
 async function assertPublicHost(hostname: string) {
   if (hostname === 'localhost' || hostname.endsWith('.localhost')) {
-    throw new MediaUploadError(400, 'PRIVATE_REMOTE_HOST', 'Private network image URLs are not allowed');
+    throw new MediaUploadError(
+      400,
+      'PRIVATE_REMOTE_HOST',
+      'Private network image URLs are not allowed',
+    );
   }
   const addresses = isIP(hostname)
     ? [{ address: hostname }]
     : await lookup(hostname, { all: true, verbatim: true });
   if (!addresses.length || addresses.some(({ address }) => isPrivateAddress(address))) {
-    throw new MediaUploadError(400, 'PRIVATE_REMOTE_HOST', 'Private network image URLs are not allowed');
+    throw new MediaUploadError(
+      400,
+      'PRIVATE_REMOTE_HOST',
+      'Private network image URLs are not allowed',
+    );
   }
 }
 
@@ -79,7 +103,9 @@ export function isPrivateAddress(address: string) {
   if (!/^\d+\.\d+\.\d+\.\d+$/.test(ipv4)) return false;
   const [a = 0, b = 0] = ipv4.split('.').map(Number);
   return (
-    a === 0 || a === 10 || a === 127 ||
+    a === 0 ||
+    a === 10 ||
+    a === 127 ||
     (a === 169 && b === 254) ||
     (a === 172 && b >= 16 && b <= 31) ||
     (a === 192 && b === 168) ||

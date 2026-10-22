@@ -149,7 +149,6 @@ function entryIconText(item: PublicHomeResponse['data']['entries'][number]) {
           >© {{ new Date().getFullYear() }} {{ home.homeProfile.nickname }}. Built with
           curiosity.</span
         >
-        <span><b class="home-prototype__kbd">System</b> theme</span>
       </footer>
     </section>
   </div>

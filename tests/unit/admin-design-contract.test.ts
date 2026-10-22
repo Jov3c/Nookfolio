@@ -172,4 +172,11 @@ describe('admin design contract', () => {
     expect(publicCss).toContain('justify-content: flex-start');
     expect(publicCss).toContain('padding: 72px 36px 48px');
   });
+
+  it('keeps the homepage footer free of a misleading static theme label', () => {
+    const publicHome = read('app/pages/index.vue');
+
+    expect(publicHome).not.toContain('System</b> theme');
+    expect(publicHome).not.toContain('home-prototype__kbd');
+  });
 });

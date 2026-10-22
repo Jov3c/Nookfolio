@@ -78,18 +78,20 @@ describe('admin design contract', () => {
     expect(responsiveCss).toContain('overflow: auto');
   });
 
-  it('builds the overview from six truthful floating desktop islands', () => {
+  it('builds the overview around core metrics, writing, recent work and pending actions', () => {
     const dashboard = read('app/pages/admin/index.vue');
     const contentCss = read('app/assets/css/admin/dashboard.css');
 
-    for (const area of ['assets', 'recent', 'create', 'activity', 'inbox', 'status']) {
-      expect(dashboard).toContain(`admin-dashboard-island--${area}`);
+    for (const area of ['metrics', 'writing', 'recent', 'pending', 'health']) {
+      expect(dashboard).toContain(`admin-dashboard-panel--${area}`);
       expect(contentCss).toContain(`grid-area: ${area}`);
     }
-    expect(contentCss).toContain("'assets recent create'");
-    expect(contentCss).toContain("'activity recent inbox'");
-    expect(contentCss).toContain("'activity status inbox'");
-    expect(dashboard).toContain('尚未连接最近编辑记录');
+    expect(dashboard).toContain('已发布文章');
+    expect(dashboard).toContain('草稿');
+    expect(dashboard).toContain('待处理互动');
+    expect(dashboard).toContain('继续写作');
+    expect(dashboard).toContain('最近翻阅');
+    expect(dashboard).toContain('暂无草稿，开始写一篇新文章');
     expect(dashboard).not.toMatch(/Math\.random|假数据|模拟数据/);
   });
 

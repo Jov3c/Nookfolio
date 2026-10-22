@@ -7,11 +7,21 @@ defineProps<{ project: PublicProject }>();
 
 <template>
   <article class="project-card">
+    <NuxtLink
+      class="project-card__link"
+      :to="`/projects/${project.slug}`"
+      :aria-label="`阅读 ${project.name} 的项目说明`"
+    />
     <div class="project-card__head">
       <h2 class="project-card__name">
         <NuxtLink :to="`/projects/${project.slug}`">{{ project.name }}</NuxtLink>
       </h2>
-      <span class="status-pill" :data-status="project.status.toLowerCase()">
+      <span class="project-card__status">
+        <i
+          class="project-card__status-dot"
+          :data-status="project.status.toLowerCase()"
+          aria-hidden="true"
+        />
         {{ PROJECT_STATUS_LABELS[project.status] }}
       </span>
     </div>
@@ -25,6 +35,7 @@ defineProps<{ project: PublicProject }>();
         :href="project.githubUrl"
         target="_blank"
         rel="noopener noreferrer"
+        @click.stop
       >
         项目源码
       </a>
@@ -35,6 +46,7 @@ defineProps<{ project: PublicProject }>();
         :href="project.demoUrl"
         target="_blank"
         rel="noopener noreferrer"
+        @click.stop
       >
         在线预览
       </a>

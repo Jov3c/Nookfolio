@@ -11,6 +11,7 @@ const contentTypes: Record<string, string> = {
   '.jpeg': 'image/jpeg',
   '.jpg': 'image/jpeg',
   '.png': 'image/png',
+  '.svg': 'image/svg+xml',
   '.webp': 'image/webp',
 };
 
@@ -40,6 +41,10 @@ export default defineEventHandler(async (event) => {
   const mimeType = contentTypes[extname(filePath).toLowerCase()];
   if (!mimeType) throw createError({ statusCode: 404, statusMessage: 'Media not found' });
   setResponseHeader(event, 'Content-Type', mimeType);
+  setResponseHeader(event, 'X-Content-Type-Options', 'nosniff');
+  if (mimeType === 'image/svg+xml') {
+    setResponseHeader(event, 'Content-Security-Policy', "default-src 'none'; style-src 'unsafe-inline'; sandbox");
+  }
   setResponseHeader(event, 'Cache-Control', 'public, max-age=31536000, immutable');
   return sendStream(event, createReadStream(filePath));
 });

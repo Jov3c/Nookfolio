@@ -110,6 +110,21 @@ onBeforeUnmount(() => {
             referrerpolicy="no-referrer"
           />
         </a>
+        <a
+          class="route-option"
+          href="https://blogs.quest"
+          target="_blank"
+          rel="noopener"
+          role="menuitem"
+          title="BlogsClub · 空间穿梭"
+          @click="closePopover"
+        >
+          <img
+            src="https://www.blogsclub.org/usr/uploads/2025/01/3461426643.jpg"
+            alt="BlogsClub · 空间穿梭"
+            decoding="async"
+          />
+        </a>
       </section>
     </Transition>
   </div>

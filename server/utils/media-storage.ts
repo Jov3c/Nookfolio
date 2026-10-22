@@ -2,14 +2,16 @@ import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { mkdir, rename, unlink, writeFile } from 'node:fs/promises';
 import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 
+import sanitizeHtml from 'sanitize-html';
+
 import type { MediaCategory } from '../../shared/constants/media';
 
 export const MEDIA_MAX_BYTES = 10 * 1024 * 1024;
 export const MEDIA_MAX_DIMENSION = 4096;
 
 export interface DetectedImage {
-  mimeType: 'image/jpeg' | 'image/png' | 'image/webp' | 'image/gif';
-  extension: 'jpg' | 'png' | 'webp' | 'gif';
+  mimeType: 'image/jpeg' | 'image/png' | 'image/webp' | 'image/gif' | 'image/svg+xml';
+  extension: 'jpg' | 'png' | 'webp' | 'gif' | 'svg';
   width?: number;
   height?: number;
 }
@@ -43,6 +45,11 @@ export function getMediaStorageRoot(env: NodeJS.ProcessEnv = process.env) {
 }
 
 export function detectImage(buffer: Buffer): DetectedImage | null {
+  const textStart = buffer.subarray(0, Math.min(buffer.length, 2048)).toString('utf8').trimStart();
+  if (/^(?:<\?xml[^>]*>\s*)?<svg[\s>]/i.test(textStart)) {
+    return { mimeType: 'image/svg+xml', extension: 'svg', ...readSvgDimensions(textStart) };
+  }
+
   if (
     buffer.length >= 24 &&
     buffer.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]))
@@ -103,9 +110,11 @@ export function validateImageUpload(buffer: Buffer, originalName: string) {
     throw new MediaUploadError(
       400,
       'UNSUPPORTED_FILE_TYPE',
-      'Only JPEG, PNG, WebP, and GIF images are allowed',
+      'Only JPEG, PNG, WebP, GIF, and SVG images are allowed',
     );
   }
+
+  if (detected.mimeType === 'image/svg+xml') sanitizeSvg(buffer);
 
   if (
     (detected.width !== undefined && detected.width > MEDIA_MAX_DIMENSION) ||
@@ -121,6 +130,14 @@ export function validateImageUpload(buffer: Buffer, originalName: string) {
   return {
     originalName: sanitizeOriginalName(originalName),
     ...detected,
+  };
+}
+
+export function prepareImageUpload(buffer: Buffer, originalName: string) {
+  const detected = validateImageUpload(buffer, originalName);
+  return {
+    buffer: detected.mimeType === 'image/svg+xml' ? Buffer.from(sanitizeSvg(buffer), 'utf8') : buffer,
+    detected,
   };
 }
 
@@ -228,4 +245,57 @@ function readWebpDimensions(buffer: Buffer) {
     };
   }
   return {};
+}
+
+function sanitizeSvg(buffer: Buffer) {
+  const source = buffer.toString('utf8').replace(/^\uFEFF/, '').trim();
+  if (
+    /<(?:script|foreignObject|iframe|object|embed|audio|video)\b/i.test(source) ||
+    /\son[a-z]+\s*=/i.test(source) ||
+    /\s(?:href|xlink:href)\s*=/i.test(source) ||
+    /url\s*\(\s*['"]?\s*(?:https?:|data:|javascript:)/i.test(source)
+  ) {
+    throw new MediaUploadError(400, 'UNSAFE_SVG', 'The SVG contains unsafe content');
+  }
+
+  const sanitized = sanitizeHtml(source, {
+    allowedTags: [
+      'svg', 'g', 'path', 'circle', 'ellipse', 'rect', 'line', 'polyline', 'polygon',
+      'defs', 'linearGradient', 'radialGradient', 'stop', 'clipPath', 'mask', 'title', 'desc',
+    ],
+    allowedAttributes: {
+      svg: ['xmlns', 'viewBox', 'viewbox', 'width', 'height', 'fill', 'stroke', 'role', 'aria-label'],
+      '*': [
+        'id', 'd', 'x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'rx', 'ry',
+        'width', 'height', 'points', 'transform', 'viewBox', 'viewbox', 'fill', 'fill-rule',
+        'clip-rule', 'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin', 'opacity',
+        'offset', 'stop-color', 'stop-opacity', 'gradientUnits', 'gradientunits',
+        'gradientTransform', 'gradienttransform', 'clipPathUnits', 'clippathunits',
+      ],
+    },
+    allowedSchemes: [],
+    parser: { lowerCaseTags: false, lowerCaseAttributeNames: false },
+  });
+  if (!/^<svg[\s>]/i.test(sanitized)) {
+    throw new MediaUploadError(400, 'INVALID_SVG', 'The SVG image is invalid');
+  }
+  return sanitized;
+}
+
+function readSvgDimensions(source: string) {
+  const width = readSvgNumber(source, 'width');
+  const height = readSvgNumber(source, 'height');
+  if (width && height) return { width, height };
+  const viewBox = source.match(
+    /\bviewBox\s*=\s*["'][-\d.]+[ ,]+[-\d.]+[ ,]+([\d.]+)[ ,]+([\d.]+)["']/i,
+  );
+  return {
+    ...(width || viewBox?.[1] ? { width: Math.round(width || Number(viewBox?.[1])) } : {}),
+    ...(height || viewBox?.[2] ? { height: Math.round(height || Number(viewBox?.[2])) } : {}),
+  };
+}
+
+function readSvgNumber(source: string, attribute: 'width' | 'height') {
+  const match = source.match(new RegExp(`\\b${attribute}\\s*=\\s*["']([\\d.]+)`, 'i'));
+  return match?.[1] ? Math.round(Number(match[1])) : 0;
 }

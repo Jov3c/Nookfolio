@@ -9,8 +9,10 @@ import {
   getMediaStorageRoot,
   resolveStoredMediaPath,
   storeMediaFile,
+  prepareImageUpload,
   validateImageUpload,
 } from '../../server/utils/media-storage';
+import { isPrivateAddress } from '../../server/utils/remote-image';
 
 const onePixelPng = Buffer.from(
   '89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000d49444154789c6360a0c0000002000100ff0d0a2db40000000049454e44ae426082',
@@ -26,9 +28,17 @@ describe('media upload security', () => {
       height: 1,
     });
     expect(() => validateImageUpload(onePixelPng, 'not-really-a-document.txt')).not.toThrow();
-    expect(() => validateImageUpload(Buffer.from('<svg></svg>'), 'image.png')).toThrow(
-      'Only JPEG, PNG, WebP, and GIF images are allowed',
-    );
+    expect(validateImageUpload(Buffer.from('<svg viewBox="0 0 24 24"><path d="M0 0"/></svg>'), 'icon.svg'))
+      .toMatchObject({ mimeType: 'image/svg+xml', extension: 'svg' });
+    expect(() =>
+      validateImageUpload(Buffer.from('<svg><script>alert(1)</script></svg>'), 'icon.svg'),
+    ).toThrow('unsafe content');
+    expect(
+      prepareImageUpload(
+        Buffer.from('<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg>'),
+        'icon.svg',
+      ).buffer.toString(),
+    ).toContain('<circle');
   });
 
   it('rejects files above the 10 MB limit and unsafe storage paths', () => {
@@ -60,5 +70,13 @@ describe('media upload security', () => {
 
   it('uses an ignored local equivalent when no storage root is configured', () => {
     expect(getMediaStorageRoot({})).toContain(join('.data', 'uploads'));
+  });
+
+  it('blocks loopback and private addresses for online image imports', () => {
+    expect(isPrivateAddress('127.0.0.1')).toBe(true);
+    expect(isPrivateAddress('10.1.2.3')).toBe(true);
+    expect(isPrivateAddress('192.168.1.2')).toBe(true);
+    expect(isPrivateAddress('::1')).toBe(true);
+    expect(isPrivateAddress('8.8.8.8')).toBe(false);
   });
 });

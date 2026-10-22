@@ -8,7 +8,7 @@ import {
   MediaUploadError,
   removeStoredMedia,
   storeMediaFile,
-  validateImageUpload,
+  prepareImageUpload,
 } from '../utils/media-storage';
 
 export interface MediaStorageContract {
@@ -73,15 +73,20 @@ export class MediaService {
     altText?: string;
     now?: Date;
   }) {
-    const detected = validateImageUpload(input.buffer, input.originalName);
-    const stored = await this.storage.store(input.buffer, input.category, detected, input.now);
+    const prepared = prepareImageUpload(input.buffer, input.originalName);
+    const stored = await this.storage.store(
+      prepared.buffer,
+      input.category,
+      prepared.detected,
+      input.now,
+    );
 
     try {
       const media = await this.repository.create({
-        originalName: detected.originalName,
+        originalName: prepared.detected.originalName,
         storedName: stored.storedName,
         mimeType: stored.mimeType,
-        sizeBytes: BigInt(input.buffer.length),
+        sizeBytes: BigInt(prepared.buffer.length),
         width: stored.width,
         height: stored.height,
         storagePath: stored.storagePath,

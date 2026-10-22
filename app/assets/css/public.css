@@ -331,32 +331,55 @@
 }
 
 .project-card__status-dot {
+  position: relative;
   width: 7px;
   height: 7px;
   flex: 0 0 auto;
   border-radius: 50%;
-  background: #72a87b;
+  background: currentcolor;
+  color: #72a87b;
   box-shadow: 0 0 0 5px rgb(114 168 123 / 11%);
+  animation: project-status-breathe 1.8s ease-in-out infinite;
+}
+
+.project-card__status-dot::after {
+  position: absolute;
+  border: 1px solid currentcolor;
+  border-radius: inherit;
+  content: '';
+  inset: -5px;
+  opacity: 0;
+  animation: project-status-ring 1.8s ease-out infinite;
 }
 
 .project-card__status-dot[data-status='building'] {
-  background: #5b91c8;
+  color: #5b91c8;
   box-shadow: 0 0 0 5px rgb(91 145 200 / 12%);
 }
 
 .project-card__status-dot[data-status='done'] {
-  background: #72a87b;
+  color: #72a87b;
   box-shadow: 0 0 0 5px rgb(114 168 123 / 11%);
 }
 
 .project-card__status-dot[data-status='active'] {
-  background: #d18a45;
+  color: #d18a45;
   box-shadow: 0 0 0 5px rgb(209 138 69 / 12%);
 }
 
 .project-card__status-dot[data-status='paused'] {
-  background: #c75d5d;
+  color: #c75d5d;
   box-shadow: 0 0 0 5px rgb(199 93 93 / 12%);
+}
+
+@keyframes project-status-breathe {
+  0%, 100% { transform: scale(0.9); }
+  50% { transform: scale(1.25); }
+}
+
+@keyframes project-status-ring {
+  0% { opacity: 0.42; transform: scale(0.45); }
+  70%, 100% { opacity: 0; transform: scale(1.35); }
 }
 
 .tag-list {
@@ -824,6 +847,11 @@
   .project-card:not(.project-card--skeleton) {
     opacity: 1;
     transform: none;
+  }
+
+  .project-card__status-dot,
+  .project-card__status-dot::after {
+    animation: none;
   }
 }
 

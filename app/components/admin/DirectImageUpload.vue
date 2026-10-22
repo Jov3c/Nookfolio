@@ -44,6 +44,8 @@ const positionX = ref(50);
 const positionY = ref(50);
 const isCropping = ref(false);
 const isUploading = ref(false);
+const showRemoteInput = ref(false);
+const remoteUrl = ref('');
 const dragStart = reactive({ x: 0, y: 0, positionX: 50, positionY: 50 });
 
 const displayedUrl = computed(() => previewUrl.value || props.currentUrl || '');
@@ -175,6 +177,29 @@ async function upload(file: File) {
   }
 }
 
+async function importRemoteImage() {
+  if (!remoteUrl.value.trim()) {
+    emit('error', '请填写在线图片链接。');
+    return;
+  }
+  isUploading.value = true;
+  try {
+    const result = await $fetch<{ data: UploadedMedia }>('/api/v1/admin/media/import', {
+      method: 'POST',
+      body: { url: remoteUrl.value, category: props.category, altText: props.altText },
+    });
+    previewUrl.value = result.data.publicUrl;
+    remoteUrl.value = '';
+    showRemoteInput.value = false;
+    emit('uploaded', result.data);
+  } catch (error) {
+    const fetchError = error as { data?: { error?: { message?: string } } };
+    emit('error', fetchError.data?.error?.message || '在线图片导入失败，请检查链接。');
+  } finally {
+    isUploading.value = false;
+  }
+}
+
 function removeImage() {
   previewUrl.value = '';
   emit('removed');
@@ -229,6 +254,14 @@ onBeforeUnmount(() => {
             {{ displayedUrl ? '更换图片' : '上传图片' }}
           </button>
           <button
+            type="button"
+            class="admin-secondary-button"
+            :disabled="disabled || isUploading"
+            @click="showRemoteInput = !showRemoteInput"
+          >
+            在线链接
+          </button>
+          <button
             v-if="removable && displayedUrl"
             type="button"
             class="admin-danger-button"
@@ -238,14 +271,31 @@ onBeforeUnmount(() => {
             移除图片
           </button>
         </div>
-        <small>支持 JPEG、PNG、WebP 和 GIF，最大 10 MB。</small>
+        <form
+          v-if="showRemoteInput"
+          class="direct-image-upload__remote"
+          @submit.prevent="importRemoteImage"
+        >
+          <input
+            v-model="remoteUrl"
+            type="url"
+            inputmode="url"
+            placeholder="https://example.com/icon.svg"
+            aria-label="在线图片链接"
+            required
+          />
+          <button class="admin-secondary-button" type="submit" :disabled="isUploading">
+            {{ isUploading ? '正在导入…' : '导入' }}
+          </button>
+        </form>
+        <small>支持 JPEG、PNG、WebP、GIF 和安全 SVG，最大 10 MB。</small>
       </div>
     </div>
     <input
       ref="fileInput"
       class="direct-image-upload__input"
       type="file"
-      accept="image/jpeg,image/png,image/webp,image/gif"
+      accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml,.svg"
       @change="chooseFile"
     />
 
@@ -305,6 +355,20 @@ onBeforeUnmount(() => {
 .direct-image-upload__label {
   font-size: 0.82rem;
   font-weight: 700;
+}
+.direct-image-upload__remote {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.direct-image-upload__remote input {
+  min-width: 0;
+  flex: 1;
+  padding: 0 10px;
+  border: 1px solid var(--color-line);
+  border-radius: 9px;
+  background: var(--color-panel);
+  color: var(--color-text);
 }
 .direct-image-upload__card {
   display: grid;

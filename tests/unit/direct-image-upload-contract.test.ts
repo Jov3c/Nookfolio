@@ -41,4 +41,12 @@ describe('direct image upload admin experience', () => {
     expect(uploader).toContain('.direct-image-upload--compact .direct-image-upload__preview');
     expect(homeAdmin).toMatch(/label="入口图标"[\s\S]*?compact/);
   });
+
+  it('accepts SVG files and can import an image from a safe online URL', () => {
+    const uploader = read('app/components/admin/DirectImageUpload.vue');
+
+    expect(uploader).toContain('image/svg+xml');
+    expect(uploader).toContain('在线链接');
+    expect(uploader).toContain('/api/v1/admin/media/import');
+  });
 });

@@ -13,10 +13,20 @@ export const mediaUploadFieldsSchema = z.object({
   altText: z.string().trim().max(300).default(''),
 });
 
+export const mediaImportSchema = mediaUploadFieldsSchema.extend({
+  url: z
+    .string()
+    .trim()
+    .max(1000)
+    .url()
+    .refine((value) => ['http:', 'https:'].includes(new URL(value).protocol), 'Use HTTP or HTTPS'),
+});
+
 export const mediaUpdateSchema = z.object({
   altText: z.string().trim().max(300).nullable(),
 });
 
 export type MediaListQuery = z.infer<typeof mediaListQuerySchema>;
 export type MediaUploadFields = z.infer<typeof mediaUploadFieldsSchema>;
+export type MediaImportInput = z.infer<typeof mediaImportSchema>;
 export type MediaUpdateInput = z.infer<typeof mediaUpdateSchema>;

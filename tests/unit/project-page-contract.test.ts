@@ -34,6 +34,7 @@ describe('project and blog page presentation', () => {
     expect(css).toContain(".project-card__status-dot[data-status='done']");
     expect(css).toContain(".project-card__status-dot[data-status='paused']");
     expect(css).toContain('font-family: "Noto Serif SC"');
+    expect(css).toContain('animation: project-status-breathe');
   });
 
   it('gives project README pages the same live table of contents as blog articles', () => {

@@ -3,6 +3,7 @@ import BlogChrome from '~/components/blog/BlogChrome.vue';
 import SkeletonBlock from '~/components/ui/SkeletonBlock.vue';
 import StandardHero from '~/components/ui/StandardHero.vue';
 import type { PublicFriendLinksResponse } from '~/types/friend-links';
+import type { PublicHomeResponse } from '~/types/home';
 
 const { data, pending, error } = await useFetch<PublicFriendLinksResponse>('/api/v1/public/links', {
   key: 'public-friend-links',
@@ -12,6 +13,22 @@ const { data, pending, error } = await useFetch<PublicFriendLinksResponse>('/api
 const friendLinks = computed(() => data.value?.data ?? []);
 const displayLinks = computed(() => friendLinks.value.slice(0, 6));
 const showPrototypeSkeleton = ref(true);
+const { data: homeData } = await useFetch<PublicHomeResponse>('/api/v1/public/home', {
+  key: 'links-site-information',
+});
+const runtimeConfig = useRuntimeConfig();
+const copiedField = ref('');
+const siteOrigin = computed(() => String(runtimeConfig.public.siteUrl || 'https://jov3.cloud').replace(/\/$/, ''));
+const siteInfo = computed(() => {
+  const home = homeData.value?.data;
+  return {
+    name: home?.siteProfile.siteTitle || 'Nookfolio',
+    url: siteOrigin.value,
+    feed: `${siteOrigin.value}/rss.xml`,
+    icon: absoluteUrl(home?.homeProfile.avatar?.url || '/favicon.ico'),
+    description: '保持好奇。',
+  };
+});
 
 let skeletonTimer: number | undefined;
 
@@ -47,6 +64,22 @@ function domain(url: string) {
 
 function avatarClass(index: number) {
   return `avatar-${String.fromCharCode(97 + (index % 6))}`;
+}
+
+function absoluteUrl(value: string) {
+  try {
+    return new URL(value, `${siteOrigin.value}/`).toString();
+  } catch {
+    return value;
+  }
+}
+
+async function copySiteField(field: string, value: string) {
+  await navigator.clipboard.writeText(value);
+  copiedField.value = field;
+  window.setTimeout(() => {
+    if (copiedField.value === field) copiedField.value = '';
+  }, 1400);
 }
 </script>
 
@@ -103,6 +136,28 @@ function avatarClass(index: number) {
             <span class="link-domain">{{ domain(friend.url) }}</span>
           </span>
         </a>
+      </div>
+    </section>
+
+    <section class="site-link-info" aria-labelledby="site-link-info-heading">
+      <p>若能得您垂青，还望链接小站：</p>
+      <div class="site-link-info__panel">
+        <header>
+          <span aria-hidden="true">♧</span>
+          <h2 id="site-link-info-heading">站点信息</h2>
+        </header>
+        <dl>
+          <div v-for="(value, field) in siteInfo" :key="field">
+            <dt>{{ { name: '名称', url: '地址', feed: '订阅', icon: '图标', description: '描述' }[field] }}：</dt>
+            <dd>
+              <button type="button" :title="`复制${value}`" @click="copySiteField(field, value)">
+                <img v-if="field === 'icon'" :src="value" alt="当前站点头像" />
+                <code>{{ value }}</code>
+                <span>{{ copiedField === field ? '已复制' : '复制' }}</span>
+              </button>
+            </dd>
+          </div>
+        </dl>
       </div>
     </section>
   </BlogChrome>

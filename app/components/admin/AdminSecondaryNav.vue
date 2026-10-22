@@ -5,14 +5,15 @@ const state = computed(() => getAdminNavigationState(route.path));
 </script>
 
 <template>
-  <nav v-if="state.secondaryItems.length > 1" class="admin-secondary-nav" aria-label="后台二级导航">
+  <nav class="admin-secondary-nav" aria-label="当前分区页面">
     <NuxtLink
-      v-for="item in state.secondaryItems"
+      v-for="(item, index) in state.secondaryItems"
       :key="item.to"
       :to="item.to"
       :data-active="isAdminRouteActive(route.path, item.to)"
     >
-      {{ item.label }}
+      <span aria-hidden="true">{{ String(index + 1).padStart(2, '0') }}</span>
+      <strong>{{ item.label }}</strong>
     </NuxtLink>
   </nav>
 </template>

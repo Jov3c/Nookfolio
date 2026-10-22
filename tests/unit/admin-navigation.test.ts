@@ -37,4 +37,25 @@ describe('admin navigation motion', () => {
       getAdminNavigationState('/admin/projects').secondaryItems.map((item) => item.label),
     ).toContain('项目管理');
   });
+
+  test('keeps the editorial index ordered and zero padded in the shared navigation', () => {
+    const content = getAdminNavigationState('/admin/projects');
+
+    expect(content.secondaryItems.map((item) => item.label)).toEqual([
+      '发布文章',
+      '草稿箱',
+      '文章管理',
+      '分类管理',
+      '项目管理',
+      '时间线',
+    ]);
+    expect(content.secondaryItems.map((_, index) => String(index + 1).padStart(2, '0'))).toEqual([
+      '01',
+      '02',
+      '03',
+      '04',
+      '05',
+      '06',
+    ]);
+  });
 });

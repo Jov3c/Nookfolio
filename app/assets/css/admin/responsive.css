@@ -19,7 +19,7 @@
   .home-avatar-field__library {
     grid-column: 1/-1;
   }
-  .admin-floating-bar {
+  .admin-topbar {
     grid-template-columns: auto 1fr auto;
   }
   .admin-primary-nav a {
@@ -30,7 +30,7 @@
   .admin-layout {
     width: min(calc(100% - 32px), 1280px);
   }
-  .admin-floating-bar {
+  .admin-topbar {
     grid-template-columns: 1fr auto;
   }
   .admin-primary-nav {
@@ -58,6 +58,27 @@
   .admin-mobile-menu {
     display: grid;
     place-items: center;
+  }
+  .admin-workspace {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding-top: 18px;
+  }
+  .admin-workspace__index {
+    position: static;
+    min-width: 0;
+  }
+  .admin-secondary-nav {
+    display: flex;
+    gap: 4px;
+    padding: 4px 0 8px;
+    overflow-x: auto;
+  }
+  .admin-secondary-nav a {
+    flex: 0 0 auto;
+    min-height: 42px;
+    grid-template-columns: 25px auto;
+    padding-inline: 10px 13px;
   }
   .posts-admin-layout,
   .categories-admin-layout,
@@ -103,7 +124,7 @@
     width: min(calc(100% - 20px), 1280px);
     padding-top: 10px;
   }
-  .admin-floating-bar {
+  .admin-topbar {
     top: 8px;
     min-height: 58px;
     padding: 8px 9px 8px 14px;
@@ -115,9 +136,6 @@
   }
   .admin-view-site {
     display: none;
-  }
-  .admin-secondary-nav {
-    margin-top: 10px;
   }
   .admin-main {
     padding-top: 22px;

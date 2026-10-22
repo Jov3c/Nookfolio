@@ -24,7 +24,7 @@ describe('admin design contract', () => {
     expect(css.split('\n').length).toBeLessThan(20);
   });
 
-  it('uses the approved floating top navigation workspace', () => {
+  it('uses the approved editorial top navigation and indexed workspace', () => {
     const layout = read('app/layouts/admin.vue');
     const shellCss = read('app/assets/css/admin/shell.css');
 
@@ -33,7 +33,10 @@ describe('admin design contract', () => {
     expect(layout).toContain('<AdminPrimaryNav');
     expect(layout).toContain('<AdminSecondaryNav');
     expect(layout).not.toContain('admin-sidebar');
-    expect(shellCss).toContain('.admin-floating-bar');
+    expect(shellCss).toContain('.admin-topbar');
+    expect(layout).toContain('admin-workspace');
+    expect(layout).toContain('admin-workspace__index');
+    expect(layout).toContain('admin-workspace__content');
     expect(shellCss).toContain('var(--color-bg)');
     expect(shellCss).toContain('var(--color-panel)');
     expect(shellCss).toContain('var(--color-accent)');
@@ -45,14 +48,14 @@ describe('admin design contract', () => {
     expect(layout).toContain('primaryNav.value?.focusFirst()');
   });
 
-  it('uses floating islands without the retired paper theme', () => {
+  it('uses editorial surfaces without the retired paper theme', () => {
     const shellCss = read('app/assets/css/admin/shell.css');
     const islandsCss = read('app/assets/css/admin/islands.css');
     const responsiveCss = read('app/assets/css/admin/responsive.css');
     const authCss = read('app/assets/css/admin/auth.css');
     const aboutPage = read('app/pages/admin/about.vue');
 
-    expect(shellCss).toContain('grid-template-columns: minmax(150px, 1fr) auto minmax(150px, 1fr)');
+    expect(shellCss).toContain('grid-template-columns: 190px minmax(0, 1fr)');
     expect(existsSync(resolve(root, 'app/assets/css/admin/paper.css'))).toBe(false);
     expect(islandsCss).toContain('.admin-island');
     expect(islandsCss).toContain('border-radius: var(--radius-lg)');

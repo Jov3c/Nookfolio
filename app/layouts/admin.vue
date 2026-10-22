@@ -49,14 +49,14 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleKeydown));
   <div class="admin-root">
     <Toaster position="bottom-right" :duration="2500" close-button rich-colors />
     <div class="admin-layout">
-      <header class="admin-floating-bar">
+      <header class="admin-topbar">
         <SiteBrand to="/admin" aria-label="返回概览仪表盘" />
         <AdminPrimaryNav
           ref="primaryNav"
           :class="{ 'admin-primary-nav--open': isMobileOpen }"
           @click="closeMobileNavigation()"
         />
-        <div class="admin-floating-bar__actions">
+        <div class="admin-topbar__actions">
           <NuxtLink class="admin-view-site" to="/" target="_blank">查看站点</NuxtLink>
           <ThemeToggle />
           <details class="admin-identity-menu">
@@ -84,8 +84,12 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleKeydown));
           </button>
         </div>
       </header>
-      <AdminSecondaryNav />
-      <main class="admin-main"><slot /></main>
+      <div class="admin-workspace">
+        <aside class="admin-workspace__index">
+          <AdminSecondaryNav />
+        </aside>
+        <main class="admin-main admin-workspace__content"><slot /></main>
+      </div>
     </div>
   </div>
 </template>

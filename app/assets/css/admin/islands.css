@@ -103,7 +103,7 @@
   background: var(--color-panel);
 }
 
-html[data-theme='dark'] .admin-floating-bar,
+html[data-theme='dark'] .admin-topbar,
 html[data-theme='dark'] .admin-secondary-nav {
   background: color-mix(in srgb, var(--color-panel) 88%, transparent);
 }

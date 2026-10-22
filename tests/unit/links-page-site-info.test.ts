@@ -23,6 +23,6 @@ describe('public links page site information', () => {
     const menu = read('app/components/shell/TravellingLink.vue');
 
     expect(menu).toContain('https://blogs.quest');
-    expect(menu).toContain('https://www.blogsclub.org/usr/uploads/2025/01/3461426643.jpg');
+    expect(menu).toContain('/images/blog-routes/blogsclub.jpg');
   });
 });

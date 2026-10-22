@@ -64,7 +64,7 @@ onBeforeUnmount(() => {
           @click="closePopover"
         >
           <img
-            src="https://www.travellings.cn/assets/logo.gif"
+            src="/images/blog-routes/travelling.gif"
             alt="开往 · 友链接力"
             decoding="async"
             referrerpolicy="no-referrer"
@@ -80,7 +80,7 @@ onBeforeUnmount(() => {
           @click="closePopover"
         >
           <img
-            src="https://photo.xiangming.site/img/footer.gif"
+            src="/images/blog-routes/blogscn.gif"
             alt="笔墨迹 · 随机穿梭"
             decoding="async"
             referrerpolicy="no-referrer"
@@ -97,14 +97,14 @@ onBeforeUnmount(() => {
         >
           <img
             class="route-option__logo route-option__logo--light"
-            src="https://www.foreverblog.cn/assets/logo/wormhole_v2_dark.webp"
+            src="/images/blog-routes/wormhole-dark.webp"
             alt="十年之约虫洞"
             decoding="async"
             referrerpolicy="no-referrer"
           />
           <img
             class="route-option__logo route-option__logo--dark"
-            src="https://www.foreverblog.cn/assets/logo/wormhole_v2_light.webp"
+            src="/images/blog-routes/wormhole-light.webp"
             alt=""
             decoding="async"
             referrerpolicy="no-referrer"
@@ -120,7 +120,7 @@ onBeforeUnmount(() => {
           @click="closePopover"
         >
           <img
-            src="https://www.blogsclub.org/usr/uploads/2025/01/3461426643.jpg"
+            src="/images/blog-routes/blogsclub.jpg"
             alt="BlogsClub · 空间穿梭"
             decoding="async"
           />

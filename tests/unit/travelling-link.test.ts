@@ -19,9 +19,12 @@ describe('travelling link popover', () => {
     expect(travelling).toBeGreaterThan(-1);
     expect(blogscn).toBeGreaterThan(travelling);
     expect(forever).toBeGreaterThan(blogscn);
-    expect(source).toContain('https://www.travellings.cn/assets/logo.gif');
-    expect(source).toContain('https://photo.xiangming.site/img/footer.gif');
-    expect(source).toContain('https://www.foreverblog.cn/assets/logo/wormhole_v2_dark.webp');
+    expect(source).toContain('/images/blog-routes/travelling.gif');
+    expect(source).toContain('/images/blog-routes/blogscn.gif');
+    expect(source).toContain('/images/blog-routes/wormhole-dark.webp');
+    expect(source).toContain('/images/blog-routes/wormhole-light.webp');
+    expect(source).toContain('/images/blog-routes/blogsclub.jpg');
+    expect(source).not.toMatch(/src="https:\/\//);
     expect(source).toContain('width: 188px');
   });
 

@@ -13,7 +13,7 @@ const props = withDefaults(
     fallbackText?: string;
     category: 'avatars' | 'icons' | 'blog' | 'projects' | 'timeline' | 'links' | 'general';
     altText: string;
-    crop?: 'none' | 'square';
+    crop?: 'none' | 'square' | 'center-square';
     disabled?: boolean;
     removable?: boolean;
     compact?: boolean;
@@ -62,6 +62,19 @@ async function chooseFile(event: Event) {
   const file = input.files?.[0];
   input.value = '';
   if (!file) return;
+
+  if (props.crop === 'center-square') {
+    isUploading.value = true;
+    try {
+      const cropped = await createCenteredSquareCrop(file);
+      previewUrl.value = URL.createObjectURL(cropped);
+      await upload(cropped);
+    } catch {
+      emit('error', `${props.label}裁剪失败，请重新选择图片。`);
+      isUploading.value = false;
+    }
+    return;
+  }
 
   if (props.crop === 'square') {
     releaseSourceUrl();
@@ -156,6 +169,36 @@ async function createSquareCrop(image: HTMLImageElement, originalName: string) {
   });
 }
 
+async function createCenteredSquareCrop(file: File) {
+  const objectUrl = URL.createObjectURL(file);
+  try {
+    const image = new Image();
+    image.src = objectUrl;
+    await image.decode();
+    const sourceSize = Math.min(image.naturalWidth, image.naturalHeight);
+    const sourceX = (image.naturalWidth - sourceSize) / 2;
+    const sourceY = (image.naturalHeight - sourceSize) / 2;
+    const canvas = document.createElement('canvas');
+    canvas.width = 800;
+    canvas.height = 800;
+    const context = canvas.getContext('2d');
+    if (!context) throw new Error('CANVAS_UNAVAILABLE');
+    context.drawImage(image, sourceX, sourceY, sourceSize, sourceSize, 0, 0, 800, 800);
+    const blob = await new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob(
+        (result) => (result ? resolve(result) : reject(new Error('CROP_FAILED'))),
+        'image/webp',
+        0.9,
+      );
+    });
+    return new File([blob], `${file.name.replace(/\.[^.]+$/, '')}-cropped.webp`, {
+      type: 'image/webp',
+    });
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}
+
 async function upload(file: File) {
   isUploading.value = true;
   try {
@@ -247,7 +290,9 @@ onBeforeUnmount(() => {
           {{
             crop === 'square'
               ? '上传后可调整大小和位置，默认居中。'
-              : '从电脑选择图片，上传后直接绑定。'
+              : crop === 'center-square'
+                ? '上传后自动居中裁成正方形。'
+                : '从电脑选择图片，上传后直接绑定。'
           }}
         </p>
         <div class="direct-image-upload__actions">

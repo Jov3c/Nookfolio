@@ -56,7 +56,7 @@ async function importMarkdown(event: Event) {
     <AdminDirectImageUpload
       label="文章封面"
       category="blog"
-      crop="square"
+      crop="center-square"
       :current-url="coverUrl"
       :fallback-text="form.title || '封面'"
       :alt-text="`${form.title || '文章'}封面`"

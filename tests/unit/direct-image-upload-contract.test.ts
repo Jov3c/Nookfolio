@@ -42,6 +42,14 @@ describe('direct image upload admin experience', () => {
     expect(uploader).toContain('`${props.label}裁剪失败，请重新选择图片。`');
   });
 
+  it('decodes local crop sources through CSP-compatible data URLs', () => {
+    const uploader = read('app/components/admin/DirectImageUpload.vue');
+
+    expect(uploader).toContain('reader.readAsDataURL(file)');
+    expect(uploader).not.toContain('sourceUrl.value = URL.createObjectURL(file)');
+    expect(uploader).not.toContain('const objectUrl = URL.createObjectURL(file)');
+  });
+
   it('uses the compact uploader inside homepage entry rows', () => {
     const uploader = read('app/components/admin/DirectImageUpload.vue');
     const homeAdmin = read('app/pages/admin/home.vue');

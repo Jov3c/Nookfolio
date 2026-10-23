@@ -67,7 +67,6 @@ async function chooseFile(event: Event) {
     isUploading.value = true;
     try {
       const cropped = await createCenteredSquareCrop(file);
-      previewUrl.value = URL.createObjectURL(cropped);
       await upload(cropped);
     } catch {
       emit('error', `${props.label}裁剪失败，请重新选择图片。`);
@@ -79,7 +78,7 @@ async function chooseFile(event: Event) {
   if (props.crop === 'square') {
     releaseSourceUrl();
     sourceFile.value = file;
-    sourceUrl.value = URL.createObjectURL(file);
+    sourceUrl.value = await readFileAsDataUrl(file);
     zoom.value = 1;
     positionX.value = 50;
     positionY.value = 50;
@@ -128,7 +127,6 @@ async function confirmCrop() {
 
   try {
     const cropped = await createSquareCrop(image, file.name);
-    previewUrl.value = URL.createObjectURL(cropped);
     isCropping.value = false;
     await upload(cropped);
   } catch {
@@ -170,33 +168,40 @@ async function createSquareCrop(image: HTMLImageElement, originalName: string) {
 }
 
 async function createCenteredSquareCrop(file: File) {
-  const objectUrl = URL.createObjectURL(file);
-  try {
-    const image = new Image();
-    image.src = objectUrl;
-    await image.decode();
-    const sourceSize = Math.min(image.naturalWidth, image.naturalHeight);
-    const sourceX = (image.naturalWidth - sourceSize) / 2;
-    const sourceY = (image.naturalHeight - sourceSize) / 2;
-    const canvas = document.createElement('canvas');
-    canvas.width = 800;
-    canvas.height = 800;
-    const context = canvas.getContext('2d');
-    if (!context) throw new Error('CANVAS_UNAVAILABLE');
-    context.drawImage(image, sourceX, sourceY, sourceSize, sourceSize, 0, 0, 800, 800);
-    const blob = await new Promise<Blob>((resolve, reject) => {
-      canvas.toBlob(
-        (result) => (result ? resolve(result) : reject(new Error('CROP_FAILED'))),
-        'image/webp',
-        0.9,
-      );
-    });
-    return new File([blob], `${file.name.replace(/\.[^.]+$/, '')}-cropped.webp`, {
-      type: 'image/webp',
-    });
-  } finally {
-    URL.revokeObjectURL(objectUrl);
-  }
+  const image = new Image();
+  image.src = await readFileAsDataUrl(file);
+  await image.decode();
+  const sourceSize = Math.min(image.naturalWidth, image.naturalHeight);
+  const sourceX = (image.naturalWidth - sourceSize) / 2;
+  const sourceY = (image.naturalHeight - sourceSize) / 2;
+  const canvas = document.createElement('canvas');
+  canvas.width = 800;
+  canvas.height = 800;
+  const context = canvas.getContext('2d');
+  if (!context) throw new Error('CANVAS_UNAVAILABLE');
+  context.drawImage(image, sourceX, sourceY, sourceSize, sourceSize, 0, 0, 800, 800);
+  const blob = await new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob(
+      (result) => (result ? resolve(result) : reject(new Error('CROP_FAILED'))),
+      'image/webp',
+      0.9,
+    );
+  });
+  return new File([blob], `${file.name.replace(/\.[^.]+$/, '')}-cropped.webp`, {
+    type: 'image/webp',
+  });
+}
+
+function readFileAsDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(reader.error || new Error('FILE_READ_FAILED'));
+    reader.onload = () =>
+      typeof reader.result === 'string'
+        ? resolve(reader.result)
+        : reject(new Error('FILE_READ_FAILED'));
+    reader.readAsDataURL(file);
+  });
 }
 
 async function upload(file: File) {
@@ -249,7 +254,6 @@ function removeImage() {
 }
 
 function releaseSourceUrl() {
-  if (sourceUrl.value) URL.revokeObjectURL(sourceUrl.value);
   sourceUrl.value = '';
 }
 
@@ -259,7 +263,6 @@ function clamp(value: number, minimum: number, maximum: number) {
 
 onBeforeUnmount(() => {
   releaseSourceUrl();
-  if (previewUrl.value.startsWith('blob:')) URL.revokeObjectURL(previewUrl.value);
 });
 </script>
 

@@ -378,21 +378,21 @@ onBeforeUnmount(() => {
 }
 .direct-image-upload__card {
   display: grid;
-  grid-template-columns: 116px 1fr;
-  gap: 18px;
+  grid-template-columns: 88px 1fr;
+  gap: 12px;
   align-items: center;
-  padding: 16px;
+  padding: 12px;
   border: 1px solid var(--color-line);
-  border-radius: 16px;
+  border-radius: 14px;
   background: var(--color-bg);
 }
 .direct-image-upload__preview {
   position: relative;
-  width: 116px;
-  height: 116px;
+  width: 88px;
+  height: 88px;
   overflow: hidden;
   border: 1px solid var(--color-line);
-  border-radius: 18px;
+  border-radius: 14px;
   background: var(--color-panel);
   color: var(--color-muted);
 }

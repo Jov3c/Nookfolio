@@ -25,6 +25,8 @@ describe('reading controls', () => {
     const css = read('app/assets/css/prototype.css');
 
     expect(css).toMatch(/\.post-card__cover-art--image\s*\{[\s\S]*?background-size:\s*contain/);
+    expect(css).not.toMatch(/\.post-card__cover-art\[data-cover-index=[^}]+\{[^}]*background:/g);
+    expect(css).toMatch(/\.post-card__cover-art\[data-cover-index='1'\]\s*\{\s*background-color:/);
     expect(css).toMatch(/\.article-cover\s*\{[\s\S]*?object-fit:\s*contain/);
   });
 });

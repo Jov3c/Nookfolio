@@ -154,23 +154,26 @@ async function copySiteField(field: string, value: string) {
             <p>点击任意一行即可复制</p>
           </div>
         </header>
-        <dl class="site-link-card__code">
-          <div v-for="(value, field) in siteInfo" :key="field">
-            <dt>
+        <div class="site-link-card__code">
+          <button
+            v-for="(value, field) in siteInfo"
+            :key="field"
+            type="button"
+            class="site-link-card__row"
+            :class="{ 'is-copied': copiedField === field }"
+            :aria-label="`复制${value}`"
+            @click="copySiteField(field, value)"
+          >
+            <span class="site-link-card__label">
               {{
                 { name: '名称', url: '地址', feed: '订阅', icon: '图标', description: '描述' }[
                   field
                 ]
               }}：
-            </dt>
-            <dd>
-              <button type="button" :title="`复制${value}`" @click="copySiteField(field, value)">
-                <code>{{ value }}</code>
-                <span>{{ copiedField === field ? '已复制' : '复制' }}</span>
-              </button>
-            </dd>
-          </div>
-        </dl>
+            </span>
+            <code>{{ value }}</code>
+          </button>
+        </div>
       </div>
     </section>
   </BlogChrome>

@@ -16,7 +16,18 @@ describe('public links page site information', () => {
     expect(page).toContain('icon: `${siteOrigin.value}/avatar`');
     expect(page).toContain('/rss.xml');
     expect(page).toContain('site-link-card__code');
+    expect(page).toMatch(
+      /<button[^>]*class="site-link-card__row"[^>]*[\s\S]*?site-link-card__label[\s\S]*?<code>/,
+    );
+    expect(page).not.toContain("copiedField === field ? '已复制' : '复制'");
     expect(read('server/routes/avatar.get.ts')).toContain('homeProfile.avatar');
+  });
+
+  it('uses a compact two-column site-information card', () => {
+    const css = read('app/assets/css/prototype.css');
+
+    expect(css).toMatch(/\.site-link-card__code\s*\{[\s\S]*?grid-template-columns:\s*repeat\(2/);
+    expect(css).toMatch(/\.site-link-card__row\s*\{[\s\S]*?cursor:\s*pointer/);
   });
 
   it('includes the official BlogsClub random-blog route', () => {

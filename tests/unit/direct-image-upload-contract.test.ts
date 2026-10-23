@@ -57,4 +57,14 @@ describe('direct image upload admin experience', () => {
     expect(uploader).toContain('.direct-image-upload--contain .direct-image-upload__preview img');
     expect(uploader).toContain('object-fit: contain');
   });
+
+  it('keeps the regular upload card compact', () => {
+    const uploader = read('app/components/admin/DirectImageUpload.vue');
+
+    expect(uploader).toMatch(
+      /\.direct-image-upload__card\s*\{[\s\S]*?grid-template-columns:\s*88px 1fr/,
+    );
+    expect(uploader).toMatch(/\.direct-image-upload__preview\s*\{[\s\S]*?width:\s*88px/);
+    expect(uploader).toMatch(/\.direct-image-upload__preview\s*\{[\s\S]*?height:\s*88px/);
+  });
 });

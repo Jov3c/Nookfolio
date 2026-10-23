@@ -929,11 +929,42 @@ html[data-blog-transition='active'] .article-page__header {
 }
 
 .site-link-card {
+  position: relative;
   overflow: hidden;
   border: 1px solid var(--color-line);
   border-radius: 18px;
   background: var(--color-panel);
   box-shadow: 0 14px 36px rgb(28 34 29 / 5%);
+}
+
+.site-link-card__toast {
+  position: absolute;
+  z-index: 2;
+  top: 9px;
+  right: 12px;
+  padding: 6px 9px;
+  margin: 0;
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  background: var(--color-text);
+  box-shadow: 0 8px 22px rgb(28 34 29 / 14%);
+  color: var(--color-bg);
+  font-size: 0.68rem;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.site-link-card-toast-enter-active,
+.site-link-card-toast-leave-active {
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.site-link-card-toast-enter-from,
+.site-link-card-toast-leave-to {
+  opacity: 0;
+  transform: translateY(-4px) scale(0.96);
 }
 
 .site-link-card__header {

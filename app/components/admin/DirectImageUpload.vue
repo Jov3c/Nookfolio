@@ -119,7 +119,7 @@ async function confirmCrop() {
     isCropping.value = false;
     await upload(cropped);
   } catch {
-    emit('error', '头像裁剪失败，请重新选择图片。');
+    emit('error', `${props.label}裁剪失败，请重新选择图片。`);
   } finally {
     releaseSourceUrl();
   }
@@ -311,13 +311,13 @@ onBeforeUnmount(() => {
         class="image-crop-dialog"
         role="dialog"
         aria-modal="true"
-        aria-label="调整头像"
+        :aria-label="`调整${label}`"
       >
         <div class="image-crop-dialog__panel">
           <header>
             <div>
-              <p class="eyebrow">头像裁剪</p>
-              <h2>调整头像尺寸</h2>
+              <p class="eyebrow">{{ label }}裁剪</p>
+              <h2>调整{{ label }}尺寸</h2>
             </div>
             <button type="button" aria-label="关闭" @click="cancelCrop">×</button>
           </header>
@@ -332,7 +332,7 @@ onBeforeUnmount(() => {
             <img
               ref="cropImage"
               :src="sourceUrl"
-              alt="待裁剪头像"
+              :alt="`待裁剪${label}`"
               :style="cropImageStyle"
               draggable="false"
             />

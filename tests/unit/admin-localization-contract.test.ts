@@ -55,7 +55,7 @@ describe('admin localization contract', () => {
 
     expect(login).not.toContain('fetchError.data?.error?.message');
     expect(uploader).toContain('点击上传');
-    expect(uploader).toContain('调整头像尺寸');
+    expect(uploader).toContain('调整{{ label }}尺寸');
     expect(uploader).not.toContain('stored outside the build');
   });
 

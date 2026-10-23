@@ -18,6 +18,13 @@ const { data: homeData } = await useFetch<PublicHomeResponse>('/api/v1/public/ho
 });
 const runtimeConfig = useRuntimeConfig();
 const copiedField = ref('');
+const siteFieldLabels: Record<string, string> = {
+  name: '名称',
+  url: '地址',
+  feed: '订阅',
+  icon: '图标',
+  description: '描述',
+};
 const siteOrigin = computed(() =>
   String(runtimeConfig.public.siteUrl || 'https://jov3.cloud').replace(/\/$/, ''),
 );
@@ -33,11 +40,15 @@ const siteInfo = computed(() => {
 });
 
 let skeletonTimer: number | undefined;
+let copyTimer: number | undefined;
 
 onMounted(() => {
   skeletonTimer = window.setTimeout(() => (showPrototypeSkeleton.value = false), 850);
 });
-onBeforeUnmount(() => window.clearTimeout(skeletonTimer));
+onBeforeUnmount(() => {
+  window.clearTimeout(skeletonTimer);
+  window.clearTimeout(copyTimer);
+});
 
 definePageMeta({ layout: 'blog-prototype' });
 
@@ -79,7 +90,8 @@ function absoluteUrl(value: string) {
 async function copySiteField(field: string, value: string) {
   await navigator.clipboard.writeText(value);
   copiedField.value = field;
-  window.setTimeout(() => {
+  window.clearTimeout(copyTimer);
+  copyTimer = window.setTimeout(() => {
     if (copiedField.value === field) copiedField.value = '';
   }, 1400);
 }
@@ -144,6 +156,11 @@ async function copySiteField(field: string, value: string) {
     <section class="site-link-info" aria-labelledby="site-link-info-heading">
       <p>若能得您垂青，还望链接小站：</p>
       <div class="site-link-card">
+        <Transition name="site-link-card-toast">
+          <p v-if="copiedField" class="site-link-card__toast" role="status">
+            已复制{{ siteFieldLabels[copiedField] }}
+          </p>
+        </Transition>
         <header class="site-link-card__header">
           <img
             :src="absoluteUrl(homeData?.data.homeProfile.avatar?.url || '/favicon.ico')"
@@ -164,13 +181,7 @@ async function copySiteField(field: string, value: string) {
             :aria-label="`复制${value}`"
             @click="copySiteField(field, value)"
           >
-            <span class="site-link-card__label">
-              {{
-                { name: '名称', url: '地址', feed: '订阅', icon: '图标', description: '描述' }[
-                  field
-                ]
-              }}：
-            </span>
+            <span class="site-link-card__label"> {{ siteFieldLabels[field] }}： </span>
             <code>{{ value }}</code>
           </button>
         </div>

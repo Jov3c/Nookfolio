@@ -20,6 +20,9 @@ describe('public links page site information', () => {
       /<button[^>]*class="site-link-card__row"[^>]*[\s\S]*?site-link-card__label[\s\S]*?<code>/,
     );
     expect(page).not.toContain("copiedField === field ? '已复制' : '复制'");
+    expect(page).toContain('class="site-link-card__toast"');
+    expect(page).toContain('role="status"');
+    expect(page).toContain('已复制');
     expect(read('server/routes/avatar.get.ts')).toContain('homeProfile.avatar');
   });
 

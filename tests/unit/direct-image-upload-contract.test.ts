@@ -32,6 +32,15 @@ describe('direct image upload admin experience', () => {
     expect(uploader).toContain("props.crop === 'square'");
   });
 
+  it('uses the same square crop flow for article covers', () => {
+    const editor = read('app/components/admin/PostEditorFields.vue');
+    const uploader = read('app/components/admin/DirectImageUpload.vue');
+
+    expect(editor).toMatch(/label="文章封面"[\s\S]*?crop="square"/);
+    expect(uploader).toContain('`${props.label}裁剪失败，请重新选择图片。`');
+    expect(uploader).toContain('{{ label }}裁剪');
+  });
+
   it('uses the compact uploader inside homepage entry rows', () => {
     const uploader = read('app/components/admin/DirectImageUpload.vue');
     const homeAdmin = read('app/pages/admin/home.vue');

@@ -88,14 +88,6 @@ html.is-scroll-active::-webkit-scrollbar-thumb,
   object-fit: cover;
 }
 
-.site-brand__fallback {
-  width: 7px;
-  height: 7px;
-  flex: 0 0 auto;
-  border-radius: 50%;
-  background: var(--color-accent);
-}
-
 body {
   min-width: 320px;
   min-height: 100vh;

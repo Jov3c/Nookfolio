@@ -25,7 +25,13 @@ const text = computed(() => profile.value?.brandText || 'Nookfolio');
       :src="profile.brandIcon.url"
       :alt="profile.brandIcon.altText || ''"
     />
-    <i v-else class="site-brand__fallback" aria-hidden="true" />
+    <img
+      v-else
+      class="site-brand__icon"
+      src="/brand/nookfolio-app-icon.svg"
+      alt=""
+      aria-hidden="true"
+    />
     <span class="site-brand__text">{{ text }}</span>
   </NuxtLink>
 </template>

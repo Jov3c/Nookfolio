@@ -13,12 +13,27 @@ describe('HTTP security headers', () => {
     expect(SECURITY_HEADERS['Referrer-Policy']).toBe('strict-origin-when-cross-origin');
   });
 
-  it('registers the supplied artwork as the site icon', async () => {
+  it('registers the Nookfolio logo icon suite', async () => {
     const config = await readFile(resolve(process.cwd(), 'nuxt.config.ts'), 'utf8');
 
-    expect(config).toContain("href: '/nookfolio-icon.png'");
-    await expect(
-      readFile(resolve(process.cwd(), 'public/nookfolio-icon.png')),
-    ).resolves.toBeInstanceOf(Buffer);
+    expect(config).toContain("href: '/favicon.svg'");
+    expect(config).toContain("href: '/apple-touch-icon.png'");
+    expect(config).toContain("href: '/site.webmanifest'");
+    expect(config).toContain("content: '#EA632B'");
+
+    for (const asset of [
+      'favicon.svg',
+      'favicon.ico',
+      'favicon-32.png',
+      'apple-touch-icon.png',
+      'icon-192.png',
+      'icon-512.png',
+      'maskable-512.png',
+      'site.webmanifest',
+    ]) {
+      await expect(readFile(resolve(process.cwd(), 'public', asset))).resolves.toBeInstanceOf(
+        Buffer,
+      );
+    }
   });
 });

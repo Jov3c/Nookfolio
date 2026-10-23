@@ -1,5 +1,6 @@
 {
-  "name": "Nookfolio logo",
+  "name": "Nookfolio",
+  "short_name": "Nookfolio",
   "icons": [
     {
       "src": "/icon-192.png",

@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
@@ -15,11 +15,18 @@ describe('HTTP security headers', () => {
 
   it('registers the Nookfolio logo icon suite', async () => {
     const config = await readFile(resolve(process.cwd(), 'nuxt.config.ts'), 'utf8');
+    const manifest = JSON.parse(
+      await readFile(resolve(process.cwd(), 'public/site.webmanifest'), 'utf8'),
+    );
 
     expect(config).toContain("href: '/favicon.svg'");
     expect(config).toContain("href: '/apple-touch-icon.png'");
     expect(config).toContain("href: '/site.webmanifest'");
     expect(config).toContain("content: '#EA632B'");
+    expect(manifest.name).toBe('Nookfolio');
+    expect(await readdir(resolve(process.cwd(), 'public/brand'))).toEqual([
+      'nookfolio-app-icon.svg',
+    ]);
 
     for (const asset of [
       'favicon.svg',

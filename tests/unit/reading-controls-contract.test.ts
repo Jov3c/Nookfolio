@@ -21,10 +21,10 @@ describe('reading controls', () => {
     expect(css).toMatch(/\.back-to-top--admin\s*\{[\s\S]*?left:\s*auto/);
   });
 
-  it('uses complete centered cover images in cards and article pages', () => {
+  it('fills post cards with centered cover images while keeping article images complete', () => {
     const css = read('app/assets/css/prototype.css');
 
-    expect(css).toMatch(/\.post-card__cover-art--image\s*\{[\s\S]*?background-size:\s*contain/);
+    expect(css).toMatch(/\.post-card__cover-art--image\s*\{[\s\S]*?background-size:\s*cover/);
     expect(css).not.toMatch(/\.post-card__cover-art\[data-cover-index=[^}]+\{[^}]*background:/g);
     expect(css).toMatch(/\.post-card__cover-art\[data-cover-index='1'\]\s*\{\s*background-color:/);
     expect(css).toMatch(/\.article-cover\s*\{[\s\S]*?object-fit:\s*contain/);

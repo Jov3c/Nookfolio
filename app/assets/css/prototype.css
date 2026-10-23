@@ -557,7 +557,7 @@ html[data-blog-transition='active'] .article-page__header {
   background-color: var(--color-panel);
   background-position: center;
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
 }
 
 .post-card:hover .post-card__cover-art {

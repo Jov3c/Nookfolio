@@ -13,9 +13,7 @@ const messages = ref<AdminMessage[]>([]);
 const statusFilter = ref<ModerationStatus | ''>('');
 const replyDrafts = reactive<Record<string, string>>({});
 const isLoading = ref(true);
-const busyKey = ref('');
-const notice = ref('');
-const errorMessage = ref('');
+const { busyKey, notice, errorMessage, runAction } = useAdminActionState('操作失败，请重试。');
 
 useSeoMeta({ title: '留言管理 — Nookfolio 管理后台', robots: 'noindex, nofollow' });
 
@@ -70,20 +68,6 @@ async function remove(message: AdminMessage) {
     notice.value = '留言已删除。';
     await load();
   });
-}
-
-async function runAction(key: string, action: () => Promise<void>) {
-  busyKey.value = key;
-  notice.value = '';
-  errorMessage.value = '';
-  try {
-    await action();
-  } catch (error) {
-    const fetchError = error as { data?: { error?: { message?: string } } };
-    errorMessage.value = fetchError.data?.error?.message || '操作失败，请重试。';
-  } finally {
-    busyKey.value = '';
-  }
 }
 
 function formatDate(value: string) {

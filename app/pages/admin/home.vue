@@ -84,9 +84,8 @@ const newEntry = reactive({
 });
 const newSocial = reactive({ name: '', icon: '', url: 'https://', sortOrder: 30, visible: true });
 const isLoading = ref(true);
-const busyKey = ref('');
-const notice = ref('');
-const errorMessage = ref('');
+const { busyKey, notice, errorMessage, runAction } =
+  useAdminActionState('保存失败，请检查字段后重试。');
 
 useSeoMeta({ title: '首页资料 — Nookfolio 管理后台', robots: 'noindex, nofollow' });
 
@@ -355,20 +354,6 @@ async function deleteSocialLink(link: SocialLink) {
     socialLinks.value = socialLinks.value.filter((item) => item.id !== link.id);
     notice.value = 'Social Link 已删除。';
   });
-}
-
-async function runAction(key: string, action: () => Promise<void>) {
-  busyKey.value = key;
-  notice.value = '';
-  errorMessage.value = '';
-  try {
-    await action();
-  } catch (error) {
-    const fetchError = error as { data?: { error?: { message?: string } } };
-    errorMessage.value = fetchError.data?.error?.message || '保存失败，请检查字段后重试。';
-  } finally {
-    busyKey.value = '';
-  }
 }
 
 function entryEndpoint(id: string) {

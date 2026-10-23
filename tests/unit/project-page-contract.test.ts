@@ -37,6 +37,16 @@ describe('project and blog page presentation', () => {
     expect(css).toContain('animation: project-status-breathe');
   });
 
+  it('keeps project cards flat without a border or shadow', () => {
+    const css = read('app/assets/css/public.css');
+    const cardRule = css.match(/\.project-card\s*\{([^}]*)\}/)?.[1] || '';
+    const hoverRule = css.match(/\.project-card:hover\s*\{([^}]*)\}/)?.[1] || '';
+
+    expect(cardRule).toContain('border: 0');
+    expect(cardRule).toContain('box-shadow: none');
+    expect(hoverRule).toContain('box-shadow: none');
+  });
+
   it('gives project README pages the same live table of contents as blog articles', () => {
     const detail = read('app/pages/projects/[slug].vue');
 

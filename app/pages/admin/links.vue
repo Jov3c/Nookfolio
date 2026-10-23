@@ -18,9 +18,8 @@ const logoUrl = ref('');
 const selectedStatus = ref<AdminFriendLinkStatus>('PUBLISHED');
 const isLoading = ref(true);
 const isCreating = ref(false);
-const busyKey = ref('');
-const notice = ref('');
-const errorMessage = ref('');
+const { busyKey, notice, errorMessage, getErrorMessage, runAction } =
+  useAdminActionState('操作失败，请重试。');
 const showCreate = ref(false);
 const form = reactive({
   name: '',
@@ -123,24 +122,6 @@ async function remove(link: AdminFriendLink) {
     notice.value = '友链已删除。';
     await load();
   });
-}
-
-async function runAction(key: string, action: () => Promise<void>) {
-  busyKey.value = key;
-  notice.value = '';
-  errorMessage.value = '';
-  try {
-    await action();
-  } catch (error) {
-    errorMessage.value = getErrorMessage(error, '操作失败，请重试。');
-  } finally {
-    busyKey.value = '';
-  }
-}
-
-function getErrorMessage(error: unknown, fallback: string) {
-  const fetchError = error as { data?: { error?: { message?: string } } };
-  return fetchError.data?.error?.message || fallback;
 }
 
 function formatDate(value: string) {

@@ -12,9 +12,8 @@ interface CategoryForm {
 
 const categories = ref<BlogCategory[]>([]);
 const isLoading = ref(true);
-const busyKey = ref('');
-const notice = ref('');
-const errorMessage = ref('');
+const { busyKey, notice, errorMessage, runAction } =
+  useAdminActionState('操作失败，请检查字段后重试。');
 const form = reactive<CategoryForm>(createEmptyForm());
 const selectedId = ref<string | null>(null);
 
@@ -85,20 +84,6 @@ async function remove() {
     startNew();
     notice.value = '分类已删除。';
   });
-}
-
-async function runAction(key: string, action: () => Promise<void>) {
-  busyKey.value = key;
-  notice.value = '';
-  errorMessage.value = '';
-  try {
-    await action();
-  } catch (error) {
-    const fetchError = error as { data?: { error?: { message?: string } } };
-    errorMessage.value = fetchError.data?.error?.message || '操作失败，请检查字段后重试。';
-  } finally {
-    busyKey.value = '';
-  }
 }
 
 function formPayload() {

@@ -114,9 +114,8 @@ const newExperience = reactive<ExperienceDraft>(createEmptyExperience(10));
 const newEducation = reactive<EducationDraft>(createEmptyEducation(10));
 const newSkill = reactive<SkillDraft>(createEmptySkill(10));
 const isLoading = ref(true);
-const busyKey = ref('');
-const notice = ref('');
-const errorMessage = ref('');
+const { busyKey, notice, errorMessage, runAction } =
+  useAdminActionState('操作失败，请检查字段后重试。');
 
 useSeoMeta({ title: '个人简历 — Nookfolio 管理后台', robots: 'noindex, nofollow' });
 
@@ -263,20 +262,6 @@ async function deleteSkill(item: AdminCvSkill) {
     await load();
     notice.value = '技能组已删除。';
   });
-}
-
-async function runAction(key: string, action: () => Promise<void>) {
-  busyKey.value = key;
-  notice.value = '';
-  errorMessage.value = '';
-  try {
-    await action();
-  } catch (error) {
-    const fetchError = error as { data?: { error?: { message?: string } } };
-    errorMessage.value = fetchError.data?.error?.message || '操作失败，请检查字段后重试。';
-  } finally {
-    busyKey.value = '';
-  }
 }
 
 function applyAggregate(data: CvAggregateResponse) {

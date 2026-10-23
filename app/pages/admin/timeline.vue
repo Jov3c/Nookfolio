@@ -58,9 +58,8 @@ const uploadedMedia = ref<Record<string, AdminMedia>>({});
 const selectedEntryId = ref<string | null>(null);
 const form = reactive<TimelineDraft>(createEmptyForm());
 const isLoading = ref(true);
-const busyKey = ref('');
-const notice = ref('');
-const errorMessage = ref('');
+const { busyKey, notice, errorMessage, runAction } =
+  useAdminActionState('操作失败，请检查字段后重试。');
 
 const selectedEntry = computed(() =>
   entries.value.find((entry) => entry.id === selectedEntryId.value),
@@ -160,20 +159,6 @@ function addUploadedMedia(item: AdminMedia) {
 
 function removeMedia(id: string) {
   form.mediaIds = form.mediaIds.filter((mediaId) => mediaId !== id);
-}
-
-async function runAction(key: string, action: () => Promise<void>) {
-  busyKey.value = key;
-  notice.value = '';
-  errorMessage.value = '';
-  try {
-    await action();
-  } catch (error) {
-    const fetchError = error as { data?: { error?: { message?: string } } };
-    errorMessage.value = fetchError.data?.error?.message || '操作失败，请检查字段后重试。';
-  } finally {
-    busyKey.value = '';
-  }
 }
 
 function formPayload() {

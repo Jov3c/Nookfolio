@@ -32,9 +32,8 @@ interface ProjectForm {
 const projects = ref<AdminProject[]>([]);
 const selectedProjectId = ref<string | null>(null);
 const isLoading = ref(true);
-const busyKey = ref('');
-const notice = ref('');
-const errorMessage = ref('');
+const { busyKey, notice, errorMessage, runAction } =
+  useAdminActionState('操作失败，请检查字段后重试。');
 const markdownFileInput = ref<HTMLInputElement | null>(null);
 const form = reactive<ProjectForm>(createEmptyForm());
 
@@ -160,20 +159,6 @@ async function importMarkdown(event: Event) {
   form.readmeMarkdown = await file.text();
   notice.value = `已导入 ${file.name}，保存项目后写入数据库。`;
   errorMessage.value = '';
-}
-
-async function runAction(key: string, action: () => Promise<void>) {
-  busyKey.value = key;
-  notice.value = '';
-  errorMessage.value = '';
-  try {
-    await action();
-  } catch (error) {
-    const fetchError = error as { data?: { error?: { message?: string } } };
-    errorMessage.value = fetchError.data?.error?.message || '操作失败，请检查字段后重试。';
-  } finally {
-    busyKey.value = '';
-  }
 }
 
 function formPayload() {

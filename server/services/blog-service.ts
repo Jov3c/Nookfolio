@@ -146,7 +146,7 @@ export class BlogService {
     try {
       return toAdminDto(
         await this.repository.createPost({
-          ...normalizePostCreateInput(input),
+          ...normalizePostInput(input),
           publishedAt: normalizePublishedAt(input.status, input.publishedAt),
           wordCount: countMarkdownWords(input.markdownBody),
         }),
@@ -162,7 +162,7 @@ export class BlogService {
     const next = { ...toPostInput(current), ...input };
     validatePostInput(next);
     await this.ensureReferences(next.categoryId, next.coverMediaId);
-    const normalized = normalizePostUpdateInput(input);
+    const normalized = normalizePostInput(input);
     try {
       return toAdminDto(
         await this.repository.updatePost(id, {
@@ -227,7 +227,7 @@ export class BlogService {
       throw new BlogError(400, 'INVALID_CATEGORY', 'Category fields are invalid');
     try {
       return toCategoryDto(
-        await this.repository.createCategory(normalizeCategoryCreateInput(parsed.data)),
+        await this.repository.createCategory(normalizeCategoryInput(parsed.data)),
         0,
       );
     } catch (error) {
@@ -242,10 +242,7 @@ export class BlogService {
     if (!parsed.success)
       throw new BlogError(400, 'INVALID_CATEGORY', 'Category fields are invalid');
     try {
-      const category = await this.repository.updateCategory(
-        id,
-        normalizeCategoryUpdateInput(input),
-      );
+      const category = await this.repository.updateCategory(id, normalizeCategoryInput(input));
       return toCategoryDto(category, await this.repository.countPostsInCategory(id));
     } catch (error) {
       throw mapPersistenceError(error, 'CATEGORY_SLUG_CONFLICT', 'Category slug is already in use');
@@ -288,16 +285,9 @@ function validatePostInput(input: PostCreateInput) {
   if (!parsed.success) throw new BlogError(400, 'INVALID_POST', 'Post fields are invalid');
 }
 
-function normalizeCategoryCreateInput(input: CategoryCreateInput): CategoryCreateInput {
-  return {
-    slug: input.slug.trim().toLowerCase(),
-    name: input.name.trim(),
-    sortOrder: input.sortOrder,
-    visible: input.visible,
-  };
-}
-
-function normalizeCategoryUpdateInput(input: CategoryUpdateInput) {
+function normalizeCategoryInput(input: CategoryCreateInput): CategoryCreateInput;
+function normalizeCategoryInput(input: CategoryUpdateInput): CategoryUpdateInput;
+function normalizeCategoryInput(input: CategoryUpdateInput) {
   return {
     ...(input.slug === undefined ? {} : { slug: input.slug.trim().toLowerCase() }),
     ...(input.name === undefined ? {} : { name: input.name.trim() }),
@@ -306,21 +296,9 @@ function normalizeCategoryUpdateInput(input: CategoryUpdateInput) {
   };
 }
 
-function normalizePostCreateInput(input: PostCreateInput) {
-  return {
-    slug: input.slug.trim().toLowerCase(),
-    title: input.title.trim(),
-    excerpt: input.excerpt.trim(),
-    categoryId: input.categoryId,
-    coverMediaId: input.coverMediaId,
-    markdownBody: input.markdownBody.trim(),
-    status: input.status,
-    seoTitle: input.seoTitle?.trim() || null,
-    seoDescription: input.seoDescription?.trim() || null,
-  };
-}
-
-function normalizePostUpdateInput(input: PostUpdateInput) {
+function normalizePostInput(input: PostCreateInput): Omit<PostCreateInput, 'publishedAt'>;
+function normalizePostInput(input: PostUpdateInput): Omit<PostUpdateInput, 'publishedAt'>;
+function normalizePostInput(input: PostUpdateInput) {
   return {
     ...(input.slug === undefined ? {} : { slug: input.slug.trim().toLowerCase() }),
     ...(input.title === undefined ? {} : { title: input.title.trim() }),

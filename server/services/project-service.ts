@@ -45,7 +45,7 @@ export class ProjectService {
   async create(input: ProjectCreateInput) {
     validateProjectInput(input);
     try {
-      return toAdminDto(await this.repository.create(normalizeCreateInput(input)));
+      return toAdminDto(await this.repository.create(normalizeProjectInput(input)));
     } catch (error) {
       throw mapProjectPersistenceError(error);
     }
@@ -58,7 +58,7 @@ export class ProjectService {
     const next = { ...toProjectInput(current), ...input };
     validateProjectInput(next);
     try {
-      return toAdminDto(await this.repository.update(id, normalizeUpdateInput(input)));
+      return toAdminDto(await this.repository.update(id, normalizeProjectInput(input)));
     } catch (error) {
       throw mapProjectPersistenceError(error);
     }
@@ -114,20 +114,9 @@ function toProjectInput(project: Project): ProjectCreateInput {
   };
 }
 
-function normalizeCreateInput(input: ProjectCreateInput) {
-  return {
-    ...input,
-    slug: input.slug.trim().toLowerCase(),
-    name: input.name.trim(),
-    summary: input.summary.trim(),
-    techStack: normalizeTechStack(input.techStack),
-    githubUrl: normalizeOptionalUrl(input.githubUrl),
-    demoUrl: normalizeOptionalUrl(input.demoUrl),
-    readmeMarkdown: input.readmeMarkdown.trim(),
-  };
-}
-
-function normalizeUpdateInput(input: ProjectUpdateInput) {
+function normalizeProjectInput(input: ProjectCreateInput): ProjectCreateInput;
+function normalizeProjectInput(input: ProjectUpdateInput): ProjectUpdateInput;
+function normalizeProjectInput(input: ProjectUpdateInput) {
   return {
     ...(input.slug === undefined ? {} : { slug: input.slug.trim().toLowerCase() }),
     ...(input.name === undefined ? {} : { name: input.name.trim() }),

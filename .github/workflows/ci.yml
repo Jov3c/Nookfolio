@@ -89,7 +89,7 @@ jobs:
       - name: Create restore backup fixture
         run: |
           mkdir -p /tmp/nookfolio-backup/uploads /tmp/nookfolio-backup/geo
-          pg_dump "postgresql://nookfolio:nookfolio_ci_only@127.0.0.1:5432/nookfolio" > /tmp/nookfolio-backup/database.sql
+          docker exec ${{ job.services.postgres.id }} pg_dump -U nookfolio nookfolio > /tmp/nookfolio-backup/database.sql
           tar -C /tmp/nookfolio-backup -czf /tmp/nookfolio-backup/uploads-geo.tgz uploads geo
 
       - name: Run real PostgreSQL restore test

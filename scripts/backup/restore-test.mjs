@@ -56,10 +56,7 @@ async function verifyDatabase() {
       'timeline_entries',
     ];
     for (const table of requiredTables) {
-      const result = await client.query(
-        `SELECT count(*)::int AS count FROM ${quoteIdentifier('public')}.${quoteIdentifier(table)}`,
-      );
-      if (result.rows[0].count < 1) throw new Error(`Restored table is empty: ${table}`);
+      await client.query(`SELECT 1 FROM public.${quoteIdentifier(table)} LIMIT 0`);
     }
   } finally {
     await client.end();

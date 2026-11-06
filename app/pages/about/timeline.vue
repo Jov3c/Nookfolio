@@ -170,7 +170,6 @@ usePageSeo({
             <div v-else class="life-now-card">
               <strong>{{ entry.title }}</strong
               ><span>{{ entry.dateLabel }}</span>
-              <!-- Timeline HTML is rendered and sanitized by the shared server Markdown pipeline. -->
               <!-- eslint-disable-next-line vue/no-v-html -->
               <div class="life-now-card__body" v-html="entry.bodyHtml" />
             </div>

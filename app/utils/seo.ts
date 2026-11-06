@@ -1,3 +1,5 @@
+import { normalizeSiteUrl } from '#shared/site-url';
+
 export interface PageSeoInput {
   title: string;
   description: string;
@@ -42,16 +44,6 @@ export function buildPageSeoMeta(
   if (input.image) result.ogImage = normalizeImageUrl(input.image, baseUrl);
   if (input.publishedAt) result.articlePublishedTime = input.publishedAt;
   return result;
-}
-
-function normalizeSiteUrl(value: string) {
-  try {
-    const url = new URL(value.trim());
-    if (!['http:', 'https:'].includes(url.protocol)) return null;
-    return `${url.origin}${url.pathname.replace(/\/+$/, '')}`;
-  } catch {
-    return null;
-  }
 }
 
 function normalizeImageUrl(value: string, baseUrl: string) {

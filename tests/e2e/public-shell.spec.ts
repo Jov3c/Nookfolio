@@ -26,7 +26,7 @@ test('projects open a README-style detail page', async ({ page }) => {
 
   await expect(page.getByRole('heading', { name: 'Projects' })).toBeVisible();
   await expect(page.getByText(/共\s*\d+\s*个项目/)).toBeVisible();
-  await page.getByRole('link', { name: /示例项目/ }).click();
+  await page.getByRole('link', { name: '示例项目', exact: true }).click();
   await expect(page).toHaveURL(/\/projects\/example-project$/);
   await expect(
     page.locator('.project-prototype-readme').getByRole('heading', { name: '示例项目' }),

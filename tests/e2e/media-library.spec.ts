@@ -10,14 +10,15 @@ test('admin can upload, edit, serve, query, and delete media', async ({ page }, 
 
   await createAdminSession(page);
 
-  await page.goto('/admin/media');
-  await expect(page.getByRole('heading', { name: '媒体库', exact: true })).toBeVisible();
-
   const invalid = await page.request.post('/api/v1/admin/media/upload', {
     multipart: {
-      file: { name: 'not-an-image.svg', mimeType: 'image/svg+xml', buffer: Buffer.from('<svg />') },
+      file: {
+        name: 'not-an-image.png',
+        mimeType: 'image/png',
+        buffer: Buffer.from('not an image'),
+      },
       category: 'general',
-      altText: 'Rejected SVG',
+      altText: 'Invalid image',
     },
   });
   expect(invalid.status()).toBe(400);

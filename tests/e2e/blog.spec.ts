@@ -74,6 +74,8 @@ test('blog utilities preserve archive, links, and guestbook semantics', async ({
 
   await page.goto('/blog/message');
   await expect(page.getByRole('heading', { name: 'Message', exact: true })).toBeVisible();
-  await expect(page.getByText('想说点什么就留下来吧。', { exact: true })).toBeVisible();
+  await expect(
+    page.getByText('想说点什么就留下来吧。可以是建议、问题，也可以只是打个招呼。', { exact: true }),
+  ).toBeVisible();
   await expect(page.getByLabel('悄悄话')).toBeVisible();
 });

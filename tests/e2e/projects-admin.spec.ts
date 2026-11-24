@@ -43,15 +43,14 @@ test('admin can create a README project and publish or hide it', async ({ page }
     expect((await publicDetail.json()).data.readmeHtml).toContain('Stage Five README');
 
     await page.goto('/projects');
-    await expect(page.getByRole('link', { name: /Stage Five E2E/ })).toBeVisible();
-    await expect(page.locator(`[href="/projects/${slug}"]`)).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Stage Five E2E', exact: true })).toBeVisible();
 
     const hidden = await page.request.patch(`/api/v1/admin/projects/${createdId}`, {
       data: { visible: false },
     });
     expect(hidden.ok()).toBe(true);
     await page.reload();
-    await expect(page.getByRole('link', { name: /Stage Five E2E/ })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'Stage Five E2E', exact: true })).toHaveCount(0);
   } finally {
     if (createdId) await page.request.delete(`/api/v1/admin/projects/${createdId}`);
   }

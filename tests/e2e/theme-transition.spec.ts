@@ -31,9 +31,10 @@ test('every page shell exposes one theme toggle', async ({ page }) => {
 test('public page shells expose the Travelling link', async ({ page }) => {
   for (const route of ['/', '/projects', '/blog', '/about']) {
     await page.goto(route);
-    const travelling = page.getByRole('link', { name: '开往其他独立博客' });
-    await expect(travelling).toHaveCount(1);
-    await expect(travelling).toHaveText('');
+    await expect(page.locator('html')).toHaveAttribute('data-hydrated', 'true');
+    await page.getByRole('button', { name: '探索独立博客' }).click();
+    const travelling = page.getByRole('menuitem', { name: '开往 · 友链接力' });
+    await expect(travelling).toBeVisible();
     await expect(travelling).toHaveAttribute('href', 'https://www.travellings.cn/go.html');
     await expect(travelling).toHaveAttribute('target', '_blank');
     await expect(travelling).toHaveAttribute('rel', 'noopener noreferrer');

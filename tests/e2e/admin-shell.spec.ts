@@ -26,7 +26,8 @@ test('admin login protects the shell and logout invalidates access', async ({ pa
   await page.goto('/admin');
   await expect(page.locator('.admin-dashboard-intro h1')).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('data-hydrated', 'true');
-  await expect(page.getByText(adminEmail, { exact: true }).first()).toBeVisible();
+  await page.locator('.admin-identity-menu summary').click();
+  await expect(page.getByText(adminEmail, { exact: true })).toBeVisible();
   expect(await page.evaluate(() => localStorage.getItem('admin_token'))).toBeNull();
 
   await page.getByRole('button', { name: '退出登录' }).click();
@@ -43,7 +44,7 @@ test('mobile navigation exposes every admin destination and manages focus', asyn
   test.skip(testInfo.project.name !== 'mobile-chromium', 'Responsive admin shell runs once');
   await signIn(page, '10.0.0.22');
 
-  const menuButton = page.getByRole('button', { name: '打开导航' });
+  const menuButton = page.getByRole('button', { name: /^(打开|关闭)导航$/ });
   const primaryDestinations = ['概览', '内容', '资料', '互动'];
 
   for (const width of [390, 800, 900]) {
@@ -63,7 +64,7 @@ test('mobile navigation exposes every admin destination and manages focus', asyn
   }
 });
 
-test('desktop navigation keeps the active primary group and indexed secondary route visible', async ({
+test('desktop navigation keeps the active primary group and secondary route visible', async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop admin navigation runs once');
@@ -78,7 +79,7 @@ test('desktop navigation keeps the active primary group and indexed secondary ro
   });
   const postsLink = page
     .getByRole('navigation', { name: '当前分区页面' })
-    .getByRole('link', { name: /03\s*文章管理/ });
+    .getByRole('link', { name: '文章管理', exact: true });
   const indicator = page.locator('.admin-primary-nav__indicator');
 
   await expect(contentGroup).toHaveAttribute('data-active', 'true');

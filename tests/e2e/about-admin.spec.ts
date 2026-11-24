@@ -11,20 +11,18 @@ test('admin can toggle CV visibility without deleting its content', async ({ pag
     await page.goto('/admin/cv');
     await expect(page.getByRole('heading', { name: '个人简历' })).toBeVisible();
     await expect(page.locator('html')).toHaveAttribute('data-hydrated', 'true');
-    await page.getByRole('button', { name: '内容管理' }).click();
-    await expect(page.getByRole('link', { name: '时间线' })).toBeVisible();
     await expect(page.getByLabel('公开简历')).toBeChecked();
 
     await page.getByLabel('公开简历').uncheck();
-    await Promise.all([
+    const [response] = await Promise.all([
       page.waitForResponse(
         (response) =>
           response.url().endsWith('/api/v1/admin/cv/profile') &&
-          response.request().method() === 'PATCH' &&
-          response.ok(),
+          response.request().method() === 'PATCH',
       ),
       page.getByRole('button', { name: '保存资料' }).click(),
     ]);
+    expect(response.ok()).toBe(true);
     await expect(page.getByRole('status')).toContainText('已保存');
     expect((await page.request.get('/api/v1/public/cv')).status()).toBe(404);
     const privateSitemap = await page.request.get('/sitemap.xml');
@@ -32,16 +30,16 @@ test('admin can toggle CV visibility without deleting its content', async ({ pag
     await expect(page.getByText('设为私密后，前台“关于”菜单将隐藏个人简历')).toBeVisible();
 
     await page.getByLabel('公开简历').check();
-    await Promise.all([
+    const [publishResponse] = await Promise.all([
       page.waitForResponse(
         (response) =>
           response.url().endsWith('/api/v1/admin/cv/profile') &&
-          response.request().method() === 'PATCH' &&
-          response.ok(),
+          response.request().method() === 'PATCH',
       ),
       page.getByRole('button', { name: '保存资料' }).click(),
     ]);
     await expect(page.getByRole('status')).toContainText('已保存');
+    expect(publishResponse.ok()).toBe(true);
     expect((await page.request.get('/api/v1/public/cv')).ok()).toBe(true);
   } finally {
     await page.request.patch('/api/v1/admin/cv/profile', {

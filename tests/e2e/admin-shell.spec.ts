@@ -45,6 +45,7 @@ test('mobile navigation exposes every admin destination and manages focus', asyn
   await signIn(page, '10.0.0.22');
 
   const menuButton = page.getByRole('button', { name: /^(打开|关闭)导航$/ });
+  const primaryNav = page.getByRole('navigation', { name: '后台主导航' });
   const primaryDestinations = ['概览', '内容', '资料', '互动'];
 
   for (const width of [390, 800, 900]) {
@@ -52,11 +53,9 @@ test('mobile navigation exposes every admin destination and manages focus', asyn
     await expect(menuButton).toHaveAttribute('aria-expanded', 'false');
     await menuButton.click();
     await expect(menuButton).toHaveAttribute('aria-expanded', 'true');
-    await expect(page.getByRole('link', { name: '概览', exact: true })).toBeFocused();
+    await expect(primaryNav.getByRole('link', { name: '概览', exact: true })).toBeFocused();
     for (const name of primaryDestinations) {
-      await expect(
-        page.locator('#admin-primary-navigation').getByRole('link', { name, exact: true }),
-      ).toBeVisible();
+      await expect(primaryNav.getByRole('link', { name, exact: true })).toBeVisible();
     }
     await page.keyboard.press('Escape');
     await expect(menuButton).toHaveAttribute('aria-expanded', 'false');
